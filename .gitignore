@@ -1,0 +1,9 @@
+LICENSE.txt
+Include/*
+Lib/*
+Scripts/*
+tcl/*
+.gitignore
+.vscode/*
+pyvenv.cfg
+*.pyc
