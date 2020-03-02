@@ -10,6 +10,6 @@ Checkout -
 
 Admin Page - Cyril
 
-Wishlist - 
+Wishlist - Rachael
 
 Prepare shipping labels and electronic invoices - 
