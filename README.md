@@ -1,13 +1,15 @@
 # CM1205-OnlineShop
 
-Product Pages - 
+Product Pages - George
 
-Shopping Basket - 
+Shopping Basket - Sean
 
-User Account - 
+User Account - Luca
 
 Checkout - 
 
-Admin Page - 
+Admin Page - Cyril
 
-Wishlist - Basim
+Wishlist - 
+
+Prepare shipping labels and electronic invoices - 
