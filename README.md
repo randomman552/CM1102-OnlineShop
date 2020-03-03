@@ -7,12 +7,12 @@ Shopping Basket - Sean
 
 User Account - Luca
 
-Checkout - 
+Checkout - Rachael
 
 Admin Page - Cyril
 
 ## Optional
 
-Wishlist - Rachael
+Wishlist - 
 
 Prepare shipping labels and electronic invoices - 
