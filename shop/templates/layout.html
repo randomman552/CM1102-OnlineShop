@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Shop</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <!-- Main navigation panel -->
+        <nav class="main">
+            <nav class="sub-nav">
+                <a href="/" class="button"><p>Home</p></a>
+                <a href="/products" class="button"><p>Products</p></a>
+            </nav>
+            <nav class="sub-nav search">
+                <form class="search" action="/products/search" method="get">
+                    <input type="text" placeholder="Search" name="query">
+                    <button type="submit"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search"></button>
+                </form>
+            </nav>
+            <nav class="sub-nav reversed">
+                <a href="/login" class="button"><p>Login</p></a>
+                <a href="/register" class="button"><p>Register</p></a>
+            </nav>
+        </nav>
+        <main>
+            {% block content %}
+            
+            {% endblock %}
+        </main>
+    </body>
+</html>

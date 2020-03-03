@@ -1,0 +1,129 @@
+/* Root element for setting variables */
+:root {
+	font-size: 16px;
+	font-family: sans-serif;
+	--bg-color: #dddddd;
+	--fg-color: #ffffff;
+	--border-color: #707070;
+	--button-hover: #dddddd;
+	--text-color: #000000;
+}
+
+/* Body attributes */
+body {
+	background-color: var(--bg-color);
+	margin: 0;
+	padding: 0;
+}
+body::-webkit-scrollbar {
+	width: 0.25rem;
+}
+body::-webkit-scrollbar-track {
+	background: var(--bg-color);
+}
+body::-webkit-scrollbar-thumb {
+	background: var(--fg-color);
+}
+
+/*Header attributes */
+nav.main {
+	top: 0;
+	box-sizing: border-box;
+	width: 100%;
+	position: fixed;
+	height: 4rem;
+	margin: 0;
+	padding: 0 3rem 0 3rem;
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	background: var(--fg-color);
+	border-bottom: 1px solid var(--border-color);
+	justify-content: space-evenly;
+}
+nav.sub-nav {
+	display: inline-flex;
+	flex-basis: 33%;
+	flex-shrink: 1;
+}
+nav.sub-nav.search {
+	flex-shrink: 2;
+	align-items: center;
+	justify-content: center;
+}
+nav.reversed {
+	flex-direction: row-reverse;
+}
+
+/* Attributes used to style links like buttons */
+a.button {
+	text-decoration: none;
+	text-align: center;
+	margin: 0 2px 0 2px;
+	color: var(--text-color);
+	border: 1px solid var(--bg-color);
+	text-transform: uppercase;
+	border-radius: 1rem;
+	vertical-align: middle;
+	transition: 0.5s;
+}
+a.button:hover {
+	background-color: var(--bg-color);
+}
+a.button > p {
+	padding: 1rem;
+	margin: 0;
+}
+a.button > img {
+	height: 3rem;
+	width: 3rem;
+}
+
+/* Form attributes */
+form {
+	text-align: center;
+}
+
+/* Search form attributes */
+form.search {
+	display: inline-flex;
+	flex-direction: row;
+	flex-basis: 100%;
+	align-items: center;
+}
+form.search input[type = "text"],
+form.search button[type = "submit"] {
+	padding: 0;
+	font-size: inherit;
+	margin: 0;
+	border: 1px solid var(--bg-color);
+	text-align: center;
+	height: 2.5rem;
+	flex-basis: 60rem;
+	flex-shrink: 1;
+	transition: 0.5s;
+	border-radius: 0.5rem 0 0 0.5rem;
+}
+form.search button[type = "submit"] {
+	flex-basis: 2.5rem;
+	flex-shrink: 0;
+	border-radius: 0 0.5rem 0.5rem 0;
+}
+form.search input[type = "text"]:hover,
+form.search button[type = "submit"]:hover {
+	background: var(--bg-color);
+}
+form.search button > img {
+	width: 2rem;
+	height: 2rem;
+}
+/* Attributes for main section of the page */
+main {
+	margin-left: 15%;
+	border-radius: 1em;
+	width: 70%;
+	text-align: center;
+	background: var(--fg-color);
+	margin-top: 4.5rem;
+	padding: 1rem;
+}
