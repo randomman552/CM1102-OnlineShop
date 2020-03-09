@@ -5,4 +5,5 @@ import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+from . import models
 from . import routes
