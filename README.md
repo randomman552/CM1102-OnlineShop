@@ -13,6 +13,6 @@ Admin Page - Cyril
 
 ## Optional
 
-Wishlist - 
+Wishlist - Bazz
 
 Prepare shipping labels and electronic invoices - 
