@@ -42,9 +42,6 @@ class User(UserMixin, db.Model):
     email = Column(String(256), unique=True, nullable=False)
     password_hash = Column(Text)
     creation_date = Column(DateTime, nullable=False, default=datetime.now())
-
-    def __repr__(self):
-        return f"User '{self.username}', '{self.email}'"
     
     @property
     def password(self):
