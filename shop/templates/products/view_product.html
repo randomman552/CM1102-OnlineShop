@@ -1,20 +1,45 @@
 {% extends 'layout.html' %}
 {% block content %}
     {% if product != None %}
+        {% if mode == "edit" %}
+            <div style="text-align: left;">
+                {% if product.public %}
+                    <button onclick="setPublic(false)">Make Private</button>
+                {% else %}
+                    <button onclick="setPublic(true)">Make Public</button>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="product main_container">
             <div class="product row">
                 <div class="product image container">
+                    {% if mode == "edit" %}
+                        <button class="edit" onclick="openImageOrderEdit()"></button>
+                    {% endif %}
                     {% for picture in pictures %}
 
                     {% endfor %}
                 </div>
                 <div class="product description container">
-                    <div class="product description name">{{ product.name }}</div>
-                    <div class="product description text">{{ product.description }}</div>
+                    <div class="product description name">
+                        {{ product.name }}
+                        {% if mode == "edit" %}
+                            <button class="edit" onclick="openNameEdit()"></button>
+                        {% endif %}
+                    </div>
+                    <div class="product description text">
+                        {{ product.description }}
+                        {% if mode == "edit" %}
+                            <button class="edit" onclick="openDescriptionEdit()"></button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="product row">
                 <div class="product image selector">
+                    {% if mode == "edit" %}
+                        <button class="edit" onclick="openImageEdit()"></button>
+                    {% endif %}
                     {% for picture in pictures %}
 
                     {% endfor %}
@@ -29,9 +54,10 @@
             </div>
             
         </div>
-        <script src="{{ url_for('static', filename='js/product.js') }}"></script>
         {% if mode == "edit" %}
-        <script src="{{ url_for('static', filename='js/edit_product.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/edit_product.js') }}"></script>
+        {% else %}
+        <script type="text/javascript" src="{{ url_for('static', filename='js/product.js') }}"></script>
         {% endif %}
     {% else %}
         <h1>The requested product does not exist.</h1>

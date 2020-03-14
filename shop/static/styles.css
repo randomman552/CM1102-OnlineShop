@@ -30,6 +30,7 @@ nav.main {
 	top: 0;
 	box-sizing: border-box;
 	width: 100%;
+	z-index: 1000;
 	position: fixed;
 	height: 4rem;
 	margin: 0;
@@ -129,8 +130,24 @@ main {
 	padding: 1rem;
 }
 
+/* Button attributes */
+button.edit {
+	display: inline-block;
+	background: url(icons/edit.svg);
+	background-size: 100% 100%;
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 0;
+	margin: 1px;
+	width: 1rem;
+	height: 1rem;
+}
+
 /* Product page attributes */
 .product {
+	position: sticky;
+	z-index: 0;
 	display: flex;
 	text-align: left;
 	padding: 2px;
@@ -175,6 +192,7 @@ main {
 	flex-direction: row-reverse;
 	flex-shrink: 1;
 }
+
 /* Error and warning attributes */
 .error {
 	display: inline-block;
