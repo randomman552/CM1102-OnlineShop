@@ -117,6 +117,7 @@ form.search button > img {
 	width: 2rem;
 	height: 2rem;
 }
+
 /* Attributes for main section of the page */
 main {
 	margin-left: 15%;
@@ -126,4 +127,85 @@ main {
 	background: var(--fg-color);
 	margin-top: 4.5rem;
 	padding: 1rem;
+}
+
+/* Product page attributes */
+.product {
+	display: flex;
+	text-align: left;
+	padding: 2px;
+	border: 1px solid black;
+}
+.product.row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	width: 100%;
+}
+.product.main_container {
+	display: flex;
+	flex-direction: column;
+}
+.product.image {
+	flex-basis: 60%;
+}
+.product.image.selector {
+	height: 50px;
+	align-items: flex-start;
+}
+.product.description {
+	flex-basis: 40%;
+}
+.product.description.container {
+	flex-direction: column;
+	height: 25rem;
+}
+.product.description.name {
+	display: block;
+	flex-basis: 1rem;
+	flex-shrink: 1;
+}
+.product.description.text {
+	display: block;
+	flex-basis: 100%;
+	flex-grow: 1;
+}
+.product.purchase {
+	display: inline-flex;
+	flex-direction: row-reverse;
+	flex-shrink: 1;
+}
+/* Error and warning attributes */
+.error {
+	display: inline-block;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #ff8080;
+}
+
+.warn {
+	display: inline-block;
+	box-shadow: 1px black inset;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #ffec84;
+}
+
+.info {
+	display: inline-block;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #8fd6ff;
 }

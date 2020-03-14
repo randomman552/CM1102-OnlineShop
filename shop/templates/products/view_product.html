@@ -1,4 +1,39 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <h1>View product</h1>
+    {% if product != None %}
+        <div class="product main_container">
+            <div class="product row">
+                <div class="product image container">
+                    {% for picture in pictures %}
+
+                    {% endfor %}
+                </div>
+                <div class="product description container">
+                    <div class="product description name">{{ product.name }}</div>
+                    <div class="product description text">{{ product.description }}</div>
+                </div>
+            </div>
+            <div class="product row">
+                <div class="product image selector">
+                    {% for picture in pictures %}
+
+                    {% endfor %}
+                </div>
+                <div class="product description purchase">
+                    <button>Add to cart</button>
+                    <button>Add to wishlist</button>
+                </div>
+            </div>
+            <div class="product row">
+                <h1>MORE INFO</h1>
+            </div>
+            
+        </div>
+        <script src="{{ url_for('static', filename='js/product.js') }}"></script>
+        {% if mode == "edit" %}
+        <script src="{{ url_for('static', filename='js/edit_product.js') }}"></script>
+        {% endif %}
+    {% else %}
+        <h1>The requested product does not exist.</h1>
+    {% endif %}
 {% endblock %}
