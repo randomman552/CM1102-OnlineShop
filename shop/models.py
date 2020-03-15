@@ -57,10 +57,11 @@ class Product(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
     name = Column(Text, nullable=False)
     #Price is stored as an integer so no precision is lost to floating point accuracy
-    price = Column(Integer, nullable=False, default=0)
+    __price = Column(Integer, nullable=False, default=0)
     description = Column(Text, nullable=False, default="This is a description")
     __information = Column(Text)
     public = Column(Boolean, default=False)
+    
     #Description stores a json encoded dict, this allows me to store some layout information in the product table.
     @property
     def information(self):
@@ -69,6 +70,20 @@ class Product(db.Model):
     @information.setter
     def set_information(self, dict_object):
         self.__information = json.dumps(dict_object)
+
+    @property
+    def price(self):
+        price = "£" + str(round(self.__price / 100, 2))
+        print(price)
+        price_split = price.split(".")
+        while len(price_split[1]) < 2:
+            price += "0"
+            price_split = price.split(".")
+        return price
+
+    @price.setter
+    def set_price(self, number):
+        self.__price = round(number * 10)
     
 #Review class
 class Review(db.Model):

@@ -30,7 +30,7 @@ nav.main {
 	top: 0;
 	box-sizing: border-box;
 	width: 100%;
-	z-index: 1000;
+	z-index: 1;
 	position: fixed;
 	height: 4rem;
 	margin: 0;
@@ -119,6 +119,12 @@ form.search button > img {
 	height: 2rem;
 }
 
+form.edit-popup {
+	text-align: left;
+	display: none;
+	position: relative;
+}
+
 /* Attributes for main section of the page */
 main {
 	margin-left: 15%;
@@ -138,10 +144,42 @@ button.edit {
 	position: absolute;
 	right: 0;
 	top: 0;
+	z-index: 2;
 	padding: 0;
 	margin: 1px;
 	width: 1rem;
 	height: 1rem;
+}
+button.edit.close {
+	background: url(icons/close.svg);
+	background-size: 100% 100%;
+}
+
+/* Popup container attributes (NOT CURRENTLY IN USE)*/
+.popup {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	display: inline-block;
+	cursor: pointer;
+}
+.popup .popuptext {
+	visibility: hidden;
+	width: 160px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 8px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 125%;
+	left: 50%;
+	margin-left: -80px;
+}
+.popup .show {
+	visibility: visible;
+	transition: 0.2s;
 }
 
 /* Product page attributes */
@@ -186,6 +224,15 @@ button.edit {
 	display: block;
 	flex-basis: 100%;
 	flex-grow: 1;
+}
+.product.description.price {
+	flex-basis: 100%;
+	flex-grow: 1;
+	text-align: right;
+}
+.product.description.price > span {
+	margin: 0.5rem;
+	font-size: 1.5rem;
 }
 .product.purchase {
 	display: inline-flex;

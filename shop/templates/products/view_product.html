@@ -8,29 +8,33 @@
                 {% else %}
                     <button onclick="setPublic(true)">Make Public</button>
                 {% endif %}
+                <button onclick="deleteProduct('{{ product.ID }}')">Delete</button>
             </div>
         {% endif %}
         <div class="product main_container">
             <div class="product row">
                 <div class="product image container">
-                    {% if mode == "edit" %}
-                        <button class="edit" onclick="openImageOrderEdit()"></button>
-                    {% endif %}
                     {% for picture in pictures %}
 
                     {% endfor %}
                 </div>
                 <div class="product description container">
                     <div class="product description name">
-                        {{ product.name }}
+                        <span id="name">{{ product.name }}</span>
                         {% if mode == "edit" %}
-                            <button class="edit" onclick="openNameEdit()"></button>
+                            <button id="name-edit" class="edit" onclick="openEdit('name')"></button>
+                            <button style="display: none;" id="name-close" class="edit close" onclick="closeEdit('name')"></button>
+                            <form id="name-form" class="edit-popup" action="" method="post">
+                            </form>
                         {% endif %}
                     </div>
                     <div class="product description text">
-                        {{ product.description }}
+                        <span id="description">{{ product.description }}</span>
                         {% if mode == "edit" %}
-                            <button class="edit" onclick="openDescriptionEdit()"></button>
+                            <button id="description-edit" class="edit" onclick="openEdit('description')"></button>
+                            <button style="display: none;" id="description-close" class="edit close" onclick="closeEdit('description')"></button>
+                            <form id="description-form" class="edit-popup" action="" method="post">
+                            </form>
                         {% endif %}
                     </div>
                 </div>
@@ -38,7 +42,7 @@
             <div class="product row">
                 <div class="product image selector">
                     {% if mode == "edit" %}
-                        <button class="edit" onclick="openImageEdit()"></button>
+                        <!-- TODO: IMPLEMENT THIS -->
                     {% endif %}
                     {% for picture in pictures %}
 
@@ -47,6 +51,15 @@
                 <div class="product description purchase">
                     <button>Add to cart</button>
                     <button>Add to wishlist</button>
+                    <div class="product description price">
+                        <span id="price">Price: {{ product.price }}</span>
+                        {% if mode == "edit" %}
+                            <button id="price-edit" class="edit" onclick="openEdit('price')"></button>
+                            <button style="display: none;" id="price-close" class="edit close" onclick="closeEdit('price')"></button>
+                            <form id="price-form" class="edit-popup" action="" method="post">
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="product row">

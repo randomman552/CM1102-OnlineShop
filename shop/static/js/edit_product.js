@@ -1,36 +1,25 @@
-//Functions for changing product descriptions
-function openDescriptionEdit() {
-	console.log('Description Edit Started');
+//Generalised functions for edits
+function openEdit(editing) {
+	//Function is passed string corresponding to the field being edited
+	document.getElementById(editing + '-form').style.display = 'block';
+	document.getElementById(editing + '-close').style.display = 'block';
+	document.getElementById(editing + '-edit').style.display = 'none';
+	document.getElementById(editing).style.display = 'none';
 }
-function closeDescriptionEdit() {
-	console.log('Description Edit Ended');
-}
-
-//Functions for changing product names
-function openNameEdit() {
-	console.log('Name Edit Started');
-}
-function closeNameEdit() {
-	console.log('Name Edit Ended');
-}
-
-//Functions for adding images
-function openImageEdit() {
-	console.log('Image Edit Started');
-}
-function closeImageEdit() {
-	console.log('Image Edit Ended');
+function closeEdit(editing) {
+	//Function is passed string corresponding to the field being edited
+	document.getElementById(editing + '-form').style.display = 'none';
+	document.getElementById(editing + '-close').style.display = 'none';
+	document.getElementById(editing + '-edit').style.display = 'block';
+	document.getElementById(editing).style.display = 'block';
 }
 
-//Function for editing image order
-function openImageOrderEdit() {
-	console.log('Image Order Edit Started');
-}
-function closeImageOrderEdit() {
-	console.log('Image Order Edit Ended');
-}
-
-//Functions for changing state between public and private
+//Function for changing state between public and private
 function setPublic(new_state) {
 	console.log(new_state);
+}
+
+//Function to delete the product
+function deleteProduct(ID) {
+	console.log('Delete product with ID: ' + ID);
 }
