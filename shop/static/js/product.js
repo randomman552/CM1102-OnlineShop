@@ -43,20 +43,20 @@ function slideJmp(n) {
 function slideShow(n) {
 	var i;
 	var slides = document.getElementsByClassName('slide-content');
-	var selectors = document.getElementsByClassName('slide-selector');
-	if (n > slides.length - 1) {
-		slideIndex = 0;
-	}
+	var selectors = document.getElementsByClassName('slide-selector overlay');
 	if (n < 0) {
 		slideIndex = slides.length - 1;
+	}
+	if (n > slides.length - 1) {
+		slideIndex = 0;
 	}
 	for (i = 0; i <= slides.length - 1; i++) {
 		slides[i].style.display = 'none';
 	}
 	for (i = 0; i <= selectors.length - 1; i++) {
-		selectors[i].classname = selectors[i].classname;
+		selectors[i].style.display = 'block';
 	}
-	slides[slideIndex].style.display = 'block';
-	selectors[slideIndex].classname += ' active';
+	slides[slideIndex].style.display = 'flex';
+	selectors[slideIndex].style.display = 'none';
 }
 //#endregion
