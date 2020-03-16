@@ -74,11 +74,8 @@ class Product(db.Model):
     @property
     def price(self):
         price = "£" + str(round(self.__price / 100, 2))
-        print(price)
-        price_split = price.split(".")
-        while len(price_split[1]) < 2:
+        while len(price.split(".")[1]) < 2:
             price += "0"
-            price_split = price.split(".")
         return price
 
     @price.setter
