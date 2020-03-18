@@ -1,4 +1,10 @@
 {% extends 'layout.html' %}
+
+{% block head %}
+    <title>{{ product.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/view_product.css')}}">
+{% endblock %}
+
 {% block content %}
     {% if product != None %}
         {% if mode == "edit" %}

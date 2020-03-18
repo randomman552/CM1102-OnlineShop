@@ -81,7 +81,6 @@ function slideShowResume() {
 //This function handles showing and hiding of the slideshow controls
 function slideShowControlsState(state) {
 	var controls = [ document.getElementById('slideshow-prev'), document.getElementById('slideshow-next') ];
-	console.log(controls);
 	if (state == false) {
 		controls.forEach((element) => {
 			element.style.display = 'none';

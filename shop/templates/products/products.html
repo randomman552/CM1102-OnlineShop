@@ -1,4 +1,21 @@
 {% extends 'layout.html' %}
+
+{% block head %}
+    <title>Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h1>List of products:</h1>
+    <div class="container">
+        <div class="container filters">
+            <!-- TODO: ADD FILTERS -->
+        </div>
+        <div class="container products">
+            {% for i in range(products|length) %}
+                <product onclick="window.location = '/products/{{ products[i].ID }}'">
+                    {{ products[i].name }}
+                </product>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

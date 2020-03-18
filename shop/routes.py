@@ -11,9 +11,13 @@ from . import app
 def render_home():
     return render_template("layout.html")
 
-@app.route("/products?query=<string:query>")
-def render_products(query):
-    return render_template("products/products.html")
+@app.route("/products")
+def render_products():
+    products = Product.query.all()
+    pictures = []
+    for product in products:
+        pictures.append(Picture.query.filter(Product.ID.like(product.ID)).all())
+    return render_template("products/products.html", products=products, pictures=pictures)
 
 @app.route("/products/new", methods=["GET", "POST"])
 def render_new_product():
