@@ -14,15 +14,15 @@
         {% endif %}
         <div class="product main_container">
             <div class="product row">
-                <div class="product image container">
+                <div class="product image container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
                     <!-- Picture slideshow -->
                     {% for picture in pictures %}
                         <div class="slide-content">
-                            <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image">
+                            <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
                         </div>
                     {% endfor %}
-                    <a class="prev" onclick="slideMov(-1)">&#10094;</a>
-                    <a class="next" onclick="slideMov(1)">&#10095;</a>
+                    <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
+                    <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
                 </div>
                 <div class="product description container">
                     <div class="product description name">

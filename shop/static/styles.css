@@ -215,7 +215,6 @@ button.edit.close {
 	display: flex;
 	text-align: left;
 	padding: 2px;
-	border: 1px dashed #dddddd;
 }
 .product.row {
 	display: flex;

@@ -27,15 +27,23 @@ function deleteProduct(ID) {
 //#endregion
 
 //#region Image slideshow functions
+var slideTime = 5000;
 var slideIndex = 0;
 slideShow(slideIndex);
+var slideIntervalID = 0;
+slideShowResume();
 //Function to move the slides by the given number
 function slideMov(n) {
+	//In this function will pause and resume the slideshow to reset the timer
+	slideShowPause();
+	slideShowResume();
 	slideShow((slideIndex += n));
 }
 
 //Function to jump to the given slide number
 function slideJmp(n) {
+	slideShowPause();
+	slideShowResume();
 	slideShow((slideIndex = n));
 }
 
@@ -58,5 +66,30 @@ function slideShow(n) {
 	}
 	slides[slideIndex].style.display = 'flex';
 	selectors[slideIndex].style.display = 'none';
+}
+
+function slideShowPause() {
+	clearInterval(slideIntervalID);
+}
+
+function slideShowResume() {
+	slideIntervalID = setInterval(function() {
+		slideMov(1);
+	}, slideTime);
+}
+
+//This function handles showing and hiding of the slideshow controls
+function slideShowControlsState(state) {
+	var controls = [ document.getElementById('slideshow-prev'), document.getElementById('slideshow-next') ];
+	console.log(controls);
+	if (state == false) {
+		controls.forEach((element) => {
+			element.style.display = 'none';
+		});
+	} else {
+		controls.forEach((element) => {
+			element.style.display = 'inline';
+		});
+	}
 }
 //#endregion

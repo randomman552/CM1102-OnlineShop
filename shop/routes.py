@@ -28,16 +28,10 @@ def render_new_product():
     #Change the product name from the random one
     new_product.name = "Product name"
     db.session.commit()
-    return redirect(f"/products/edit/{new_product.ID}")
+    return redirect(f"/products/{new_product.ID}")
 
-@app.route("/products/edit/<int:product_id>")
-def render_edit_product(product_id):
-    product = Product.query.filter(Product.ID.like(product_id)).first()
-    pictures = Picture.query.filter(Picture.productID.like(product_id)).all()
-    return render_template("products/view_product.html", product=product, pictures=pictures, mode="edit")
-
-@app.route("/products/<int:product_id>", methods=["GET", "POST"])
+@app.route("/products/<int:product_id>", methods=["GET"])
 def render_view_product(product_id):
     product = Product.query.filter(Product.ID.like(product_id)).first()
     pictures = Picture.query.filter(Picture.productID.like(product_id)).all()
-    return render_template("products/view_product.html", product=product, pictures=pictures, mode="view")
+    return render_template("products/view_product.html", product=product, pictures=pictures, mode="edit")
