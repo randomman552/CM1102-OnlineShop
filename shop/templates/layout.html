@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Shop</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+        {% block head %}
+            <title>Shop</title>
+        {% endblock %}
     </head>
     <body>
         <!-- Main navigation panel -->
