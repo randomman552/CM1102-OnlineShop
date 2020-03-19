@@ -62,10 +62,10 @@ function slideShow(n) {
 		slides[i].style.display = 'none';
 	}
 	for (i = 0; i <= selectors.length - 1; i++) {
-		selectors[i].style.display = 'block';
+		selectors[i].classList.remove('active');
 	}
 	slides[slideIndex].style.display = 'flex';
-	selectors[slideIndex].style.display = 'none';
+	selectors[slideIndex].classList.add('active');
 }
 
 function slideShowPause() {

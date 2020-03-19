@@ -126,7 +126,8 @@
 	z-index: 3;
 	background-color: rgba(200, 200, 200, 0.5);
 }
-.slide-selector .overlay:hover {
+.slide-selector .overlay:hover,
+.overlay.active {
 	background-color: rgba(0, 0, 0, 0);
 }
 
