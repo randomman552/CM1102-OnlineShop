@@ -16,8 +16,8 @@ def render_products():
     products = Product.query.all()
     pictures = []
     for product in products:
-        pictures.append(Picture.query.filter(Product.ID.like(product.ID)).all())
-    return render_template("products/products.html", products=products, pictures=pictures)
+        pictures.append(Picture.query.filter(Picture.productID.like(product.ID)).all())
+    return render_template("products/products.html", products=products, pictures=pictures, mode="edit")
 
 @app.route("/products/new", methods=["GET", "POST"])
 def render_new_product():

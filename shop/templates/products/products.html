@@ -12,9 +12,18 @@
         </div>
         <div class="container products">
             {% for i in range(products|length) %}
-                <product onclick="window.location = '/products/{{ products[i].ID }}'">
-                    {{ products[i].name }}
-                </product>
+                {% if products[i].public or mode == "edit" %}
+                    <product onclick="window.location = '/products/{{ products[i].ID }}'">
+                        {{ products[i].name }}
+                        <div class="img-container">
+                            {% if pictures[i]|length > 0 %}
+                                <img src="{{ url_for('static', filename=pictures[i][0].URL) }}" alt="Image of Product">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                            {% endif %}
+                        </div>
+                    </product>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
