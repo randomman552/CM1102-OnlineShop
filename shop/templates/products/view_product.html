@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>{{ product.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/view_product.css')}}">
+{% endblock %}
+
+{% block content %}
+    {% if product != None %}
+        {% if mode == "edit" %}
+        <!-- If the mode is set to edit when this template is rendered, then edit controls will appear -->
+            <div style="text-align: left;">
+                {% if product.public %}
+                    <button onclick="setPublic(false)">Make Private</button>
+                {% else %}
+                    <button onclick="setPublic(true)">Make Public</button>
+                {% endif %}
+                <button onclick="deleteProduct('{{ product.ID }}')">Delete</button>
+            </div>
+        {% endif %}
+        <div class="product main_container">
+            <div class="product row">
+                <div class="product image container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
+                    <!-- Picture slideshow -->
+                    {% for picture in pictures %}
+                        <div class="slide-content">
+                            <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                        </div>
+                    {% endfor %}
+                    <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
+                    <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
+                </div>
+                <div class="product description container">
+                    <div class="product description name">
+                        <span id="name">{{ product.name }}</span>
+                        {% if mode == "edit" %}
+                            <button id="name-edit" class="edit" onclick="openEdit('name')"></button>
+                            <button style="display: none;" id="name-close" class="edit close" onclick="closeEdit('name')"></button>
+                            <form id="name-form" class="edit-popup" action="" method="post">
+                                <input type="text">
+                                <button type="submit">Update</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="product description text">
+                        <span id="description">{{ product.description }}</span>
+                        {% if mode == "edit" %}
+                            <button id="description-edit" class="edit" onclick="openEdit('description')"></button>
+                            <button style="display: none;" id="description-close" class="edit close" onclick="closeEdit('description')"></button>
+                            <form id="description-form" class="edit-popup" action="" method="post">
+                                <textarea></textarea>
+                                <button type="submit">Update</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="product row" style="height: 3rem;">
+                        <div class="product spacer" style="flex-basis: 100%;"></div>
+                        <div class="product description price">
+                            {% if mode == "edit" %}
+                                <button id="price-edit" class="edit" onclick="openEdit('price')"></button>
+                                <button style="display: none;" id="price-close" class="edit close" onclick="closeEdit('price')"></button>
+                                <form id="price-form" class="edit-popup" action="" method="post" style="text-align: right;">
+                                    <input id="price-input" type="text">
+                                    <button type="submit" style="bottom: -30px;">Update</button>
+                                </form>
+                            {% endif %}
+                            <span id="price">{{ product.price[1:] }}</span><label for="price-input">Price:&nbsp;£</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="product description purchase">
+                    <button>Add to cart</button>
+                    <button>Add to wishlist</button>
+                </div>
+            </div>
+            <div class="product row">
+                <div class="product image selector">
+                    {% if mode == "edit" %}
+                        <!-- TODO: IMPLEMENT THIS -->
+                    {% endif %}
+                    {% for i in range(pictures|length) %}
+                        <div class="slide-selector container">
+                            <img style="width: 100%;" src="{{ url_for( 'static', filename=pictures[i].URL) }}" alt="Thumb Image">
+                            <div onclick="slideJmp({{i}})" class="slide-selector overlay"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="product row">
+                <h1>MORE INFO</h1>
+            </div>
+            
+        </div>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/product.js') }}"></script>
+    {% else %}
+        <h1>The requested product does not exist.</h1>
+    {% endif %}
+{% endblock %}

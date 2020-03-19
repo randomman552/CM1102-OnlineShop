@@ -57,17 +57,30 @@ class Product(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
     name = Column(Text, nullable=False)
     #Price is stored as an integer so no precision is lost to floating point accuracy
-    price = Column(Integer, nullable=False)
-    __desc = Column(Text, nullable=False)
+    __price = Column(Integer, nullable=False, default=0)
+    description = Column(Text, nullable=False, default="This is a description")
+    __information = Column(Text)
+    public = Column(Boolean, default=False)
     
     #Description stores a json encoded dict, this allows me to store some layout information in the product table.
     @property
-    def description(self):
-        return json.loads(self.__desc)
+    def information(self):
+        return json.loads(self.__information)
 
-    @description.setter
-    def set_description(self, dict_object):
-        self.__desc = json.dumps(dict_object)
+    @information.setter
+    def set_information(self, dict_object):
+        self.__information = json.dumps(dict_object)
+
+    @property
+    def price(self):
+        price = "£" + str(round(self.__price / 100, 2))
+        while len(price.split(".")[1]) < 2:
+            price += "0"
+        return price
+
+    @price.setter
+    def set_price(self, number):
+        self.__price = round(number * 10)
     
 #Review class
 class Review(db.Model):
@@ -80,7 +93,7 @@ class Review(db.Model):
 #Pictures class (one to many)
 class Picture(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
-    productID = Column(Integer, ForeignKey(User.ID), nullable=False)
+    productID = Column(Integer, ForeignKey(Product.ID), nullable=False)
     URL = Column(Text, nullable=False)
 
 #Wishlist class (many to many)

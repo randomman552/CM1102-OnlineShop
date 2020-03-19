@@ -16,7 +16,7 @@ body {
 	padding: 0;
 }
 body::-webkit-scrollbar {
-	width: 0.25rem;
+	width: 10px;
 }
 body::-webkit-scrollbar-track {
 	background: var(--bg-color);
@@ -30,6 +30,7 @@ nav.main {
 	top: 0;
 	box-sizing: border-box;
 	width: 100%;
+	z-index: 1;
 	position: fixed;
 	height: 4rem;
 	margin: 0;
@@ -117,6 +118,7 @@ form.search button > img {
 	width: 2rem;
 	height: 2rem;
 }
+
 /* Attributes for main section of the page */
 main {
 	margin-left: 15%;
@@ -126,4 +128,66 @@ main {
 	background: var(--fg-color);
 	margin-top: 4.5rem;
 	padding: 1rem;
+}
+
+/* Popup container attributes (NOT CURRENTLY IN USE)*/
+.popup {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	display: inline-block;
+	cursor: pointer;
+}
+.popup .popuptext {
+	visibility: hidden;
+	width: 160px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 8px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 125%;
+	left: 50%;
+	margin-left: -80px;
+}
+.popup .show {
+	visibility: visible;
+	transition: 0.2s;
+}
+
+/* Error and warning attributes */
+.error {
+	display: inline-block;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #ff8080;
+}
+
+.warn {
+	display: inline-block;
+	box-shadow: 1px black inset;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #ffec84;
+}
+
+.info {
+	display: inline-block;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #8fd6ff;
 }
