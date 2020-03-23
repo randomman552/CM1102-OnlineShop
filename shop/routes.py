@@ -13,8 +13,23 @@ def render_home():
 
 @app.route("/products")
 def render_products():
-    products = Product.query.all()
+    products = []
+    if "query" in request.args:
+        #Fitler the results with the query, look at the description and name of products.
+        products = Product.query.filter(Product.name.like(f"%{request.args['query']}%")).all()
+        products += Product.query.filter(Product.description.like(f"%{request.args['query']}%")).all()
+        #TODO: ADD CATEGORY FILTERING
+        #Remove any duplicates
+        already_present = []
+        for product in products:
+            if product.ID in already_present:
+                products.remove(product)
+            else:
+                already_present.append(product.ID)
+    else:
+        products = Product.query.all()
     pictures = []
+    print(products)
     for product in products:
         pictures.append(Picture.query.filter(Picture.productID.like(product.ID)).all())
     return render_template("products/products.html", products=products, pictures=pictures, mode="edit")

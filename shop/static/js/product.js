@@ -32,6 +32,8 @@ var slideIndex = 0;
 slideShow(slideIndex);
 var slideIntervalID = 0;
 slideShowResume();
+slideShowControlsState(false);
+
 //Function to move the slides by the given number
 function slideMov(n) {
 	//In this function will pause and resume the slideshow to reset the timer
