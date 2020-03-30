@@ -27,7 +27,7 @@
             {% for i in range(products|length) %}
                 {% if products[i].public or mode == "edit" %}
                     <product class="{{ session['product display'] }}" onclick="window.location = '/products/{{ products[i].ID }}'">
-                        <div class="info-container grid {% if session['product display'] == 'list' %} reverse {% endif %}">
+                        <div class="info-container grid novis {% if session['product display'] == 'list' %} reverse {% endif %}">
                             <div class="info-container {{ session['product display'] }} image">
                                 {% if pictures[i]|length > 0 %}
                                     <img src="{{ url_for('static', filename=pictures[i][0].URL) }}" alt="Image of Product">
@@ -39,19 +39,7 @@
                                 {{ products[i].name }}
                             </div>
                         </div>
-                        <div class="info-container grid">
-                            <div class="info-container {{ session['product display'] }} price">
-                                {{ products[i].price }}
-                            </div>
-                            <div class="info-container {{ session['product display'] }} rating">
-                                <!-- TODO: REPLACE PLACEHOLDER RATINGS-->
-                                <div class="star"></div>
-                                <div class="star"></div>
-                                <div class="star"></div>
-                                <div class="star half"></div>
-                                <div class="star empty"></div>
-                                <div class="number">5</div>
-                            </div>
+                        <div class="info-container {{ session['product display'] }} reverse">
                             <div class="info-container {{ session['product display'] }} description">
                                 {% if products[i].description|length > 300 %}
                                     {{ products[i].description[:300] }}
@@ -59,6 +47,20 @@
                                 {% else %}
                                     {{ products[i].description }}
                                 {% endif %}
+                            </div>
+                            <div class="info-container grid novis">
+                                <div class="info-container {{ session['product display'] }} price">
+                                    {{ products[i].price }}
+                                </div>
+                                <div class="info-container {{ session['product display'] }} rating">
+                                    <!-- TODO: REPLACE PLACEHOLDER RATINGS-->
+                                    <div class="star"></div>
+                                    <div class="star"></div>
+                                    <div class="star"></div>
+                                    <div class="star half"></div>
+                                    <div class="star empty"></div>
+                                    <div class="number">5</div>
+                                </div>
                             </div>
                         </div>
                     </product>

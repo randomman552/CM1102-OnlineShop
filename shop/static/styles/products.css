@@ -58,6 +58,7 @@ product:hover {
 
 /* Info container general rules */
 .info-container {
+	flex-shrink: 1;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -69,6 +70,15 @@ product:hover {
 }
 .info-container.grid.reverse {
 	flex-direction: column-reverse;
+}
+/* These two rules are used to change the look of the list mode */
+/* DO NOT USE THEM ANYWHERE ELSE */
+/* TODO: Could replace with better names with some edits to products.html */
+.info-container.grid.novis.reverse {
+	flex-basis: 30%;
+}
+.info-container.list.reverse {
+	flex-basis: 70%;
 }
 .info-container.list {
 	height: 100%;
@@ -90,12 +100,18 @@ product:hover {
 
 /* Info container price */
 .info-container.price {
+	padding: 2px;
 	font-size: large;
+}
+.info-container.price.list {
+	border: none;
 }
 
 /* Info container rating */
-.info-container.rating {
+.info-container.rating.grid {
 	flex-direction: row;
+	padding: 2px;
+	border-bottom: 1px solid var(--bg-color);
 }
 .info-container.rating > .star {
 	background-color: green;
@@ -112,7 +128,7 @@ product:hover {
 	font-size: smaller;
 }
 .info-container.rating > .number::before {
-	content: " (";
+	content: "(";
 }
 .info-container.rating > .number::after {
 	content: ")";
@@ -121,6 +137,13 @@ product:hover {
 /* Info container description */
 .info-container.description {
 	overflow: hidden;
+	padding: 5px;
+}
+.info-container.description.list {
+	height: 100%;
+	flex-basis: 80%;
+	flex-shrink: 0;
+	border-left: 1px solid var(--bg-color);
 }
 
 /* Info container image */
@@ -135,7 +158,8 @@ product:hover {
 }
 .info-container.image.list {
 	width: 250px;
-	height: 250px;
+	height: 150px;
+	border: none;
 }
 .info-container.image.grid {
 	width: 250px;
