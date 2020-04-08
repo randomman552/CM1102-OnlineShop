@@ -16,7 +16,7 @@
         <div class="container products">
             <div class="container controls">
                 <div class="container">
-                    Sort by:&#32;<div class="dropdown selector"><span>Current selection</span></div>
+                    Sort by: <!-- TODO: Add JS dropdown here -->
                 </div>
                 <div class="container">
                     View:&#32;
@@ -24,48 +24,52 @@
                     <button onclick="window.location = window.location.toString().replace('view=grid', 'view=list');">List</button>
                 </div>
             </div>
-            {% for i in range(products|length) %}
-                {% if products[i].public or mode == "edit" %}
-                    <product class="{{ session['product display'] }}" onclick="window.location = '/products/{{ products[i].ID }}'">
-                        <div class="info-container grid novis {% if session['product display'] == 'list' %} reverse {% endif %}">
-                            <div class="info-container {{ session['product display'] }} image">
-                                {% if pictures[i]|length > 0 %}
-                                    <img src="{{ url_for('static', filename=pictures[i][0].URL) }}" alt="Image of Product">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
-                                {% endif %}
-                            </div>
-                            <div class="info-container {{ session['product display'] }} name">
-                                {{ products[i].name }}
-                            </div>
-                        </div>
-                        <div class="info-container {{ session['product display'] }} reverse">
-                            <div class="info-container {{ session['product display'] }} description">
-                                {% if products[i].description|length > 300 %}
-                                    {{ products[i].description[:300] }}
-                                    {{ "..." }}
-                                {% else %}
-                                    {{ products[i].description }}
-                                {% endif %}
-                            </div>
-                            <div class="info-container grid novis">
-                                <div class="info-container {{ session['product display'] }} price">
-                                    {{ products[i].price }}
+            {% if products|length > 0 %}
+                {% for i in range(products|length) %}
+                    {% if products[i].public or mode == "edit" %}
+                        <product class="{{ session['view'] }}" onclick="window.location = '/products/{{ products[i].ID }}'">
+                            <div class="info-container grid novis {% if session['view'] == 'list' %} reverse {% endif %}">
+                                <div class="info-container {{ session['view'] }} image">
+                                    {% if pictures[i]|length > 0 %}
+                                        <img src="{{ url_for('static', filename=pictures[i][0].URL) }}" alt="Image of Product">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                                    {% endif %}
                                 </div>
-                                <div class="info-container {{ session['product display'] }} rating">
-                                    <!-- TODO: REPLACE PLACEHOLDER RATINGS-->
-                                    <div class="star"></div>
-                                    <div class="star"></div>
-                                    <div class="star"></div>
-                                    <div class="star half"></div>
-                                    <div class="star empty"></div>
-                                    <div class="number">5</div>
+                                <div class="info-container {{ session['view'] }} name">
+                                    {{ products[i].name }}
                                 </div>
                             </div>
-                        </div>
-                    </product>
-                {% endif %}
-            {% endfor %}
+                            <div class="info-container {{ session['view'] }} reverse">
+                                <div class="info-container {{ session['view'] }} description">
+                                    {% if products[i].description|length > 300 %}
+                                        {{ products[i].description[:300] }}
+                                        {{ "..." }}
+                                    {% else %}
+                                        {{ products[i].description }}
+                                    {% endif %}
+                                </div>
+                                <div class="info-container grid novis">
+                                    <div class="info-container {{ session['view'] }} price">
+                                        {{ products[i].price }}
+                                    </div>
+                                    <div class="info-container {{ session['view'] }} rating">
+                                        <!-- TODO: Implement ratings system-->
+                                        <div class="star"></div>
+                                        <div class="star"></div>
+                                        <div class="star"></div>
+                                        <div class="star half"></div>
+                                        <div class="star empty"></div>
+                                        <div class="number">5</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </product>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <h1>There are no products that match your search.</h1>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
