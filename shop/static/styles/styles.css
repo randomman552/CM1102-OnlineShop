@@ -191,3 +191,99 @@ main {
 	text-align: center;
 	background: #8fd6ff;
 }
+
+/* Dropdown attributes */
+.dropdown {
+	text-transform: capitalize;
+	width: 240px;
+	height: 40px;
+	display: flex;
+	flex-direction: row;
+	position: relative;
+	border: 1px solid var(--bg-color);
+	background-color: white;
+	border-radius: 10px 10px 0 0;
+	padding: 5px;
+	cursor: pointer;
+	justify-content: center;
+	align-items: center;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* When hiden, the dropdown has no shadow and has a border radius */
+.dropdown.hidden {
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+/* Dropdown title and arrow attributes */
+.dropdown.title {
+	box-shadow: none;
+	flex-basis: 80%;
+	border: none;
+	border-right: 1px solid var(--bg-color);
+	border-radius: 0;
+	align-items: center;
+	padding: 0;
+	height: 100%;
+}
+.dropdown.arrow {
+	box-shadow: none;
+	overflow: hidden;
+	height: 100%;
+	flex-basis: 20%;
+	border: none;
+	padding: 0;
+}
+
+/* When hidden, then dropdown arrow is flipped and the content is hidden */
+.dropdown.hidden > .dropdown.arrow > img {
+	transform: rotate(180deg);
+}
+.dropdown.hidden > .dropdown.content {
+	display: none;
+}
+
+/* Dropdown content attributes */
+.dropdown.content {
+	border-radius: 0 0 10px 10px;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	width: 100%;
+	flex-direction: column;
+	padding: 0px;
+	position: absolute;
+	top: 100%;
+	height: auto;
+}
+.dropdown.content > * {
+	transition: 0.25s;
+	cursor: pointer;
+	display: flex;
+	height: 40px;
+	width: 100%;
+	background-color: white;
+	border-bottom: 1px solid var(--bg-color);
+	justify-content: center;
+	align-items: center;
+}
+.dropdown.content > *:last-child {
+	border-radius: 0 0 10px 10px;
+}
+
+/* Active dropdown element attributes*/
+.dropdown.content > *:hover {
+	background-color: var(--bg-color);
+}
+.dropdown.content > *.active {
+	font-weight: bold;
+}
+
+/* Required for dropdown labels */
+label.dropdown-label {
+	padding-right: 15px;
+}
+div.dropdown-container {
+	display: flex;
+	align-items: center;
+	justify-items: center;
+}

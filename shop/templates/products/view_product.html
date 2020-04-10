@@ -3,6 +3,8 @@
 {% block head %}
     <title>{{ product.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/view_product.css')}}">
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/slideshow.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/product-edit.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -91,7 +93,6 @@
             </div>
             
         </div>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/product.js') }}"></script>
     {% else %}
         <h1>The requested product does not exist.</h1>
     {% endif %}

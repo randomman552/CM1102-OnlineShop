@@ -1,32 +1,6 @@
-//#region Editing functions
-//Generalised functions for edits
-function openEdit(editing) {
-	//Function is passed string corresponding to the field being edited
-	document.getElementById(editing + '-form').style.display = 'block';
-	document.getElementById(editing + '-close').style.display = 'block';
-	document.getElementById(editing + '-edit').style.display = 'none';
-	document.getElementById(editing).style.display = 'none';
-}
-function closeEdit(editing) {
-	//Function is passed string corresponding to the field being edited
-	document.getElementById(editing + '-form').style.display = 'none';
-	document.getElementById(editing + '-close').style.display = 'none';
-	document.getElementById(editing + '-edit').style.display = 'block';
-	document.getElementById(editing).style.display = 'block';
-}
+//This document contains the code needed for the slideshow on the view product page
 
-//Function for changing state between public and private
-function setPublic(new_state) {
-	console.log(new_state);
-}
-
-//Function to delete the product
-function deleteProduct(ID) {
-	console.log('Delete product with ID: ' + ID);
-}
-//#endregion
-
-//#region Image slideshow functions
+//Setup slideshow
 var slideTime = 5000;
 var slideIndex = 0;
 slideShow(slideIndex);
@@ -34,22 +8,33 @@ var slideIntervalID = 0;
 slideShowResume();
 slideShowControlsState(false);
 
-//Function to move the slides by the given number
+/**
+ * Move the slide by the given number of slides. 
+ * This also interupts the slideshow timer.
+ * @param {number} n The number of slides to move by (can be negative or positive)
+ */
+
 function slideMov(n) {
-	//In this function will pause and resume the slideshow to reset the timer
 	slideShowPause();
 	slideShowResume();
 	slideShow((slideIndex += n));
 }
 
-//Function to jump to the given slide number
+/**
+ * Jump to a slide position
+ * @param {number} n The position to jump to
+ */
 function slideJmp(n) {
 	slideShowPause();
 	slideShowResume();
 	slideShow((slideIndex = n));
 }
 
-//Function to show the current slide
+/**
+ * Update the slide to the given position
+ * This should not be called directly, but is called by slideJmp and slideMov
+ * @param {number} n The slide number to make active (all others are inactive)
+ */
 function slideShow(n) {
 	var i;
 	var slides = document.getElementsByClassName('slide-content');
@@ -70,17 +55,26 @@ function slideShow(n) {
 	selectors[slideIndex].classList.add('active');
 }
 
+/**
+ * Pause the slideshow.
+ */
 function slideShowPause() {
 	clearInterval(slideIntervalID);
 }
 
+/** Resume the slideshow */
 function slideShowResume() {
 	slideIntervalID = setInterval(function() {
 		slideMov(1);
 	}, slideTime);
 }
 
-//This function handles showing and hiding of the slideshow controls
+/**
+ * Set the state of the slide show controls.
+ * This will hide the elements with the id 'slideshow-prev' or 'slideshow-next'
+ * @param {boolean} state If true, the slide show controls will become visible, 
+ * otherwise they will become invisibile
+ */
 function slideShowControlsState(state) {
 	var controls = [ document.getElementById('slideshow-prev'), document.getElementById('slideshow-next') ];
 	if (state == false) {
@@ -93,4 +87,3 @@ function slideShowControlsState(state) {
 		});
 	}
 }
-//#endregion

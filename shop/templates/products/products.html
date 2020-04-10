@@ -3,6 +3,49 @@
 {% block head %}
     <title>Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/dropdown.js') }}"></script>
+    <script defer type="text/javascript">
+        /** 
+         * This function is used to change the url depending on the selected sort and order options.
+         * @param {string} sort The option to change the sort variable to.
+         * @param {string} order The option to change the order variable to.
+         */
+        function setSort(sort, order){
+            //Get the current location as a string
+            let curLocation = window.location.toString();
+
+            //These options lists are used to make it easier to edit the variables in the url
+            //Using the loops below
+            let sort_options = [
+                "none", 
+                "rating", 
+                "price"
+            ];
+            let order_options =  [
+                "ascending",
+                "descending"
+            ];
+            
+            //For each sort option, run a replace operation (this ensures we replace any option present)
+            sort_options.forEach(element => {
+                //Dont bother replacing an element if it is the same as the desired option
+                if (element != sort){
+                    curLocation = curLocation.replace(`sort=${element}`, `sort=${sort}`);
+                }
+            });
+
+            //For each order option, run a replace operation
+            order_options.forEach(element => {
+                //Dont bother replacing an element if it is the same as the desired option
+                if (element != order){
+                    curLocation = curLocation.replace(`order=${element}`, `order=${order}`);
+                }
+            });
+
+            //Redirect the user to the new url
+            window.location = curLocation
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -15,8 +58,26 @@
         </form>
         <div class="container products">
             <div class="container controls">
-                <div class="container">
-                    Sort by: <!-- TODO: Add JS dropdown here -->
+                <!-- Sort selection dropdown -->
+                <div class="dropdown-container" style="flex-basis: initial;">
+                    <label class="dropdown-label" for="sort-by">Sort By:</label>
+                    <div id="sort-by" class="dropdown hidden" onclick="toggleDropdown('sort-by')">
+                        <span class="dropdown title">
+                            {% if request.args['sort'] != "none" %}
+                                {{ request.args['sort'] }} - {{ request.args['order'] }} 
+                            {% else %}
+                                none
+                            {% endif %}
+                        </span>
+                        <span class="dropdown arrow"><img src="{{ url_for('static', filename='icons/angle.svg') }}"></span>
+                        <div id="sort-by content" class="dropdown content">
+                            <a onclick="setSort('none', 'ascending')">none</a>
+                            <a onclick="setSort('price', 'ascending')">price - ascending (low - high)</a>
+                            <a onclick="setSort('price', 'descending')">price - descending (high - low)</a>
+                            <a onclick="setSort('rating', 'ascending')">rating - ascending (low - high)</a>
+                            <a onclick="setSort('rating', 'descending')">rating - descending (high - low)</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="container">
                     View:&#32;

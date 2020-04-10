@@ -31,8 +31,6 @@ if "ssl_key" in config and "ssl_cert" in config:
 app.config["SQLALCHEMY_DATABASE_URI"] = db_connect_string
 db = SQLAlchemy(app)
 
-#UNCOMMENT THIS LINE TO CLEAR THE DATABASE
-#db.drop_all()
 
 #User class
 class User(UserMixin, db.Model):
@@ -57,30 +55,30 @@ class Product(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
     name = Column(Text, nullable=False)
     #Price is stored as an integer so no precision is lost to floating point accuracy
-    __price = Column(Integer, nullable=False, default=0)
+    _price = Column(Integer, nullable=False, default=0)
     description = Column(Text, nullable=False, default="This is a description")
-    __information = Column(Text)
+    _information = Column(Text)
     public = Column(Boolean, default=False)
     
     #Description stores a json encoded dict, this allows me to store some layout information in the product table.
     @property
     def information(self):
-        return json.loads(self.__information)
+        return json.loads(self._information)
 
     @information.setter
     def set_information(self, dict_object):
-        self.__information = json.dumps(dict_object)
+        self._information = json.dumps(dict_object)
 
     @property
     def price(self):
-        price = str(round(self.__price / 100, 2))
+        price = str(round(self._price / 100, 2))
         while len(price.split(".")[1]) < 2:
             price += "0"
         return f"£ {price}"
 
     @price.setter
     def set_price(self, number):
-        self.__price = round(number * 10)
+        self._price = round(number * 10)
     
 #Review class
 class Review(db.Model):
@@ -114,3 +112,5 @@ class ProductCategory(db.Model):
     productID = Column(Integer, ForeignKey(Product.ID), nullable=False)
 
 db.create_all()
+#UNCOMMENT THIS LINE TO CLEAR THE DATABASE
+#db.drop_all()
