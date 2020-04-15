@@ -4,7 +4,7 @@ import random
 from flask import render_template, redirect, request, flash, url_for, session
 from werkzeug.utils import secure_filename
 from .forms import *
-from .models import db, Product, Picture
+from .models import db, func, Product, Picture, Review
 from . import app
 import time
 
@@ -18,7 +18,7 @@ def render_home():
 def render_products():
     def handle_vars(variable_list: dict):
         """Handle setting of session variables for product display.\n
-        @param variable_list - A dict, each entry in the dict is a variable name (str), 
+        @param variable_list - A dict, each entry in the dict is a variable name (str),
         and the corresponding value is a list of options for that variable.\n
         @return - Will return a redirect if a GET variable is to be updated, otherwise will return none.
         """
@@ -112,24 +112,82 @@ def render_products():
             """
             This function handles the ordering of the products.\n
             It checks the request.args variables to determine how to order the products.\n
-            @param products - The query object to be ordered
-            @return - The query object with sorting applied
+            @param products - The query object to be ordered.\n
+            @return - The query object with sorting applied.
             """
             sort = request.args['sort']
             order = request.args['order']
-
+            # TODO: Reformat this to have less if statements (use a key variable to handle the final sort?)
             # If a sort is specified
             if sort != "none":
                 # If we are sorting by price
                 if sort == "price":
                     # If we are ordering by ascending order
-                    if order == "ascending":
-                        products = products.order_by(Product._price.asc())
+                    if order == "asc":
+                        products = (products
+                                    .order_by(Product._price.asc())
+                                    )
+
                     # If we are ordering by descending order
-                    elif order == "descending":
-                        products = products.order_by(Product._price.desc())
-                
-                # TODO: Need to implement ratings before this.
+                    elif order == "desc":
+                        products = (products
+                                    .order_by(Product._price.desc())
+                                    )
+                # If we are sorting by rating
+                elif sort == "rating":
+                    # Calculate average rating for each product
+                    avg_rating = (db.session
+                                  .query(Review.productID, func.avg(Review.rating)
+                                         .label("avg_rating"))
+                                  .group_by(Review.productID)
+                                  .subquery()
+                                  )
+
+                    # Join the average rating onto the products for sorting
+                    products = (products
+                                .outerjoin(avg_rating, Product.ID == avg_rating.c.productID)
+                                .group_by(Product.ID)
+                                )
+
+                    # If we are ordering by asc
+                    if order == "asc":
+                        products = (products
+                                    .order_by(avg_rating.c.avg_rating.asc())
+                                    )
+
+                    # If we are ordering by desc
+                    if order == "desc":
+                        products = (products
+                                    .order_by(avg_rating.c.avg_rating.desc())
+                                    )
+
+                # If we are sorting by number of ratings
+                elif sort == "no.ratings":
+                    # Get the number of ratings for each product
+                    rating_count = (db.session
+                                    .query(Review.productID, func.count(Review.productID)
+                                           .label("rating_count"))
+                                    .group_by(Review.productID)
+                                    .subquery()
+                                    )
+
+                    # Join the rating count onto the products query for sorting
+                    products = (products
+                                .outerjoin(rating_count, Product.ID == rating_count.c.productID)
+                                .group_by(Product.ID)
+                                )
+
+                    # If we are ordering by asc
+                    if order == "asc":
+                        products = (products
+                                    .order_by(rating_count.c.rating_count.asc())
+                                    )
+
+                    # If we are ordering by desc
+                    if order == "desc":
+                        products = (products
+                                    .order_by(rating_count.c.rating_count.desc())
+                                    )
 
             # Return our updated query object
             return products
@@ -150,8 +208,10 @@ def render_products():
                 # If the limit variable is set to anything else, attempt to limit the results.
                 # This will fail if the user puts a non-number into the limit get variable
                 try:
-                    products = products.limit(
-                        (int(request.args["limit"]))).all()
+                    products = (products
+                                .limit((int(request.args["limit"])))
+                                .all()
+                                )
                 except:
                     products = products.all()
 
@@ -168,9 +228,12 @@ def render_products():
             if "query" in request.args and request.args["query"]:
 
                 # Fitler the results with the query, look at the description and name of products.
-                products = Product.query.filter((Product.name.like(
-                    f"%{request.args['query']}%") | Product.description.like(f"%{request.args['query']}%")))
+                products = (products
+                            .filter(
+                                (Product.name.like(f"%{request.args['query']}%") | Product.description.like(f"%{request.args['query']}%")))
+                            )
 
+            # TODO: Add more filtering types (by category etc)
             # Return altered products query
             return products
 
@@ -189,14 +252,17 @@ def render_products():
         # Return our products list
         return products
 
+    # TODO: Could improve the functions for getting pictures and ratings
+    # using a join method like the one for the sort in the products function
     def get_pictures(products: list) -> list:
         """
         Get the relevant pictures from the database.\n
         @param products - The list of products to get the pictures for\n
         @return - A list of lists containing the pictures for the corresponding products in the products list
         """
-        # Setup return list with slots for each product
-        pictures_return = []
+
+        # Setup return list with lists for each product
+        pictures_return = [[] for _ in range(len(products))]
 
         # If the products list is empty, return an empty list
         if len(products) == 0:
@@ -212,7 +278,6 @@ def render_products():
                 lowestID = products[i].ID
             elif products[i].ID > highestID:
                 highestID = products[i].ID
-            pictures_return.append([])
 
         # Get pictures from the database
         pictures = Picture.query.filter(Picture.productID <= highestID).filter(
@@ -225,11 +290,40 @@ def render_products():
                     pictures_return[i].append(picture)
         return pictures_return
 
+    def get_ratings(products: list) -> list:
+        """
+        Get the relevant rating averages from the database.\n
+        @param products - The list of products to get the average ratings for.\n
+        @return - A list of average ratings, position of each rating matches the product list.
+        """
+
+        # Setup return list with lists for each product
+        ratings_return = [[] for _ in range(len(products))]
+
+        # This is really slow if you have high ping to the sql server, as it requires multiple sql requests
+        # Append the corresponding pictures to the correct list
+        for i in range(len(products)):
+            # Get the average rating and add that to the list
+            avg_rating = db.session.query(func.avg(Review.rating).label(
+                "average")).filter(Review.productID == products[i].ID).first()[0]
+            if avg_rating:
+                ratings_return[i].append(float(avg_rating))
+            else:
+                ratings_return[i].append(0)
+
+            # Get the number of ratings and add that to the list
+            count = db.session.query(func.count(Review.rating).label("count")).filter(
+                Review.productID == products[i].ID).first()
+            ratings_return[i] += count
+
+        # Return our list of ratings
+        return ratings_return
+
     # Create the dict of required variables
     var_dict = {
         "view": ["grid", "list"],
-        "sort": ["none", "price", "rating"],
-        "order": ["ascending", "descending"],
+        "sort": ["no.ratings", "price", "rating"],
+        "order": ["desc", "asc"],
         "limit": ["20", "all"]
     }
     # Call handle_vars, if it returns something (a redirect), return that.
@@ -240,8 +334,9 @@ def render_products():
     # Get products and pictures from the database
     products = get_products()
     pictures = get_pictures(products)
+    ratings = get_ratings(products)
 
-    return render_template("products/products.html", products=products, pictures=pictures, mode="edit")
+    return render_template("products/products.html", products=products, pictures=pictures, ratings=ratings, mode="edit")
 
 
 @app.route("/products/new", methods=["GET", "POST"])

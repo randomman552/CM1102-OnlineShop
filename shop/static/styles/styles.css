@@ -287,3 +287,72 @@ div.dropdown-container {
 	align-items: center;
 	justify-items: center;
 }
+
+/* Star attributes (used for product ratings) */
+/* Is available in the global styles sheet so it can be used anywhere needed */
+.star {
+	width: 15px;
+	height: 15px;
+	margin: 2px;
+	background-size: 100% 100%;
+}
+.star.full {
+	background-image: url(../icons/star-full.svg);
+}
+.star.half {
+	background-image: url(../icons/star-half.svg);
+}
+.star.empty {
+	background-image: url(../icons/star-empty.svg);
+}
+.star.number {
+	width: auto;
+	font-size: smaller;
+}
+.star.number::before {
+	content: "(";
+}
+.star.number::after {
+	content: ")";
+}
+
+/* Rating container attributes (used to contain stars) */
+.rating-container {
+	display: flex;
+	flex-direction: row;
+	margin: 0 5px 0 5px;
+	justify-content: center;
+	align-items: center;
+}
+
+button {
+	border-radius: 10px;
+	padding: 10px 20px 10px 20px;
+	font-size: 1rem;
+	border: 2px solid #4855a0;
+	background-color: white;
+	transition: 0.5s;
+	cursor: pointer;
+	margin: 2px;
+}
+button:hover {
+	background-color: #ecf5ff;
+}
+button.green-confirm {
+	border: 2px solid rgb(74, 129, 48);
+	background-color: rgb(74, 129, 48);
+	color: white;
+}
+button.green-confirm:hover {
+	border: 2px solid rgb(54, 95, 35);
+	background-color: rgb(54, 95, 35);
+}
+button.red-confirm {
+	border: 2px solid rgb(214, 0, 0);
+	background-color: rgb(214, 0, 0);
+	color: white;
+}
+button.red-confirm:hover {
+	border: 2px solid rgb(184, 0, 0);
+	background-color: rgb(184, 0, 0);
+}

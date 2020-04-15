@@ -113,33 +113,6 @@ product:hover {
 	border: none;
 }
 
-/* Info container rating */
-.info-container.rating.grid {
-	flex-direction: row;
-	padding: 2px;
-	border-bottom: 1px solid var(--bg-color);
-}
-.info-container.rating > .star {
-	background-color: green;
-	width: 15px;
-	height: 15px;
-}
-.info-container.rating > .star.half {
-	background-color: yellow;
-}
-.info-container.rating > .star.empty {
-	background-color: red;
-}
-.info-container.rating > .number {
-	font-size: smaller;
-}
-.info-container.rating > .number::before {
-	content: "(";
-}
-.info-container.rating > .number::after {
-	content: ")";
-}
-
 /* Info container description */
 .info-container.description {
 	overflow: hidden;

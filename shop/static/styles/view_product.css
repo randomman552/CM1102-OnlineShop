@@ -13,53 +13,80 @@
 	flex-direction: row;
 	justify-content: space-around;
 	width: 100%;
+	border-bottom: 1px solid var(--bg-color);
 }
 .product.main_container {
 	flex-direction: column;
 }
-.product.image {
+.product.image.container {
 	flex-basis: 30%;
-	flex-grow: 1;
-	height: 400px;
+}
+.product.image {
+	flex-direction: column;
+	height: 90%;
 }
 .product.image.selector {
-	height: 50px;
+	flex-direction: row;
+	padding: 10px;
+	border-top: 1px solid var(--bg-color);
+	border-bottom: 1px solid var(--bg-color);
+	height: 60px;
 	align-items: center;
 }
+.product.name {
+	display: block;
+	text-align: center;
+	font-size: 1.5rem;
+	height: 1rem;
+	border-bottom: 1px solid var(--bg-color);
+}
 .product.description {
-	flex-basis: 50%;
+	flex-basis: 40%;
+	text-align: center;
 }
 .product.description.container {
+	border-left: 1px solid var(--bg-color);
 	flex-direction: column;
 	flex-grow: 1;
 }
-.product.description.name {
+.product.description.title {
+	flex-basis: unset;
 	display: block;
-	text-decoration: underline;
-	font-size: 1.5rem;
-	flex-basis: 1rem;
-	flex-shrink: 1;
+	border-bottom: 1px solid var(--bg-color);
+	font-size: 1.25rem;
+	text-transform: capitalize;
+	text-align: center;
 }
 .product.description.text {
+	flex-basis: unset;
 	display: block;
+	font-size: 1rem;
+	text-decoration: none;
 	flex-basis: 100%;
 	flex-grow: 1;
 }
-.product.description.price {
-	flex-basis: 30%;
-	flex-shrink: 1;
-	flex-direction: row-reverse;
+.product.price {
+	padding: 5px;
+	border-top: 1px solid var(--bg-color);
+	border-bottom: 1px solid var(--bg-color);
 	font-size: 1.5rem;
-	text-align: right;
+	margin: 0;
+	text-align: center;
 }
-.product.description.purchase {
-	flex-basis: 10%;
+.product.rating {
+	padding: 5px;
+	border-bottom: 1px solid var(--bg-color);
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	text-align: center;
+}
+.product.purchase {
+	flex-basis: 20%;
+	border-left: 1px solid var(--bg-color);
+	padding: 10px;
 	display: inline-flex;
-	flex-direction: column-reverse;
-}
-.product.spacer {
-	flex-basis: 10%;
-	flex-shrink: 2;
+	flex-direction: column;
 }
 
 /* Image slide show attributes */
@@ -67,7 +94,7 @@
 	display: none;
 	align-items: center;
 	justify-content: center;
-	width: 100%;
+	height: 20rem;
 	text-align: center;
 }
 .slide-content > img {
@@ -76,6 +103,7 @@
 	width: auto;
 	height: auto;
 }
+
 /* Slide button attributes */
 .prev,
 .next {
@@ -105,25 +133,33 @@
 }
 /* Image indicators */
 .slide-selector {
-	margin: 0;
+	height: max-content;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 2px;
 	padding: 0;
 	position: relative;
 	cursor: pointer;
 	width: 50px;
+}
+.slide-selector > img {
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
 	height: auto;
-	margin: 0 2px;
-	display: inline-block;
-	transition: background-color 0.6s ease;
 }
 .overlay {
 	margin: 0;
 	padding: 0;
+	display: block;
 	position: absolute;
 	height: 100%;
 	width: 100%;
 	top: 0;
 	left: 0;
 	z-index: 3;
+	transition: background-color 0.6s ease;
 	background-color: rgba(200, 200, 200, 0.5);
 }
 .slide-selector .overlay:hover,
@@ -131,53 +167,4 @@
 	background-color: rgba(0, 0, 0, 0);
 }
 
-/* Edit form attributes */
-form.edit-popup {
-	font: inherit;
-	font-size: inherit;
-	vertical-align: middle;
-	text-align: left;
-	height: 100%;
-	width: 100%;
-	display: none;
-	position: relative;
-}
-form.edit-popup input,
-form.edit-popup textarea {
-	width: 100%;
-	height: 100%;
-	border: none;
-	resize: none;
-	font: inherit;
-	font-size: inherit;
-	overflow: hidden;
-}
-form.edit-popup button[type = "submit"] {
-	position: absolute;
-	bottom: -5px;
-	right: 0;
-}
-form.edit-popup label {
-	font: inherit;
-	font-size: inherit;
-	display: inline;
-}
-
-/* Button attributes */
-button.edit {
-	display: inline-block;
-	background: url(../icons/edit.svg);
-	background-size: 100% 100%;
-	position: absolute;
-	right: 0;
-	top: 0;
-	z-index: 2;
-	padding: 0;
-	margin: 1px;
-	width: 1rem;
-	height: 1rem;
-}
-button.edit.close {
-	background: url(../icons/close.svg);
-	background-size: 100% 100%;
-}
+/* Review attributes */

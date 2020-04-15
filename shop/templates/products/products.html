@@ -17,13 +17,13 @@
             //These options lists are used to make it easier to edit the variables in the url
             //Using the loops below
             let sort_options = [
-                "none", 
-                "rating", 
-                "price"
+                "rating",
+                "price",
+                "no.ratings"
             ];
             let order_options =  [
-                "ascending",
-                "descending"
+                "asc",
+                "desc"
             ];
             
             //For each sort option, run a replace operation (this ensures we replace any option present)
@@ -50,7 +50,7 @@
 
 {% block content %}
     <div class="container">
-        <form class="container filters" action="" novalidate autocomplete="off">
+        <form method="GET" class="container filters" action="" novalidate autocomplete="off">
             <div>
                 <h2>Filters:</h2>
                 <button value="submit">Filter</button>
@@ -71,15 +71,14 @@
                         </span>
                         <span class="dropdown arrow"><img src="{{ url_for('static', filename='icons/angle.svg') }}"></span>
                         <div id="sort-by content" class="dropdown content">
-                            <a onclick="setSort('none', 'ascending')">none</a>
-                            <a onclick="setSort('price', 'ascending')">price - ascending (low - high)</a>
-                            <a onclick="setSort('price', 'descending')">price - descending (high - low)</a>
-                            <a onclick="setSort('rating', 'ascending')">rating - ascending (low - high)</a>
-                            <a onclick="setSort('rating', 'descending')">rating - descending (high - low)</a>
+                            <a onclick="setSort('price', 'asc')">price - ascending (low - high)</a>
+                            <a onclick="setSort('price', 'desc')">price - descending (high - low)</a>
+                            <a onclick="setSort('rating', 'desc')">rating - descending (high - low)</a>
+                            <a onclick="setSort('no.ratings', 'desc')">no.ratings - descending (high - low)</a>
                         </div>
                     </div>
                 </div>
-                <div class="container">
+                <div>
                     View:&#32;
                     <button onclick="window.location = window.location.toString().replace('view=list', 'view=grid');">Grid</button>
                     <button onclick="window.location = window.location.toString().replace('view=grid', 'view=list');">List</button>
@@ -114,14 +113,22 @@
                                     <div class="info-container {{ session['view'] }} price">
                                         {{ products[i].price }}
                                     </div>
-                                    <div class="info-container {{ session['view'] }} rating">
-                                        <!-- TODO: Implement ratings system-->
-                                        <div class="star"></div>
-                                        <div class="star"></div>
-                                        <div class="star"></div>
-                                        <div class="star half"></div>
-                                        <div class="star empty"></div>
-                                        <div class="number">5</div>
+                                    <div class="rating-container">
+                                        {% for star_num in range(5) %}
+                                            <!-- Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating-->
+                                            {% set star_num = ratings[i][0] - star_num %}
+                                            <!-- If the value left over is greater than 1, thats a full star -->
+                                            {% if star_num >= 1 %}
+                                                <div class="star full"></div>
+                                            <!-- If the value left over is between 1 and 0, thats a half star -->
+                                            {% elif star_num < 1 and star_num > 0 %}
+                                                <div class="star half"></div>
+                                            <!-- If the value left over is lower than 1, thats an empty star -->
+                                            {% else %}
+                                                <div class="star empty"></div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <div class="star number">{{ ratings[i][1] }}</div>
                                     </div>
                                 </div>
                             </div>
