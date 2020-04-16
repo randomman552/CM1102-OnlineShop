@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% from 'products/review.html' import rating %}
 
 {% block head %}
     <title>{{ product.name }}</title>
@@ -10,9 +11,7 @@
 {% block content %}
     {% if product != None %}
         <div class="product main_container">
-            <div class="product description name">
-                <span id="name">{{ product.name }}</span>
-            </div>
+            <h1>{{ product.name }}</h1>
             <div class="product row">
                 <div class="product image container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
                     <div class="product image">
@@ -35,9 +34,7 @@
                     </div>
                 </div>
                 <div class="product description container">
-                    <div class="product description title">
-                        description
-                    </div>
+                    <h2>description</h2>
                     <div class="product description text">
                         <span id="description">{{ product.description }}</span>
                     </div>
@@ -47,16 +44,7 @@
                         <span id="price" style="width: 100%;">{{ product.price }}</span>
                     </div>
                     <div class="product rating">
-                        <div class="rating-container">
-
-                            <!-- TODO: Implement ratings system -->
-                            <div class="star full"></div>
-                            <div class="star full"></div>
-                            <div class="star full"></div>
-                            <div class="star half"></div>
-                            <div class="star empty"></div>
-                            <div class="star number">5</div>
-                        </div>
+                        {{ rating(review_avg, review_count) }}
                     </div>
                     <button class="green-confirm">
                         Add to cart
@@ -66,12 +54,32 @@
                     </button>
                 </div>
             </div>
-            <div class="product row">
-                <div class="review title">
-                    Reviews
-                </div>
+            <h2>reviews</h2>
+            <div class="review-container">
+                {# TODO: Add review sorting/filtering #}
+                {# For each review, add the review to the DOM #}
+                {% for i in range(reviews|length) %}
+                    <div class="review">
+                        <div>
+                            {%- if users[i] -%}
+                                {{ users[i].email }}
+                            {%- else -%}
+                                Anonymous
+                            {%- endif %}
+                            {{ rating(reviews[i].rating) }}
+                        </div>
+                        {% if reviews[i].content %}
+                            <div class="content">
+                                {{ reviews[i].content }}
+                            </div>
+                        {% else %}
+                            <div class="content emtpy">
+                                User left no comment.
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
-            
         </div>
     {% else %}
         <h1>The requested product does not exist.</h1>

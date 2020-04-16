@@ -14,7 +14,10 @@
                 <div class="star empty"></div>
             {% endif %}
         {% endfor %}
-        {# Put the number of reviews after the stars #}
-        <div class="star number">{{ count }}</div>
+
+        {# Put the number of reviews after the stars if it has been set #}
+        {% if count -%}
+            <div class="star number">{{ count }}</div>
+        {%- endif %}
     </div>
 {%- endmacro %}

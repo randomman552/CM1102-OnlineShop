@@ -153,3 +153,35 @@
 }
 
 /* Review attributes */
+.review-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+.review {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	margin: 2px;
+	width: 400px;
+	height: 100px;
+	border: 1px solid var(--bg-color);
+	transition: 0.5s;
+	cursor: pointer;
+}
+.review:hover {
+	border: 1px solid black;
+}
+/* Any direct decendants have this applied */
+.review > * {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+/* Review content styles */
+.review > .content {
+	border: 1px solid var(--bg-color);
+	/* So it fills the whole box */
+	height: 100%;
+}

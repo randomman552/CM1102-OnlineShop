@@ -1,10 +1,11 @@
 # File to hold routes (we can split this into many separate files if it gets too big)
 import os
 import random
+from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
 from werkzeug.utils import secure_filename
 from .forms import *
-from .models import db, func, Product, Picture, Review
+from .models import db, func, Product, Picture, Review, User, Wishlist
 from . import app
 import time
 
@@ -359,4 +360,34 @@ def render_new_product():
 def render_view_product(product_id):
     product = Product.query.filter(Product.ID.like(product_id)).first()
     pictures = Picture.query.filter(Picture.productID.like(product_id)).all()
-    return render_template("products/view_product.html", product=product, pictures=pictures, mode="edit")
+    reviews = Review.query.filter(Review.productID.like(product_id)).all()
+
+    users = []
+    # For each review, add the user that made that review to a list of users.
+    for review in reviews:
+        user = User.query.filter(User.ID == review.userID).first()
+        users.append(user)
+
+    review_avg = (db.session
+                  .query(func.avg(Review.rating)
+                         .label("average"))
+                  .filter(Review.productID == product_id)
+                  .first()[0]
+                  )
+    review_count = (db.session
+                    .query(func.count(Review.rating)
+                           .label("average"))
+                    .filter(Review.productID == product_id)
+                    .first()[0]
+                    )
+
+    return render_template(
+        "products/view_product.html",
+        product=product,
+        pictures=pictures,
+        reviews=reviews,
+        review_avg=review_avg,
+        review_count=review_count,
+        users=users,
+        mode="edit"
+    )

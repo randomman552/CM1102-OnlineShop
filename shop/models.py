@@ -92,7 +92,7 @@ class Review(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
     userID = Column(Integer, ForeignKey(User.ID))
     productID = Column(Integer, ForeignKey(Product.ID))
-    rating = Column(Integer, nullable=False)
+    rating = Column(Integer, nullable=False, default=1)
     content = Column(Text)
 
 # Pictures class (one to many)
