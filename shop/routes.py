@@ -60,29 +60,28 @@ def render_products():
             @return - A string containing the redirect URL, or an empty string if GET variable is present.
             """
 
-            # Check if the variable has a session value, if it doesnt then create one for it and update the url
-            if not(var_name in session):
-                # If the options list has more than 0 members, take the first as the default
-                # Otherwise assign an empty string
-                if len(options) > 0:
-                    session[var_name] = options[0]
-                else:
-                    session[var_name] = ""
-                return build_new_url(var_name, session[var_name])
             # If it is set to grid, set the session variable and return
             if var_name in request.args:
 
                 # If options have been specified
                 if len(options) > 0:
+
                     # If the variable is one of the valid options, update the session variable
                     if request.args[var_name] in options:
-                        # Otherwise revert to what it was set to before
                         session[var_name] = request.args[var_name]
+
+                    # Otherwise revert to what it was set to before
                     else:
                         return build_new_url(var_name, session[var_name])
-                # If options have not been specified, allow any variable to be assigned
+
+                # If options have not been specified, allow any variable to be assigned to any value
                 else:
                     session[var_name] = request.args[var_name]
+
+            # If the value is not set and not in the session, assign it's default value here
+            elif var_name not in session:
+                session[var_name] = options[0]
+                return build_new_url(var_name, session[var_name])
             else:
                 return build_new_url(var_name, session[var_name])
 
@@ -321,6 +320,7 @@ def render_products():
         return ratings_return
 
     # Create the dict of required variables
+    # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER
     var_dict = {
         "view": ["grid", "list"],
         "sort": ["no.ratings", "price", "rating"],
