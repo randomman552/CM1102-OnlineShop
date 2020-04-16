@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% from 'products/review.html' import rating %}
 
 {% block head %}
     <title>Products</title>
@@ -113,23 +114,7 @@
                                     <div class="info-container {{ session['view'] }} price">
                                         {{ products[i].price }}
                                     </div>
-                                    <div class="rating-container">
-                                        {% for star_num in range(5) %}
-                                            <!-- Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating-->
-                                            {% set star_num = ratings[i][0] - star_num %}
-                                            <!-- If the value left over is greater than 1, thats a full star -->
-                                            {% if star_num >= 1 %}
-                                                <div class="star full"></div>
-                                            <!-- If the value left over is between 1 and 0, thats a half star -->
-                                            {% elif star_num < 1 and star_num > 0 %}
-                                                <div class="star half"></div>
-                                            <!-- If the value left over is lower than 1, thats an empty star -->
-                                            {% else %}
-                                                <div class="star empty"></div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        <div class="star number">{{ ratings[i][1] }}</div>
-                                    </div>
+                                    {{ rating(ratings[i][0], ratings[i][1]) }}
                                 </div>
                             </div>
                         </product>
