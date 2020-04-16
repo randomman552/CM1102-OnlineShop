@@ -356,3 +356,25 @@ button.red-confirm:hover {
 	border: 2px solid rgb(184, 0, 0);
 	background-color: rgb(184, 0, 0);
 }
+
+/* Heading styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	display: block;
+	text-transform: capitalize;
+	border: none;
+	border-bottom: 1px solid var(--bg-color);
+}
+h1 {
+	font-size: 1.75rem;
+}
+h2 {
+	font-size: 1.25rem;
+}
