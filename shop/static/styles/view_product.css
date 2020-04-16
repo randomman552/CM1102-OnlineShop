@@ -1,14 +1,14 @@
 /* Product page attributes */
 .product {
-	vertical-align: middle;
 	position: relative;
 	z-index: 0;
-	margin: 10px;
+	margin: 5px;
 	display: flex;
 	text-align: left;
 	padding: 2px;
 }
 .product.row {
+	height: 600px;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
@@ -18,20 +18,24 @@
 .product.main_container {
 	flex-direction: column;
 }
-.product.image.container {
-	border-right: 1px solid var(--bg-color);
-	flex-basis: 30%;
-}
 .product.image {
 	flex-direction: column;
-	height: 90%;
+	border-right: 1px solid var(--bg-color);
+	flex-basis: 30%;
+	justify-content: space-between;
+}
+.product.image.container {
+	flex-basis: 90%;
+	border: none;
 }
 .product.image.selector {
 	flex-direction: row;
+	justify-content: center;
 	padding: 10px;
+	border: none;
 	border-top: 1px solid var(--bg-color);
 	border-bottom: 1px solid var(--bg-color);
-	height: 60px;
+	flex-basis: 10%;
 	align-items: center;
 }
 .product.description {
@@ -79,7 +83,7 @@
 	display: none;
 	align-items: center;
 	justify-content: center;
-	height: 20rem;
+	height: 100%;
 	text-align: center;
 }
 .slide-content > img {

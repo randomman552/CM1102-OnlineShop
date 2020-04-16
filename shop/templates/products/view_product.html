@@ -13,14 +13,20 @@
         <div class="product main_container">
             <h1>{{ product.name }}</h1>
             <div class="product row">
-                <div class="product image container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
-                    <div class="product image">
+                <div class="product image" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
+                    <div class="product image container">
                         <!-- Picture slideshow -->
-                        {% for picture in pictures %}
+                        {% if pictures|length > 0 -%}
+                            {% for picture in pictures %}
+                                <div class="slide-content">
+                                    <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                                </div>
+                            {% endfor %}
+                        {%- else -%}
                             <div class="slide-content">
-                                <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                                <img src="{{ url_for('static', filename='products/default.png') }}" alt="No images" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
                             </div>
-                        {% endfor %}
+                        {%- endif %}
                         <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
                         <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
                     </div>
@@ -54,7 +60,7 @@
                     </button>
                 </div>
             </div>
-            <h2>reviews</h2>
+            <h2 id="reviews">reviews</h2>
             <div class="review-container">
                 {# TODO: Add review sorting/filtering #}
                 {# For each review, add the review to the DOM #}

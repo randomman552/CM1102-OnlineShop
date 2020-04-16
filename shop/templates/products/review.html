@@ -1,5 +1,5 @@
 {% macro rating(score, count) -%}
-    <div class="rating-container">
+    <a href="#reviews" class="rating-container">
         {% for star_num in range(5) %}
             {# Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating #}
             {% set star_num = score - star_num %}
@@ -19,5 +19,5 @@
         {% if count -%}
             <div class="star number">{{ count }}</div>
         {%- endif %}
-    </div>
+    </a>
 {%- endmacro %}

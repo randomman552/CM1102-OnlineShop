@@ -323,6 +323,8 @@ div.dropdown-container {
 	margin: 0 5px 0 5px;
 	justify-content: center;
 	align-items: center;
+	text-decoration: none;
+	color: inherit;
 }
 
 button {
