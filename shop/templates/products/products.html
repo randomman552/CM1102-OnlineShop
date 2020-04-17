@@ -52,9 +52,28 @@
 {% block content %}
     <div class="container">
         <form method="GET" class="container filters" action="" novalidate autocomplete="off">
+            {# Store the current search query in this hidden field so that it is preserved after filtering #}
+            <input type="hidden" name="query" value="{% if 'query' in request.args -%} {{ request.args['query'] }} {%- endif %}">
+            
+            {# Each of the divs is a row in the form #}
+            <div class="container controls" style="flex-basis: unset; justify-content: space-between; height: 50px;">
+                <h2 style="border: none;">Filters:</h2>
+                <input type="submit" value="Filter">
+            </div>
             <div>
-                <h2>Filters:</h2>
-                <button value="submit">Filter</button>
+                <label for=minprice>Minimum Price: </label>
+                <input class="price" name="minprice" id="minprice" 
+                type="number" placeholder="0" min="0"
+                value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}">
+            </div>
+            <div>
+                <label for="maxprice">Maximum Price: </label>
+                <input class="price" name="maxprice" id="maxprice" 
+                type="number" placeholder="0" min="0"
+                value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}">
+            </div>
+            <div>
+
             </div>
         </form>
         <div class="container products">
@@ -131,7 +150,7 @@
                     {% endif %}
                 {% endfor %}
             {% else %}
-                <h1>There are no products that match your search.</h1>
+                <h1 style="border: none;">There were no products that match your search criteria.</h1>
             {% endif %}
         </div>
     </div>

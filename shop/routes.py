@@ -229,9 +229,38 @@ def render_products():
 
                 # Fitler the results with the query, look at the description and name of products.
                 products = (products
-                            .filter(
-                                (Product.name.like(f"%{request.args['query']}%") | Product.description.like(f"%{request.args['query']}%")))
-                            )
+                            .filter(Product.name.like(f"%{request.args['query']}%")))
+
+            # TODO: Could make a general function for these filters
+            # Min price filtering
+            if "minprice" in request.args:
+                # Contained in a try loop to prevent any incorrect values from breaking the page
+                try:
+                    if request.args["minprice"]:
+                        # Multiply by 100 as they are stored as integers after being multiplied by 100
+                        min_price = round(
+                            float(request.args["minprice"]) * 100)
+                    else:
+                        # Set to zero if not set in args
+                        min_price = 0
+
+                    # Apply the filter to the query
+                    products = products.filter(Product._price >= min_price)
+                except:
+                    pass
+
+            # Max price filtering
+            if "maxprice" in request.args:
+                try:
+                    if request.args["maxprice"]:
+                        max_price = round(
+                            float(request.args["maxprice"]) * 100)
+                    else:
+                        max_price = 0
+
+                    products = products.filter(Product._price <= max_price)
+                except:
+                    pass
 
             # TODO: Add more filtering types (by category etc)
             # Return altered products query

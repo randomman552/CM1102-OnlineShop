@@ -57,6 +57,7 @@ nav.reversed {
 }
 
 /* Attributes used to style links like buttons */
+/* TODO: Unify button styles */
 a.button {
 	text-decoration: none;
 	text-align: center;
@@ -327,7 +328,8 @@ div.dropdown-container {
 	color: inherit;
 }
 
-button {
+button,
+input[type="submit"] {
 	border-radius: 10px;
 	padding: 10px 20px 10px 20px;
 	font-size: 1rem;
@@ -337,7 +339,8 @@ button {
 	cursor: pointer;
 	margin: 2px;
 }
-button:hover {
+button:hover,
+input[type="submit"]:hover {
 	background-color: #ecf5ff;
 }
 button.green-confirm {

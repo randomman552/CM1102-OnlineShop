@@ -66,7 +66,8 @@ class Product(db.Model):
                           default='{"overview":[], "detailed":[]}')
     public = Column(Boolean, default=False)
 
-    # Description stores a json encoded dict, this allows me to store some layout information in the product table.
+    # Information stores a json encoded dict,
+    # This allows me to store more information in that column(such as overview and detailed views).
     @property
     def information(self) -> dict:
         return json.loads(self._information)
