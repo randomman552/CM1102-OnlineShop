@@ -1,6 +1,6 @@
 {% macro rating(score, count) -%}
     <a href="#reviews" class="rating-container">
-        {% for star_num in range(5) %}
+        {% for star_num in range(5) -%}
             {# Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating #}
             {% set star_num = score - star_num %}
             {# If the value left over is greater than 1, thats a full star #}
@@ -13,7 +13,7 @@
             {% else %}
                 <div class="star empty"></div>
             {% endif %}
-        {% endfor %}
+        {%- endfor %}
 
         {# Put the number of reviews after the stars if it has been set #}
         {% if count -%}

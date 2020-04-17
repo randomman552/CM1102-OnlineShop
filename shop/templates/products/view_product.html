@@ -15,7 +15,7 @@
             <div class="product row">
                 <div class="product image" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
                     <div class="product image container">
-                        <!-- Picture slideshow -->
+                        {# Picture slideshow #}
                         {% if pictures|length > 0 -%}
                             {% for picture in pictures %}
                                 <div class="slide-content">
@@ -46,6 +46,17 @@
                     </div>
                 </div>
                 <div class="product purchase">
+                    {%- set overview = product.information["overview"] -%}
+                    {% if overview|length > 0 -%}
+                        <h2>overview</h2>
+                        <ul>
+                            {% for item in overview -%}
+                                <li>{{- item -}}</li>
+                            {%- endfor %}
+                        </ul>
+                        <hr>
+                    {%- endif %}
+                    <h2>purchase</h2>
                     <div class="product price">
                         <span id="price" style="width: 100%;">{{ product.price }}</span>
                     </div>

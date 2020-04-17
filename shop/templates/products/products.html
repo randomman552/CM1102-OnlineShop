@@ -103,12 +103,22 @@
                             </div>
                             <div class="info-container {{ session['view'] }} reverse">
                                 <div class="info-container {{ session['view'] }} description">
-                                    {% if products[i].description|length > 300 %}
-                                        {{ products[i].description[:300] }}
-                                        {{ "..." }}
-                                    {% else %}
-                                        {{ products[i].description }}
-                                    {% endif %}
+                                        {% set overview = products[i].information['overview'] -%}
+                                        {%- if overview|length > 0 -%}
+                                            <ul>
+                                                {%- for item in overview -%}
+                                                    <li>{{ item }}</li>
+                                                {%- endfor -%}
+                                            </ul>
+                                        {%- else -%}
+                                            {# if the product description is longer than 300 characters, limit it to 300 characters #}
+                                            {% if products[i].description|length > 300 %}
+                                                {{ products[i].description[:300] -}} {{- "..." }}
+                                            {# Otherwise display the whole description #}
+                                            {% else %}
+                                                {{ products[i].description }}
+                                            {% endif %}
+                                        {%- endif %}
                                 </div>
                                 <div class="info-container grid novis">
                                     <div class="info-container {{ session['view'] }} price">

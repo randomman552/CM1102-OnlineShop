@@ -62,16 +62,17 @@ class Product(db.Model):
     # Price is stored as an integer so no precision is lost to floating point accuracy
     _price = Column(Integer, nullable=False, default=0)
     description = Column(Text, nullable=False, default="This is a description")
-    _information = Column(Text)
+    _information = Column(Text, nullable=False,
+                          default='{"overview":[], "detailed":[]}')
     public = Column(Boolean, default=False)
 
     # Description stores a json encoded dict, this allows me to store some layout information in the product table.
     @property
-    def information(self):
+    def information(self) -> dict:
         return json.loads(self._information)
 
     @information.setter
-    def set_information(self, dict_object):
+    def set_information(self, dict_object: dict) -> None:
         self._information = json.dumps(dict_object)
 
     @property

@@ -126,6 +126,7 @@ product:hover {
 }
 .info-container.description.grid {
 	border: none;
+	width: 100%;
 }
 
 /* Info container image */
