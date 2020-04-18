@@ -39,11 +39,11 @@ nav.main {
 	display: flex;
 	flex-direction: row;
 	background: var(--fg-color);
-	border-bottom: 1px solid var(--border-color);
 	justify-content: space-evenly;
 }
 nav.sub-nav {
 	display: inline-flex;
+	height: 100%;
 	flex-basis: 33%;
 	flex-shrink: 1;
 }
@@ -54,31 +54,6 @@ nav.sub-nav.search {
 }
 nav.reversed {
 	flex-direction: row-reverse;
-}
-
-/* Attributes used to style links like buttons */
-/* TODO: Unify button styles */
-a.button {
-	text-decoration: none;
-	text-align: center;
-	margin: 0 2px 0 2px;
-	color: var(--text-color);
-	border: 1px solid var(--bg-color);
-	text-transform: uppercase;
-	border-radius: 1rem;
-	vertical-align: middle;
-	transition: 0.5s;
-}
-a.button:hover {
-	background-color: var(--button-hover);
-}
-a.button > p {
-	padding: 1rem;
-	margin: 0;
-}
-a.button > img {
-	height: 3rem;
-	width: 3rem;
 }
 
 /* Form attributes */
@@ -338,36 +313,69 @@ div.dropdown-container {
 	color: inherit;
 }
 
-button {
+/* Button styles */
+.button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	color: initial;
 	border-radius: 10px;
 	padding: 10px 20px 10px 20px;
 	font-size: 1rem;
-	border: 2px solid #4855a0;
-	background-color: white;
 	transition: 0.5s;
 	cursor: pointer;
 	margin: 2px;
+	text-transform: capitalize;
+	--border-color: #4855a0;
+	--background-color: white;
+	--text-color: black;
+	--button-hover: rgba(72, 85, 160, 0.1);
+	--button-hover-border: #4855a0;
+	--text-hover: black;
 }
-button:hover {
+/* The hover style of a button can be set by using the variables in the following example */
+.button.green-confirm {
+	--border-color: rgb(74, 129, 48);
+	--background-color: rgb(74, 129, 48);
+	--text-color: white;
+	--button-hover: rgb(51, 88, 33);
+	--button-hover-border: rgb(51, 88, 33);
+	--text-hover: white;
+}
+.button.red-confirm {
+	--border-color: rgb(129, 48, 48);
+	--background-color: rgb(129, 48, 48);
+	--text-color: white;
+	--button-hover: rgb(88, 33, 33);
+	--button-hover-border: rgb(88, 33, 33);
+	--text-hover: white;
+}
+.button {
+	border: 2px solid var(--border-color);
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+.button:hover {
+	border: 2px solid var(--button-hover-border);
 	background-color: var(--button-hover);
+	color: var(--text-hover);
 }
-button.green-confirm {
-	border: 2px solid rgb(74, 129, 48);
-	background-color: rgb(74, 129, 48);
-	color: white;
+/* This button style needs it's height to be constrained by a container */
+.button.bottom-only {
+	border: none;
+	margin: 0;
+	padding: 0 5px 0 5px;
+	height: 100%;
+	box-sizing: border-box;
+	border-radius: 0;
+	--button-border: var(--fg-color);
+	--button-hover-border: blue;
+	border-bottom: 2px solid var(--button-border);
 }
-button.green-confirm:hover {
-	border: 2px solid rgb(54, 95, 35);
-	background-color: rgb(54, 95, 35);
-}
-button.red-confirm {
-	border: 2px solid rgb(214, 0, 0);
-	background-color: rgb(214, 0, 0);
-	color: white;
-}
-button.red-confirm:hover {
-	border: 2px solid rgb(184, 0, 0);
-	background-color: rgb(184, 0, 0);
+.button.bottom-only:hover {
+	background-color: initial;
+	border-bottom: 2px solid var(--button-hover-border);
 }
 
 /* Heading styles */

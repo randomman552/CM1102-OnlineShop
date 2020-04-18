@@ -117,7 +117,6 @@ def render_products():
             """
 
             # Build subquerys used to filter by more advanced queries
-
             avg_rating = (db.session
                           .query(Review.productID, func.avg(Review.rating)
                                  .label("avg_rating"))

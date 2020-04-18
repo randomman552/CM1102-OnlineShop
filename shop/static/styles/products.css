@@ -38,6 +38,12 @@
 	margin-bottom: 10px;
 	border-bottom: 1px solid var(--bg-color);
 }
+.container.controls > div {
+	align-items: inherit;
+	justify-content: inherit;
+	display: inherit;
+	flex-direction: row;
+}
 
 /* Product container rules */
 product {

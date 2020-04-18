@@ -58,7 +58,7 @@
             {# Each of the divs is a row in the form #}
             <div class="container controls" style="flex-basis: unset;">
                 <h2 style="border: none;">Filters:</h2>
-                <button type="submit">Filter</button>
+                <button class="button" type="submit">Filter</button>
             </div>
 
             <div class="row">
@@ -106,8 +106,14 @@
                 </div>
                 <div>
                     View:&#32;
-                    <button onclick="window.location = window.location.toString().replace('view=list', 'view=grid');">Grid</button>
-                    <button onclick="window.location = window.location.toString().replace('view=grid', 'view=list');">List</button>
+                    <button 
+                    onclick="window.location = window.location.toString().replace('view=list', 'view=grid');"
+                    class="button"
+                    >Grid</button>
+                    <button 
+                    onclick="window.location = window.location.toString().replace('view=grid', 'view=list');"
+                    class="button"
+                    >List</button>
                 </div>
             </div>
             {% if products|length > 0 %}
