@@ -115,79 +115,63 @@ def render_products():
             @param products - The query object to be ordered.\n
             @return - The query object with sorting applied.
             """
+
+            # Build subquerys used to filter by more advanced queries
+
+            avg_rating = (db.session
+                          .query(Review.productID, func.avg(Review.rating)
+                                 .label("avg_rating"))
+                          .group_by(Review.productID)
+                          .subquery()
+                          )
+
+            rating_count = (db.session
+                            .query(Review.productID, func.count(Review.productID)
+                                   .label("rating_count"))
+                            .group_by(Review.productID)
+                            .subquery()
+                            )
+
+            # Apply joins for the previous subqueries
+            products = (products
+                        .outerjoin(avg_rating, Product.ID == avg_rating.c.productID)
+                        .group_by(Product.ID)
+                        )
+
+            products = (products
+                        .outerjoin(rating_count, Product.ID == rating_count.c.productID)
+                        .group_by(Product.ID)
+                        )
+
+            # Set the sort key, this is overridden below to change how the products are sorted
+            sort_key = Product.ID
+
+            # This dict is used like a case statement to change the key variable
+            key_dict = {
+                "price": Product._price,
+                "ratings": avg_rating.c.avg_rating,
+                "no.rating": rating_count.c.rating_count
+            }
+
+            # Get the relevant variables
             sort = request.args['sort']
             order = request.args['order']
-            # TODO: Reformat this to have less if statements (use a key variable to handle the final sort?)
-            # If a sort is specified
-            if sort != "none":
-                # If we are sorting by price
-                if sort == "price":
-                    # If we are ordering by ascending order
-                    if order == "asc":
-                        products = (products
-                                    .order_by(Product._price.asc())
-                                    )
 
-                    # If we are ordering by descending order
-                    elif order == "desc":
-                        products = (products
-                                    .order_by(Product._price.desc())
-                                    )
-                # If we are sorting by rating
-                elif sort == "rating":
-                    # Calculate average rating for each product
-                    avg_rating = (db.session
-                                  .query(Review.productID, func.avg(Review.rating)
-                                         .label("avg_rating"))
-                                  .group_by(Review.productID)
-                                  .subquery()
-                                  )
+            # Go through each key in the key dict, and find one that is applied
+            for key in key_dict:
+                if sort == key:
+                    sort_key = key_dict[key]
+                    break
 
-                    # Join the average rating onto the products for sorting
-                    products = (products
-                                .outerjoin(avg_rating, Product.ID == avg_rating.c.productID)
-                                .group_by(Product.ID)
-                                )
-
-                    # If we are ordering by asc
-                    if order == "asc":
-                        products = (products
-                                    .order_by(avg_rating.c.avg_rating.asc())
-                                    )
-
-                    # If we are ordering by desc
-                    if order == "desc":
-                        products = (products
-                                    .order_by(avg_rating.c.avg_rating.desc())
-                                    )
-
-                # If we are sorting by number of ratings
-                elif sort == "no.ratings":
-                    # Get the number of ratings for each product
-                    rating_count = (db.session
-                                    .query(Review.productID, func.count(Review.productID)
-                                           .label("rating_count"))
-                                    .group_by(Review.productID)
-                                    .subquery()
-                                    )
-
-                    # Join the rating count onto the products query for sorting
-                    products = (products
-                                .outerjoin(rating_count, Product.ID == rating_count.c.productID)
-                                .group_by(Product.ID)
-                                )
-
-                    # If we are ordering by asc
-                    if order == "asc":
-                        products = (products
-                                    .order_by(rating_count.c.rating_count.asc())
-                                    )
-
-                    # If we are ordering by desc
-                    if order == "desc":
-                        products = (products
-                                    .order_by(rating_count.c.rating_count.desc())
-                                    )
+            # Apply the sort based on the order
+            if order == "asc":
+                products = (products
+                            .order_by(sort_key.asc())
+                            )
+            elif order == "desc":
+                products = (products
+                            .order_by(sort_key.desc())
+                            )
 
             # Return our updated query object
             return products
