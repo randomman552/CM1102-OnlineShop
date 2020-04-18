@@ -257,8 +257,9 @@ def render_products():
                             float(request.args["maxprice"]) * 100)
                     else:
                         max_price = 0
-
-                    products = products.filter(Product._price <= max_price)
+                    # If max_price is equal to 0, we should ignore it and not filter by max price
+                    if max_price != 0:
+                        products = products.filter(Product._price <= max_price)
                 except:
                     pass
 
@@ -352,7 +353,7 @@ def render_products():
     # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER
     var_dict = {
         "view": ["grid", "list"],
-        "sort": ["no.ratings", "price", "rating"],
+        "sort": ["ratings", "price", "no.rating"],
         "order": ["desc", "asc"],
         "limit": ["20", "all"]
     }

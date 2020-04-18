@@ -56,23 +56,29 @@
             <input type="hidden" name="query" value="{% if 'query' in request.args -%} {{ request.args['query'] }} {%- endif %}">
             
             {# Each of the divs is a row in the form #}
-            <div class="container controls" style="flex-basis: unset; justify-content: space-between; height: 50px;">
+            <div class="container controls" style="flex-basis: unset;">
                 <h2 style="border: none;">Filters:</h2>
-                <input type="submit" value="Filter">
+                <button type="submit">Filter</button>
             </div>
-            <div>
-                <label for=minprice>Minimum Price: </label>
+
+            <div class="row">
+                <label>Price range</label>
+            </div>
+
+            <div class="row">
+                <label for="minprice">From: £</label>
                 <input class="price" name="minprice" id="minprice" 
-                type="number" placeholder="0" min="0"
-                value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}">
-            </div>
-            <div>
-                <label for="maxprice">Maximum Price: </label>
+                type="number" placeholder="Min Price" min="0"
+                value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}"
+                size="10">
+                <label for="maxprice">To: £</label>
                 <input class="price" name="maxprice" id="maxprice" 
-                type="number" placeholder="0" min="0"
-                value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}">
+                type="number" placeholder="Max Price" min="0"
+                value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}"
+                size="10">
             </div>
-            <div>
+
+            <div class="row">
 
             </div>
         </form>
