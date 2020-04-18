@@ -1,4 +1,4 @@
-{% macro rating(score, count) -%}
+{% macro rating(score, count=None) -%}
     {# Score should be the score to display, and count should be the number of reviews to display after #}
     <a href="#reviews" class="rating-container">
         {% for star_num in range(5) -%}
@@ -17,8 +17,43 @@
         {%- endfor %}
 
         {# Put the number of reviews after the stars if it has been set #}
-        {% if count -%}
+        {% if count != None -%}
             <div class="star number">{{ count }}</div>
         {%- endif %}
     </a>
 {%- endmacro %}
+
+{% macro page_slider(cur_page, max_page) -%}
+    {# Build a page slider #}
+    <form action="" method="get" style="display: flex; flex-direction: row; align-items: center;">
+        <label>Page: </label>
+        {# Create hidden fields for each of the args in the URL, 
+            means they are not lost with the form submit #}
+        {% for arg in request.args -%}
+            {# Must ensure we dont copy the page variable again #}
+            {% if arg != "page" -%}
+                <input type="hidden" name="{{- arg -}}" value="{{- request.args[arg] -}}">
+            {%- endif %}
+        {%- endfor %}
+
+        {# Check if we need to have links to the previous pages #}
+        {% if cur_page > 1 -%}
+            {% if max_page > cur_page + 1 %}
+                <button class="button small" name="page" type="submit" value="1">{{- "..." -}}</button>
+            {%- endif %}
+            <button name="page" class="button small" type="submit" value="{{- cur_page - 1 -}}">{{- cur_page - 1 -}}</button>
+        {%- endif %}
+
+        <button name="page" class="button small" type="submit" value="{{- cur_page -}}">{{- cur_page -}}</button>
+
+        {# Check if we need to have links to the next pages #}
+        {% if max_page > cur_page %}
+            <button name="page" class="button small" type="submit" value="{{- cur_page + 1 -}}">{{- cur_page + 1 -}}</button>
+            {% if max_page > cur_page + 1 %}
+                <button name="page" class="button small" type="submit" value="{{- max_page -}}">{{- "..." -}}</button>
+            {% endif %}
+        {% endif %}
+    </form>
+{%- endmacro %}
+
+{# TODO: Move product representations in here, so they can be used on basket page #}

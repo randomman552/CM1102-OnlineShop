@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% from 'products/macros.html' import rating %}
+{% from 'products/macros.html' import rating, page_slider %}
 
 {% block head %}
     <title>Products</title>
@@ -105,6 +105,13 @@
                     </div>
                 </div>
                 <div>
+                    {% if "page" in request.args -%}
+                        {{ page_slider(request.args["page"] | int, max_page) }}
+                    {%- else -%}
+                        {{ page_slider(1, max_page) }}
+                    {%- endif %}
+                </div>
+                <div>
                     View:&#32;
                     <button 
                     onclick="window.location = window.location.toString().replace('view=list', 'view=grid');"
@@ -164,6 +171,14 @@
             {% else %}
                 <h1 style="border: none;">There were no products that match your search criteria.</h1>
             {% endif %}
+            
+            <div class="container controls bottom">
+                {% if "page" in request.args -%}
+                    {{ page_slider(request.args["page"] | int, max_page) }}
+                {%- else -%}
+                    {{ page_slider(1, max_page) }}
+                {%- endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

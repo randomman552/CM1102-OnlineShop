@@ -1,3 +1,5 @@
+/* TODO: Add some other color modes? */
+/* TODO: Add media queries to change page layout with lower res (less than 1080px accross) screens */
 /* Root element for setting variables */
 :root {
 	font-size: 16px;
@@ -14,15 +16,6 @@ body {
 	background-color: var(--bg-color);
 	margin: 0;
 	padding: 0;
-}
-body::-webkit-scrollbar {
-	width: 10px;
-}
-body::-webkit-scrollbar-track {
-	background: var(--bg-color);
-}
-body::-webkit-scrollbar-thumb {
-	background: var(--fg-color);
 }
 
 /*Header attributes */
@@ -92,17 +85,18 @@ form.search button[type = "submit"] {
 	border-radius: 0.5rem 0 0 0.5rem;
 }
 form.search button[type = "submit"] {
+	cursor: pointer;
 	flex-basis: 2.5rem;
 	flex-shrink: 0;
 	border-radius: 0 0.5rem 0.5rem 0;
 }
+form.search button > img {
+	width: 90%;
+	height: 90%;
+}
 form.search input[type = "text"]:hover,
 form.search button[type = "submit"]:hover {
 	background: var(--button-hover);
-}
-form.search button > img {
-	width: 2rem;
-	height: 2rem;
 }
 
 /* Attributes for main section of the page */
@@ -369,13 +363,26 @@ div.dropdown-container {
 	height: 100%;
 	box-sizing: border-box;
 	border-radius: 0;
-	--button-border: var(--fg-color);
+	--border-color: var(--fg-color);
 	--button-hover-border: blue;
-	border-bottom: 2px solid var(--button-border);
+	border-bottom: 2px solid var(--border-color);
 }
 .button.bottom-only:hover {
 	background-color: initial;
 	border-bottom: 2px solid var(--button-hover-border);
+}
+/* Small button, intended for use in places like the page switcher */
+.button.small {
+	border: 1px solid var(--border-color);
+	padding: 2px;
+	border-radius: 3px;
+}
+/* For buttons containing images, the image will need to size itself */
+.button > img {
+	max-width: 100%;
+	max-height: 100%;
+	height: auto;
+	width: auto;
 }
 
 /* Heading styles */

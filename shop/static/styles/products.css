@@ -38,6 +38,11 @@
 	margin-bottom: 10px;
 	border-bottom: 1px solid var(--bg-color);
 }
+.container.controls.bottom {
+	border: none;
+	border-top: 1px solid var(--bg-color);
+	justify-content: center;
+}
 .container.controls > div {
 	align-items: inherit;
 	justify-content: inherit;
@@ -86,8 +91,7 @@ product:hover {
 	flex-direction: column-reverse;
 }
 /* These rules are used to change the look of the list mode */
-/* DO NOT USE THEM ANYWHERE ELSE */
-/* TODO: Could replace with better names with some edits to products.html */
+/* I would advise against using them anywhere else if you can avoid it */
 .info-container.grid.novis.reverse {
 	flex-basis: 30%;
 }

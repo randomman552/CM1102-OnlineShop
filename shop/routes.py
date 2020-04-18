@@ -8,6 +8,7 @@ from .forms import *
 from .models import db, func, Product, Picture, Review, User, Wishlist
 from . import app
 import time
+# TODO: Implement product categories
 
 
 @app.route("/")
@@ -100,7 +101,7 @@ def render_products():
         else:
             return None
 
-    def get_products() -> list:
+    def get_products() -> (list, int):
         """
         This function gets the relevant products from the database and filters them according to user input.
         @return - A list of products
@@ -148,8 +149,8 @@ def render_products():
             # This dict is used like a case statement to change the key variable
             key_dict = {
                 "price": Product._price,
-                "ratings": avg_rating.c.avg_rating,
-                "no.rating": rating_count.c.rating_count
+                "rating": avg_rating.c.avg_rating,
+                "no.ratings": rating_count.c.rating_count
             }
 
             # Get the relevant variables
@@ -178,7 +179,7 @@ def render_products():
         def create_list(products) -> list:
             """
             This function takes the products query object and querys the database.\n
-            It handles the limit set in the GET variable.\n
+            It handles the limit set in the GET variable, and the current page number.\n
             It then returns a list of the products.\n
             @param products - The query object to get from.\n
             @return - A list containg the query results.
@@ -190,13 +191,27 @@ def render_products():
             else:
                 # If the limit variable is set to anything else, attempt to limit the results.
                 # This will fail if the user puts a non-number into the limit get variable
+
+                # Get the current page number, default to 0 if not present.
+                # This must be 0 indexed to allow for easily determining get offset
+                page_num = 0
+                if "page" in request.args:
+                    try:
+                        page_num = int(request.args["page"]) - 1
+                    except:
+                        pass
+
+                # Attempt to get limit variable, if it fails then default to 20
+                limit = 20
                 try:
-                    products = (products
-                                .limit((int(request.args["limit"])))
-                                .all()
-                                )
+                    limit = int(request.args["limit"])
                 except:
-                    products = products.all()
+                    pass
+                products = (products
+                            .limit(int(request.args["limit"]))
+                            .offset(page_num * limit)
+                            .all()
+                            )
 
             # Return our products list
             return products
@@ -259,11 +274,14 @@ def render_products():
         # Sort the products query
         products = sort_products(products)
 
+        # Get the maximum number of products created by this query (used for page system)
+        product_count = len(products.all())
+
         # Get the products list produced by the query
         products = create_list(products)
 
         # Return our products list
-        return products
+        return products, product_count
 
     # TODO: Could improve the functions for getting pictures and ratings
     # using a join method like the one for the sort in the products function
@@ -336,7 +354,7 @@ def render_products():
     # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER
     var_dict = {
         "view": ["grid", "list"],
-        "sort": ["ratings", "price", "no.rating"],
+        "sort": ["rating", "price", "no.ratings"],
         "order": ["desc", "asc"],
         "limit": ["20", "all"]
     }
@@ -345,12 +363,26 @@ def render_products():
     if retval:
         return retval
 
-    # Get products and pictures from the database
-    products = get_products()
+    # Get products and the maximum product count from the database, (this uses tuple unpacking)
+    products, product_count = get_products()
+
+    # Get pictures
     pictures = get_pictures(products)
+
+    # Get ratings
     ratings = get_ratings(products)
 
-    return render_template("products/products.html", products=products, pictures=pictures, ratings=ratings, mode="edit")
+    # Get the maximum number of pages
+    limit = int(request.args["limit"])
+    max_page = product_count / limit
+
+    # Return the template
+    return render_template("products/products.html",
+                           products=products,
+                           pictures=pictures,
+                           ratings=ratings,
+                           max_page=max_page,
+                           mode="edit")
 
 
 @app.route("/products/new", methods=["GET", "POST"])
@@ -394,6 +426,9 @@ def render_view_product(product_id):
                     .first()[0]
                     )
 
+    # If the avg or count are not set, set them to 0
+    if not review_avg:
+        review_avg = 0
     return render_template(
         "products/view_product.html",
         product=product,
