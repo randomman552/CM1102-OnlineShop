@@ -29,12 +29,7 @@
         <label>Page: </label>
         {# Create hidden fields for each of the args in the URL, 
             means they are not lost with the form submit #}
-        {% for arg in request.args -%}
-            {# Must ensure we dont copy the page variable again #}
-            {% if arg != "page" -%}
-                <input type="hidden" name="{{- arg -}}" value="{{- request.args[arg] -}}">
-            {%- endif %}
-        {%- endfor %}
+            {{ arg_preserver(["page"]) }}
 
         {# Check if we need to have links to the previous pages #}
         {% if cur_page > 1 -%}
@@ -56,4 +51,61 @@
     </form>
 {%- endmacro %}
 
-{# TODO: Move product representations in here, so they can be used on basket page #}
+{% macro arg_preserver(to_ignore) -%}
+    {# This macro will build a series of hidden inputs for a form, 
+        these will preserve any arguments in the URL.
+        Any arguments specified in the to_ignore list will not be added #}
+    {% for arg in request.args -%}
+        {# If the arg is not in to_ignore, add an input for it #}
+        {% if arg not in to_ignore -%}
+            <input type="hidden" name="{{- arg -}}" value="{{- request.args[arg] -}}">
+        {%- endif %}
+    {%- endfor -%}
+{%- endmacro %}
+
+{% macro product(product, pictures, ratings, mode) -%}
+    {# This macro will build a representation of a product (as shown on the product page)
+        The mode can be "grid" or "list" and changes the styles for the product #}
+    {#TODO: Add purchase and add to product listings #}
+    <product class="{{ mode }}" onclick="window.location = '/products/{{ product.ID }}'">
+        <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
+            <div class="info-container {{ mode }} image">
+                {% if pictures|length > 0 %}
+                    <img src="{{ url_for('static', filename=pictures[0].URL) }}" alt="Image of Product">
+                {% else %}
+                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                {% endif %}
+            </div>
+            <div class="info-container {{ mode }} name">
+                {{ product.name }}
+            </div>
+        </div>
+        <div class="info-container {{ mode }} reverse">
+            <div class="info-container {{ mode }} description">
+                {% set overview = product.information['overview'] -%}
+                {%- if overview|length > 0 -%}
+                    <ul>
+                        {%- for item in overview -%}
+                            <li>{{ item }}</li>
+                        {%- endfor -%}
+                    </ul>
+                {%- else -%}
+                    {# if the product description is longer than 300 characters, limit it to 300 characters #}
+                    {% if product.description|length > 300 %}
+                        {{ product.description[:300] -}} {{- "..." }}
+                    {# Otherwise display the whole description #}
+                    {% else %}
+                        {{ product.description }}
+                    {% endif %}
+                {%- endif %}
+            </div>
+            <div class="info-container grid novis">
+                <div class="info-container {{ mode }} price">
+                    {{ product.price }}
+                </div>
+                {# Call the rating macro #}
+                {{ rating(ratings[0], ratings[1]) }}
+            </div>
+        </div>
+    </product>
+{%- endmacro %}

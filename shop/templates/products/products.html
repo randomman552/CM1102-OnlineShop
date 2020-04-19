@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% from 'products/macros.html' import rating, page_slider %}
+{% from 'products/macros.html' import rating, page_slider, arg_preserver, product %}
 
 {% block head %}
     <title>Products</title>
@@ -53,7 +53,7 @@
     <div class="container">
         <form method="GET" class="container filters" action="" novalidate autocomplete="off">
             {# Store the current search query in this hidden field so that it is preserved after filtering #}
-            <input type="hidden" name="query" value="{% if 'query' in request.args -%} {{ request.args['query'] }} {%- endif %}">
+            {{ arg_preserver(["minprice", "maxprice"]) }}
             
             {# Each of the divs is a row in the form #}
             <div class="container controls" style="flex-basis: unset;">
@@ -84,7 +84,7 @@
         </form>
         <div class="container products">
             <div class="container controls">
-                <!-- Sort selection dropdown -->
+                {# Sort selection dropdown #}
                 <div class="dropdown-container" style="flex-basis: initial;">
                     <label class="dropdown-label" for="sort-by">Sort By:</label>
                     <div id="sort-by" class="dropdown hidden" onclick="toggleDropdown('sort-by')">
@@ -126,46 +126,7 @@
             {% if products|length > 0 %}
                 {% for i in range(products|length) %}
                     {% if products[i].public or mode == "edit" %}
-                        <product class="{{ session['view'] }}" onclick="window.location = '/products/{{ products[i].ID }}'">
-                            <div class="info-container grid novis {% if session['view'] == 'list' %} reverse {% endif %}">
-                                <div class="info-container {{ session['view'] }} image">
-                                    {% if pictures[i]|length > 0 %}
-                                        <img src="{{ url_for('static', filename=pictures[i][0].URL) }}" alt="Image of Product">
-                                    {% else %}
-                                        <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
-                                    {% endif %}
-                                </div>
-                                <div class="info-container {{ session['view'] }} name">
-                                    {{ products[i].name }}
-                                </div>
-                            </div>
-                            <div class="info-container {{ session['view'] }} reverse">
-                                <div class="info-container {{ session['view'] }} description">
-                                        {% set overview = products[i].information['overview'] -%}
-                                        {%- if overview|length > 0 -%}
-                                            <ul>
-                                                {%- for item in overview -%}
-                                                    <li>{{ item }}</li>
-                                                {%- endfor -%}
-                                            </ul>
-                                        {%- else -%}
-                                            {# if the product description is longer than 300 characters, limit it to 300 characters #}
-                                            {% if products[i].description|length > 300 %}
-                                                {{ products[i].description[:300] -}} {{- "..." }}
-                                            {# Otherwise display the whole description #}
-                                            {% else %}
-                                                {{ products[i].description }}
-                                            {% endif %}
-                                        {%- endif %}
-                                </div>
-                                <div class="info-container grid novis">
-                                    <div class="info-container {{ session['view'] }} price">
-                                        {{ products[i].price }}
-                                    </div>
-                                    {{ rating(ratings[i][0], ratings[i][1]) }}
-                                </div>
-                            </div>
-                        </product>
+                        {{ product(products[i], pictures[i], ratings[i], session["view"]) }}
                     {% endif %}
                 {% endfor %}
             {% else %}

@@ -1,3 +1,4 @@
+{% from 'products/macros.html' import arg_preserver %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,7 +16,8 @@
             </nav>
             <nav class="sub-nav search">
                 <form class="search" action="/products" method="get">
-                    <!-- If query is present in GET variables, then it will be placed in the search box -->
+                    {{ arg_preserver(["query"]) }}
+                    {# If query is present in GET variables, then it will be placed in the search box #}
                     <input type="text" placeholder="Search" name="query" autocomplete="off" 
                     value="{% if 'query' in request.args %}{{ request.args['query'] }}{% endif %}">
                     <button type="submit"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search"></button>
