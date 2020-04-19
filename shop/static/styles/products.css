@@ -51,7 +51,8 @@
 }
 
 /* Product container rules */
-product {
+.product {
+	position: relative;
 	padding: 10px;
 	cursor: pointer;
 	display: flex;
@@ -63,16 +64,36 @@ product {
 	transition: 0.3s ease;
 	border: 1px solid var(--bg-color);
 }
-
-product.list {
+.product.list {
 	flex-direction: row;
 	width: 100%;
 	height: 200px;
 }
 
-product:hover {
+.product:hover,
+.product:focus-within {
 	border: 1px solid var(--border-color);
 	text-decoration: underline;
+}
+
+/* Actions container rules (used for buttons) */
+.product > .actions {
+	display: none;
+}
+.product:hover > .actions {
+	position: absolute;
+	display: flex;
+	box-sizing: border-box;
+	right: 10px;
+	top: 10px;
+	z-index: 0;
+	flex-direction: column;
+}
+.product.grid:hover > .actions {
+	width: calc(100% - 20px);
+}
+.product.list:hover > .actions {
+	width: 30%;
 }
 
 /* Info container general rules */

@@ -1,6 +1,6 @@
-{% macro rating(score, count=None) -%}
+{% macro rating(score, count=None, link="#reviews") -%}
     {# Score should be the score to display, and count should be the number of reviews to display after #}
-    <a href="#reviews" class="rating-container">
+    <a href="{{- link -}}" class="rating-container">
         {% for star_num in range(5) -%}
             {# Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating #}
             {% set star_num = score - star_num %}
@@ -66,8 +66,12 @@
 {% macro product(product, pictures, ratings, mode) -%}
     {# This macro will build a representation of a product (as shown on the product page)
         The mode can be "grid" or "list" and changes the styles for the product #}
-    {#TODO: Add purchase and add to product listings #}
-    <product class="{{ mode }}" onclick="window.location = '/products/{{ product.ID }}'">
+    <article class="product {{ mode }}" onclick="window.location = '/products/{{- product.ID -}}'">
+        <div class="actions">
+            {# TODO: Need to add actions to these buttons #}
+            <a class="button green-confirm">Add to cart</a>
+            <a class="button">Add to wishlist</a>
+        </div>
         <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
             <div class="info-container {{ mode }} image">
                 {% if pictures|length > 0 %}
@@ -104,8 +108,8 @@
                     {{ product.price }}
                 </div>
                 {# Call the rating macro #}
-                {{ rating(ratings[0], ratings[1]) }}
+                {{ rating(ratings[0], count=ratings[1], link="/products/" + product.ID|string + "#reviews") }}
             </div>
         </div>
-    </product>
+    </article>
 {%- endmacro %}

@@ -180,6 +180,7 @@ main {
 	display: flex;
 	flex-direction: row;
 	position: relative;
+	z-index: 1;
 	border: 1px solid var(--bg-color);
 	background-color: white;
 	border-radius: 10px 10px 0 0;
@@ -324,7 +325,7 @@ div.dropdown-container {
 	--border-color: #4855a0;
 	--background-color: white;
 	--text-color: black;
-	--button-hover: rgba(72, 85, 160, 0.1);
+	--button-hover: rgb(217, 224, 255);
 	--button-hover-border: #4855a0;
 	--text-hover: black;
 }
