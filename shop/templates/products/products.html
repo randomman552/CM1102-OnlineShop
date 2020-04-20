@@ -53,10 +53,11 @@
     <div class="container">
         <form method="GET" class="container filters" action="" novalidate autocomplete="off">
             {# Store the current search query in this hidden field so that it is preserved after filtering #}
-            {{ arg_preserver(["minprice", "maxprice"]) }}
+            {{ arg_preserver(["minprice", "maxprice", "category"]) }}
             
             {# Each of the divs is a row in the form #}
             <div class="container controls" style="flex-basis: unset;">
+                {# Filter form heading #}
                 <h2 style="border: none;">Filters:</h2>
                 <button class="button" type="submit">Filter</button>
             </div>
@@ -66,6 +67,7 @@
             </div>
 
             <div class="row">
+                {# Price range selector #}
                 <label for="minprice">From: £</label>
                 <input class="price" name="minprice" id="minprice" 
                 type="number" placeholder="Min Price" min="0"
@@ -79,7 +81,17 @@
             </div>
 
             <div class="row">
-
+                {# Category selector (can only browse one at once) #}
+                <label for="category">Category: </label>
+                <select id="category" name="category">
+                    <option value="">Select category</option>
+                    {% for category in categories -%}
+                        <option value="{{- category.ID -}}"
+                        {%- if "category" in request.args and request.args["category"]|int == category.ID -%} selected="selected" {%- endif -%}>
+                            {{ category.name }}
+                        </option>
+                    {%- endfor %}
+                </select>
             </div>
         </form>
         <div class="container products">

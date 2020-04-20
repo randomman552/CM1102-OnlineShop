@@ -5,10 +5,9 @@ from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
 from werkzeug.utils import secure_filename
 from .forms import *
-from .models import db, func, Product, Picture, Review, User, Wishlist
+from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app
 import time
-# TODO: Implement product categories
 
 
 @app.route("/")
@@ -261,7 +260,28 @@ def render_products():
                 except:
                     pass
 
-            # TODO: Add more filtering types (by category etc)
+            # Product category filtering
+            if "category" in request.args:
+                category = request.args["category"]
+
+                allowed_categories = []
+                # If the category is set (not null), then proceed to filter the products
+                if category:
+                    # Get the product category mappings from the database
+                    product_categories = ProductCategory.query.filter(
+                        ProductCategory.categoryID.like(category)).subquery()
+
+                    # Join with products to get our allowed products
+                    products = (products
+                                .outerjoin(product_categories, Product.ID == product_categories.c.productID)
+                                .group_by(Product.ID)
+                                )
+
+                    # Filter the products
+                    products = products.filter(
+                        product_categories.c.productID == category)
+                    print(products)
+
             # Return altered products query
             return products
 
@@ -347,11 +367,23 @@ def render_products():
                 Review.productID == products[i].ID).first()
             ratings_return[i] += count
 
+        # Each rating in the list is a tuple,
+        # the first element in the tuple is the average review score
+        # and the second is the number of reviews
+
         # Return our list of ratings
         return ratings_return
 
+    def get_categories() -> list:
+        """Get the categories from the database and return them as a list of category objects.
+        @return - A list of categories
+        """
+
+        categories = Category.query.all()
+        return categories
+
     # Create the dict of required variables
-    # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER
+    # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER (in session)
     var_dict = {
         "view": ["grid", "list"],
         "sort": ["rating", "price", "no.ratings"],
@@ -376,12 +408,16 @@ def render_products():
     limit = int(request.args["limit"])
     max_page = product_count / limit
 
+    # Get a list of all the categories from the database
+    categories = get_categories()
+
     # Return the template
     return render_template("products/products.html",
                            products=products,
                            pictures=pictures,
                            ratings=ratings,
                            max_page=max_page,
+                           categories=categories,
                            mode="edit")
 
 

@@ -21,9 +21,9 @@ body {
 /*Header attributes */
 nav.main {
 	top: 0;
+	z-index: 10;
 	box-sizing: border-box;
 	width: 100%;
-	z-index: 1;
 	position: fixed;
 	height: 4rem;
 	margin: 0;
@@ -53,16 +53,23 @@ nav.reversed {
 form {
 	text-align: center;
 }
-input {
+/* Form input attributes */
+input,
+select {
 	padding: 5px 10px 5px 10px;
 	border-radius: 5px;
 	border: 1px solid var(--border-color);
 	transition: 0.3s;
 }
-input:hover {
+input:hover,
+select:hover,
+option:hover {
 	background-color: var(--button-hover);
 }
-
+/* Options in select attributes */
+option {
+	background-color: white;
+}
 /* Search form attributes */
 form.search {
 	display: inline-flex;
@@ -261,12 +268,15 @@ main {
 
 /* Required for dropdown labels */
 label.dropdown-label {
+	text-transform: capitalize;
 	padding-right: 15px;
 }
 div.dropdown-container {
 	display: flex;
+	position: relative;
 	align-items: center;
 	justify-items: center;
+	z-index: 1;
 }
 
 /* Star attributes (used for product ratings) */
