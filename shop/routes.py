@@ -264,7 +264,6 @@ def render_products():
             if "category" in request.args:
                 category = request.args["category"]
 
-                allowed_categories = []
                 # If the category is set (not null), then proceed to filter the products
                 if category:
                     # Get the product category mappings from the database
@@ -280,7 +279,6 @@ def render_products():
                     # Filter the products
                     products = products.filter(
                         product_categories.c.productID == category)
-                    print(products)
 
             # Return altered products query
             return products
@@ -303,7 +301,7 @@ def render_products():
         # Return our products list
         return products, product_count
 
-    # TODO: Could improve the functions for getting pictures and ratings
+    # TODO: Could improve the functions for getting ratings
     # using a join method like the one for the sort in the products function
     def get_pictures(products: list) -> list:
         """
@@ -319,20 +317,14 @@ def render_products():
         if len(products) == 0:
             return pictures_return
 
-        # Generate lowest and highest ID variables, these are used to constrain the pictures we get from the database
-        lowestID = products[0].ID
-        highestID = products[0].ID
-
-        # Initalise pictures_return and get highest and lowest ID.
-        for i in range(len(products)):
-            if products[i].ID < lowestID:
-                lowestID = products[i].ID
-            elif products[i].ID > highestID:
-                highestID = products[i].ID
+        # Create a list of product IDs to get the pictures for
+        product_ids = []
+        for product in products:
+            product_ids.append(product.ID)
 
         # Get pictures from the database
-        pictures = Picture.query.filter(Picture.productID <= highestID).filter(
-            Picture.productID >= lowestID).all()
+        pictures = Picture.query.filter(
+            Picture.productID.in_(product_ids)).all()
 
         # Append the corresponding pictures to the correct list
         for i in range(len(products)):
