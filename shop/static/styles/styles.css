@@ -62,8 +62,7 @@ select {
 	transition: 0.3s;
 }
 input:hover,
-select:hover,
-option:hover {
+select:hover {
 	background-color: var(--button-hover);
 }
 /* Options in select attributes */
@@ -431,4 +430,14 @@ hr {
 	width: 100%;
 	border: none;
 	border-bottom: 1px solid var(--bg-color);
+}
+
+/* Attributes for mobile (small screen) display */
+@media only screen and (max-width: 1550px) {
+	main {
+		margin-left: unset;
+		border-radius: unset;
+		width: 100%;
+		box-sizing: border-box;
+	}
 }

@@ -27,11 +27,13 @@
 	margin: 1px;
 }
 .container.products {
+	flex-direction: row;
 	flex-wrap: wrap;
 	flex-basis: 70%;
 }
 .container.controls {
 	flex-basis: 100%;
+	flex-direction: row;
 	height: 50px;
 	justify-content: space-between;
 	align-items: center;
@@ -113,8 +115,9 @@
 }
 /* These rules are used to change the look of the list mode */
 /* I would advise against using them anywhere else if you can avoid it */
-.info-container.grid.novis.reverse {
+.info-container.grid.novis {
 	flex-basis: 30%;
+	flex-shrink: 0;
 }
 .info-container.list.reverse {
 	flex-basis: 70%;
@@ -154,7 +157,6 @@
 .info-container.description.list {
 	height: 100%;
 	flex-basis: 80%;
-	flex-shrink: 0;
 	border-left: 1px solid var(--bg-color);
 }
 .info-container.description.grid {
@@ -165,7 +167,7 @@
 /* Info container image */
 .info-container.image {
 	margin: 2px;
-	flex-shrink: 0;
+	flex-shrink: 1;
 	text-align: center;
 	align-items: center;
 	justify-content: center;
@@ -186,4 +188,16 @@
 	max-height: 100%;
 	width: auto;
 	height: auto;
+}
+
+@media only screen and (max-width: 1240px) {
+	.container {
+		flex-direction: column;
+	}
+	.container.controls {
+		border-top: 1px solid var(--bg-color);
+	}
+	.container.filters {
+		border-right: none;
+	}
 }

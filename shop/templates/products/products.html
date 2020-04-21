@@ -53,7 +53,7 @@
     <div class="container">
         <form method="GET" class="container filters" action="" novalidate autocomplete="off">
             {# Store the current search query in this hidden field so that it is preserved after filtering #}
-            {{ arg_preserver(["minprice", "maxprice", "category"]) }}
+            {{ arg_preserver(["minprice", "maxprice", "category", "page"]) }}
             
             {# Each of the divs is a row in the form #}
             <div class="container controls" style="flex-basis: unset;">
