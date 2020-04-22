@@ -10,6 +10,8 @@
 .product.row {
 	height: 600px;
 	display: flex;
+	margin: 0;
+	margin-bottom: 10px;
 	flex-direction: row;
 	justify-content: space-around;
 	width: 100%;
@@ -166,6 +168,9 @@
 	align-items: center;
 	justify-content: center;
 }
+.review-container.hidden {
+	display: none;
+}
 .review {
 	padding: 10px;
 	display: flex;
@@ -186,9 +191,76 @@
 	flex-direction: row;
 	justify-content: space-between;
 }
+
 /* Review content styles */
 .review > .content {
 	border: 1px solid var(--bg-color);
 	/* So it fills the whole box */
 	height: 100%;
+}
+
+/* Review form styles */
+.star-selector {
+	background: url("../icons/star-empty.svg") repeat-x 0 0;
+	background-size: 20% 100%;
+	width: 150px;
+	margin: 0 auto;
+}
+.star-selector label {
+	display: block;
+	width: 30px;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	text-indent: -10000%;
+	float: left;
+	position: relative;
+	z-index: 10;
+	background: transparent;
+	cursor: pointer;
+}
+.star-selector > input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+.star-selector span {
+	display: block;
+	position: relative;
+	width: 0;
+	height: 30px;
+	top: 0;
+	left: 0;
+	background: url("../icons/star-full.svg");
+	background-size: 30px 30px;
+}
+.star-selector #stars-4:checked ~ span {
+	width: 100%;
+}
+.star-selector #stars-3:checked ~ span {
+	width: 80%;
+}
+.star-selector #stars-2:checked ~ span {
+	width: 60%;
+}
+.star-selector #stars-1:checked ~ span {
+	width: 40%;
+}
+.star-selector #stars-0:checked ~ span {
+	width: 20%;
+}
+.star-selector .stars-4:hover ~ span {
+	width: 100%;
+}
+.star-selector .stars-3:hover ~ span {
+	width: 80%;
+}
+.star-selector .stars-2:hover ~ span {
+	width: 60%;
+}
+.star-selector .stars-1:hover ~ span {
+	width: 40%;
+}
+.star-selector .stars-0:hover ~ span {
+	width: 20%;
 }

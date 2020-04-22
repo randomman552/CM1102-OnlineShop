@@ -4,10 +4,12 @@ import random
 from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
 from werkzeug.utils import secure_filename
-from .forms import *
+from .forms import AddReviewForm
 from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app
 import time
+
+# TODO: Improve mobile experience
 
 
 @app.route("/")
@@ -228,7 +230,6 @@ def render_products():
                 products = (products
                             .filter(Product.name.like(f"%{request.args['query']}%")))
 
-            # TODO: Could make a general function for these filters
             # Min price filtering
             if "minprice" in request.args:
                 # Contained in a try loop to prevent any incorrect values from breaking the page
@@ -429,13 +430,30 @@ def render_new_product():
     return redirect(f"/products/{new_product.ID}")
 
 
-@app.route("/products/<int:product_id>", methods=["GET"])
+@app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
+    # Create a review form object
+    review_form = AddReviewForm()
+
+    # If the review form has been submitted, add the review to the database
+    if review_form.validate_on_submit():
+        userID = None
+        if current_user.is_authenticated:
+            userID = current_user.ID
+        new_review = Review(rating=review_form.stars.data,
+                            userID=userID,
+                            content=review_form.comment.data,
+                            productID=product_id)
+        db.session.add(new_review)
+        db.session.commit()
+        return redirect(request.base_url)
+
     product = Product.query.filter(Product.ID.like(product_id)).first()
     pictures = Picture.query.filter(Picture.productID.like(product_id)).all()
     reviews = Review.query.filter(Review.productID.like(product_id)).all()
 
     users = []
+    # TODO: Make this a join query
     # For each review, add the user that made that review to a list of users.
     for review in reviews:
         user = User.query.filter(User.ID == review.userID).first()
@@ -457,6 +475,8 @@ def render_view_product(product_id):
     # If the avg or count are not set, set them to 0
     if not review_avg:
         review_avg = 0
+
+    # Render the template
     return render_template(
         "products/view_product.html",
         product=product,
@@ -464,6 +484,6 @@ def render_view_product(product_id):
         reviews=reviews,
         review_avg=review_avg,
         review_count=review_count,
-        users=users,
-        mode="edit"
+        review_form=review_form,
+        users=users
     )

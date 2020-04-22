@@ -66,7 +66,8 @@
 {% macro product(product, pictures, ratings, mode) -%}
     {# This macro will build a representation of a product (as shown on the product page)
         The mode can be "grid" or "list" and changes the styles for the product #}
-    <article class="product {{ mode }}" onclick="window.location = '/products/{{- product.ID -}}'">
+    {# TODO: Add anchor tags so it functions as a proper link #}
+        <article class="product {{ mode }}" onclick="window.location = '/products/{{- product.ID -}}'">
         <div class="actions">
             {# TODO: Need to add actions to these buttons #}
             <a class="button green-confirm">Add to cart</a>

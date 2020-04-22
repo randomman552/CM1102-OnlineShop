@@ -1,5 +1,4 @@
 /* TODO: Add some other color modes? */
-/* TODO: Add media queries to change page layout with lower res (less than 1080px accross) screens */
 /* Root element for setting variables */
 :root {
 	font-size: 16px;
@@ -55,15 +54,20 @@ form {
 }
 /* Form input attributes */
 input,
-select {
+select,
+textarea {
 	padding: 5px 10px 5px 10px;
 	border-radius: 5px;
 	border: 1px solid var(--border-color);
 	transition: 0.3s;
 }
 input:hover,
-select:hover {
+select:hover,
+textarea:hover {
 	background-color: var(--button-hover);
+}
+input[type="submit"] {
+	cursor: pointer;
 }
 /* Options in select attributes */
 option {
@@ -360,7 +364,8 @@ div.dropdown-container {
 	background-color: var(--background-color);
 	color: var(--text-color);
 }
-.button:hover {
+.button:hover,
+.button.active {
 	border: 2px solid var(--button-hover-border);
 	background-color: var(--button-hover);
 	color: var(--text-hover);
@@ -377,7 +382,8 @@ div.dropdown-container {
 	--button-hover-border: blue;
 	border-bottom: 2px solid var(--border-color);
 }
-.button.bottom-only:hover {
+.button.bottom-only:hover,
+.button.bottom-only.active {
 	background-color: initial;
 	border-bottom: 2px solid var(--button-hover-border);
 }
