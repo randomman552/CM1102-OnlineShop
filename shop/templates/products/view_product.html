@@ -51,13 +51,25 @@
                     <h2>Overview</h2>
                         <ul>
                             <li>
-                                Mass: {{ product.mass }}
+                                Mass: {% if product._mass > 0 -%} 
+                                        {{- product.mass -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
                             </li>
                             <li>
-                                Surface Gravity: {{ product.surface_gravity }}
+                                Surface Gravity: {% if product._surface_gravity > 0 -%} 
+                                        {{- product.surface_gravity -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
                             </li>
                             <li>
-                                Orbital Period: {{ product.orbital_period }}
+                                Orbital Period: {% if product._orbital_period > 0 -%} 
+                                        {{- product.orbital_period -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
                             </li>
                         </ul>
                     <h2>purchase</h2>
