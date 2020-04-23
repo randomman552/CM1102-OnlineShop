@@ -75,12 +75,15 @@
                 <input class="price" name="minprice" id="minprice" 
                 type="number" placeholder="Min Price" min="0"
                 value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}"
-                size="10">
+                size="30">
+            </div>
+
+            <div class="row">
                 <label for="maxprice">To: £</label>
                 <input class="price" name="maxprice" id="maxprice" 
                 type="number" placeholder="Max Price" min="0"
                 value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}"
-                size="10">
+                size="30">
             </div>
 
             <div class="row">
