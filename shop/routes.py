@@ -399,7 +399,7 @@ def render_products():
 
     # Get the maximum number of pages
     limit = int(request.args["limit"])
-    max_page = product_count / limit
+    max_page = round((product_count / limit) + 0.5)
 
     # Get a list of all the categories from the database
     categories = get_categories()

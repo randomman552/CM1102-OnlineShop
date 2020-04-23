@@ -185,6 +185,7 @@
 .review:hover {
 	border: 1px solid black;
 }
+
 /* Any direct decendants have this applied */
 .review > * {
 	display: flex;
