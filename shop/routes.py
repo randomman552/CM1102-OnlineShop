@@ -152,9 +152,9 @@ def render_products():
                 "price": Product._price,
                 "rating": avg_rating.c.avg_rating,
                 "no.ratings": rating_count.c.rating_count,
-                "mass": Product.mass,
-                "surface_gravity": Product.surface_gravity,
-                "orbital_period": Product.orbital_period
+                "mass": Product._mass,
+                "surface_gravity": Product._surface_gravity,
+                "orbital_period": Product._orbital_period
             }
 
             # Get the relevant variables

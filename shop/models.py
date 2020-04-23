@@ -2,9 +2,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime, Float, BigInteger, func
+from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime, Float, BigInteger, DECIMAL, func
 from datetime import datetime
 import json
+from decimal import Decimal
 
 from . import app
 
@@ -60,28 +61,76 @@ class Product(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
     name = Column(Text, nullable=False)
 
-    # Price is stored as an integer so no precision is lost to floating point accuracy
+    # Price is stored as an decimal so no precision is lost to floating point accuracy
+    # As this is currently a signed number, its largest value is 9,223,372,036,854,775,807‬ (9 Quintillion)
     _price = Column(BigInteger, nullable=False, default=0)
     public = Column(Boolean, default=False)
     description = Column(Text, nullable=False, default="This is a description")
 
     # Some item specific attributes (could be changed if items the shop sells changes)
-    # Using floats here instead of integer because accuracy is less important for these variables
+    # Using DECIMAL here, so we can store numbers of massive size.
     # These all have a default of -1 so we can treat any value less than 0 as n/a
-    mass = Column(Float, default=-1)
-    surface_gravity = Column(Float, default=-1)
-    orbital_period = Column(Float, default=-1)
+    _mass = Column(DECIMAL(65, 0), default=-1)
+    _surface_gravity = Column(DECIMAL(64, 2), default=-1)
+    _orbital_period = Column(DECIMAL(64, 2), default=-1)
+
+    # Properties so that the format of our attributes are in the right format
+    # This common function handles the formatting
+    def __format_decimal(self, number, before: str = "", after: str = ""):
+        """
+        This function formats the number it is given into standard form 
+        if it is more than 10 characters long without it.\n
+        @param number - The number to format.\n
+        @param before - A string to add to the begining of the return value.\n
+        @param after - A string to add to the end of the return value.\n
+        @return - A string representation of that number in standard form.
+        """
+
+        return_value = str(number)
+
+        # If the number is more than 20 characters long, use the standard form
+        if len(return_value) > 10:
+            return_value = '{:.2e}'.format(number)
+        else:
+            if len(return_value.split(".")) > 1:
+                # Add zeros until it is at 2 significant figures
+                while len(return_value.split(".")[1]) < 2:
+                    return_value += "0"
+
+        # Return our formatted number
+        return f"{before}{return_value}{after}"
+
+    @property
+    def mass(self) -> str:
+        return self.__format_decimal(self._mass, after=" kg")
+
+    @mass.setter
+    def set_mass(self, number):
+        self._mass = Decimal(str(number))
+
+    @property
+    def surface_gravity(self) -> str:
+        return self.__format_decimal(self._surface_gravity, after=" m/s²")
+
+    @surface_gravity.setter
+    def set_gravity(self, number):
+        self._surface_gravity = Decimal(str(number))
+
+    @property
+    def orbital_period(self) -> str:
+        return self.__format_decimal(self._orbital_period, after=" years")
+
+    @orbital_period.setter
+    def set_orbital_period(self, number):
+        self._orbital_period = Decimal(str(number))
 
     @property
     def price(self) -> str:
-        price = str(round(self._price / 100, 2))
-        while len(price.split(".")[1]) < 2:
-            price += "0"
-        return f"£ {price}"
+        return self.__format_decimal(self._price / 100, before="£")
 
     @price.setter
     def set_price(self, number: float):
-        self._price = round(number * 10)
+        self._price = round(number * 100)
 
 # Review class
 
