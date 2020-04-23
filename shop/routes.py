@@ -311,8 +311,6 @@ def render_products():
         # Return our products list
         return products, product_count
 
-    # TODO: Could improve the functions for getting ratings
-    # using a join method like the one for the sort in the products function
     def get_pictures(products: list) -> list:
         """
         Get the relevant pictures from the database.\n
@@ -460,13 +458,26 @@ def render_view_product(product_id):
     product = Product.query.filter(Product.ID.like(product_id)).first()
     pictures = Picture.query.filter(Picture.productID.like(product_id)).all()
     reviews = Review.query.filter(Review.productID.like(product_id)).all()
+    users_temp = User.query.filter()
 
+    # Create review subquery to join with
+    review_subquery = Review.query.subquery()
+
+    users_temp = users_temp.outerjoin(
+        review_subquery, review_subquery.c.userID == User.ID).all()
+
+    # Make users list the right format (in order for reviews)
     users = []
-    # TODO: Make this a join query
-    # For each review, add the user that made that review to a list of users.
     for review in reviews:
-        user = User.query.filter(User.ID == review.userID).first()
-        users.append(user)
+        # For each user in the temp list
+        for user in users_temp:
+            # If a user in the temp list matches the user who wrote the review,
+            # append that user to the list
+            if user.ID == review.userID:
+                users.append(user)
+        else:
+            # If we finish the loop through users and did not find a match, add a None
+            users.append(None)
 
     review_avg = (db.session
                   .query(func.avg(Review.rating)
