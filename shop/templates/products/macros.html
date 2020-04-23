@@ -47,21 +47,21 @@
             {# Create a back link for the previous page if it is needed #}
             {% if cur_page - 1 > 0 -%}
                 <a href="{{ urlns.url + 'page=' + (cur_page - 1)|string }}">
-                    &#8592;
+                    {{- "&#8592;" -}}
                 </a>
             {%- endif %}
 
             {# Create a link for the current page #}
             &nbsp;
             <a href="{{ urlns.url + 'page=' + cur_page|string }}">
-                {{ cur_page }}
+                {{- cur_page -}}
             </a>
             &nbsp;
 
             {# Create a link for the next page if needed #}
             {% if cur_page + 1 <= max_page -%}
                 <a href="{{ urlns.url + 'page=' + (cur_page + 1)|string }}">
-                    &#8594;
+                    {{- "&#8594;" -}}
                 </a>
             {%- endif %}
         </div>
@@ -86,7 +86,6 @@
     {# TODO: Add anchor tags so it functions as a proper link #}
     <article class="product {{ mode }}" onclick="window.location = '/products/{{- product.ID -}}'">
         <div class="actions">
-            {# TODO: Need to add actions to these buttons #}
             <a class="button green-confirm">Add to cart</a>
             <a class="button">Add to wishlist</a>
         </div>

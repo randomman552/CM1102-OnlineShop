@@ -266,7 +266,13 @@ def render_products():
 
             # Product category filtering
             if "category" in request.args:
-                category = request.args["category"]
+                # Attempt to get category value
+                category = 0
+                try:
+                    if request.args["category"]:
+                        category = int(request.args["category"])
+                except:
+                    pass
 
                 # If the category is set (not null), then proceed to filter the products
                 if category:
@@ -282,7 +288,7 @@ def render_products():
 
                     # Filter the products
                     products = products.filter(
-                        product_categories.c.productID == category)
+                        product_categories.c.categoryID == category)
 
             # Return altered products query
             return products

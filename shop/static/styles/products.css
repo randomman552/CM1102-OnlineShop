@@ -79,23 +79,24 @@
 }
 
 /* Actions container rules (used for buttons) */
-.product > .actions {
-	display: none;
-}
-.product:hover > .actions {
+.actions {
 	position: absolute;
 	display: flex;
-	box-sizing: border-box;
-	right: 10px;
-	top: 10px;
+	bottom: 10px;
 	z-index: 0;
+}
+.product.grid > .actions {
+	left: 10px;
+	width: calc(100% - 20px);
 	flex-direction: column;
 }
-.product.grid:hover > .actions {
-	width: calc(100% - 20px);
-}
-.product.list:hover > .actions {
-	width: 30%;
+.product.list > .actions {
+	right: 10px;
+	height: calc(100% - 20px);
+	box-sizing: border-box;
+	width: 20%;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 /* Info container general rules */
