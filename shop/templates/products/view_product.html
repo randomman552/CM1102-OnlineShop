@@ -18,8 +18,10 @@
                         {# Picture slideshow #}
                         {% if pictures|length > 0 -%}
                             {% for picture in pictures %}
+                                {# The pictures here can be internal or external content, 
+                                    as long as the string in the database is correct #}
                                 <div class="slide-content">
-                                    <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                                    <img src="{{ picture.URL }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
                                 </div>
                             {% endfor %}
                         {%- else -%}
@@ -33,7 +35,7 @@
                     <div class="product image selector">
                         {% for i in range(pictures|length) %}
                             <div class="slide-selector">
-                                <img src="{{ url_for( 'static', filename=pictures[i].URL) }}" alt="Thumbnail">
+                                <img src="{{ pictures[i].URL }}" alt="Thumb">
                                 <div onclick="slideJmp({{i}})" class="slide-selector overlay"></div>
                             </div>
                         {% endfor %}
@@ -46,16 +48,15 @@
                     </div>
                 </div>
                 <div class="product purchase">
-                    {%- set overview = product.information["overview"] -%}
-                    {% if overview|length > 0 -%}
-                        <h2>overview</h2>
+                    <h2>Overview</h2>
                         <ul>
-                            {% for item in overview -%}
-                                <li>{{- item -}}</li>
-                            {%- endfor %}
+                            <li>
+                                Mass: {{ product.mass }} kg
+                            </li>
+                            <li>
+                                Surface Gravity: {{ product.surface_gravity }} m/s²
+                            </li>
                         </ul>
-                        <hr>
-                    {%- endif %}
                     <h2>purchase</h2>
                     <div class="product price">
                         <span id="price" style="width: 100%;">{{ product.price }}</span>

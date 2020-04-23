@@ -20,7 +20,10 @@
             let sort_options = [
                 "rating",
                 "price",
-                "no.ratings"
+                "no.ratings",
+                "mass",
+                "surface_gravity",
+                "orbital_period"
             ];
             let order_options =  [
                 "asc",
@@ -102,17 +105,23 @@
                     <div id="sort-by" class="dropdown hidden" onclick="toggleDropdown('sort-by')">
                         <span class="dropdown title">
                             {% if request.args['sort'] != "none" %}
-                                {{ request.args['sort'] }} - {{ request.args['order'] }} 
+                                {{ request.args['sort'].replace("_", " ") }} - {{ request.args['order'].replace("_", " ") }} 
                             {% else %}
                                 none
                             {% endif %}
                         </span>
                         <span class="dropdown arrow"><img src="{{ url_for('static', filename='icons/angle.svg') }}"></span>
                         <div id="sort-by content" class="dropdown content">
-                            <a onclick="setSort('price', 'asc')">price - ascending (low - high)</a>
-                            <a onclick="setSort('price', 'desc')">price - descending (high - low)</a>
-                            <a onclick="setSort('rating', 'desc')">rating - descending (high - low)</a>
-                            <a onclick="setSort('no.ratings', 'desc')">no.ratings - descending (high - low)</a>
+                            <a onclick="setSort('price', 'asc')">price - ascending</a>
+                            <a onclick="setSort('price', 'desc')">price - descending</a>
+                            <a onclick="setSort('rating', 'desc')">rating - descending</a>
+                            <a onclick="setSort('no.ratings', 'desc')">no.ratings - descending</a>
+                            <a onclick="setSort('surface_gravity', 'asc')">surface gravity - ascending</a>
+                            <a onclick="setSort('surface_gravity', 'desc')">surface gravity - descending</a>
+                            <a onclick="setSort('mass', 'asc')">mass - ascending</a>
+                            <a onclick="setSort('mass', 'desc')">mass - descending</a>
+                            <a onclick="setSort('orbital_period', 'asc')">orbital period - ascending</a>
+                            <a onclick="setSort('orbital_period', 'desc')">orbital period - descending</a>
                         </div>
                     </div>
                 </div>

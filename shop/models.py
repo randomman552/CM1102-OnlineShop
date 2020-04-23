@@ -2,7 +2,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime, Float, BigInteger, func
 from datetime import datetime
 import json
 
@@ -59,22 +59,18 @@ class User(UserMixin, db.Model):
 class Product(db.Model):
     ID = Column(Integer, primary_key=True, unique=True, nullable=False)
     name = Column(Text, nullable=False)
+
     # Price is stored as an integer so no precision is lost to floating point accuracy
-    _price = Column(Integer, nullable=False, default=0)
-    description = Column(Text, nullable=False, default="This is a description")
-    _information = Column(Text, nullable=False,
-                          default='{"overview":[], "detailed":[]}')
+    _price = Column(BigInteger, nullable=False, default=0)
     public = Column(Boolean, default=False)
+    description = Column(Text, nullable=False, default="This is a description")
 
-    # Information stores a json encoded dict,
-    # This allows me to store more information in that column(such as overview and detailed views).
-    @property
-    def information(self) -> dict:
-        return json.loads(self._information)
-
-    @information.setter
-    def set_information(self, dict_object: dict) -> None:
-        self._information = json.dumps(dict_object)
+    # Some item specific attributes (could be changed if items the shop sells changes)
+    # Using floats here instead of integer because accuracy is less important for these variables
+    # These all have a default of -1 so we can treat any value less than 0 as n/a
+    mass = Column(Float, default=-1)
+    surface_gravity = Column(Float, default=-1)
+    orbital_period = Column(Float, default=-1)
 
     @property
     def price(self) -> str:

@@ -151,7 +151,10 @@ def render_products():
             key_dict = {
                 "price": Product._price,
                 "rating": avg_rating.c.avg_rating,
-                "no.ratings": rating_count.c.rating_count
+                "no.ratings": rating_count.c.rating_count,
+                "mass": Product.mass,
+                "surface_gravity": Product.surface_gravity,
+                "orbital_period": Product.orbital_period
             }
 
             # Get the relevant variables
@@ -379,9 +382,9 @@ def render_products():
     # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER (in session)
     var_dict = {
         "view": ["grid", "list"],
-        "sort": ["rating", "price", "no.ratings"],
+        "sort": ["rating", "price", "no.ratings", "mass", "surface_gravity", "orbital_period"],
         "order": ["desc", "asc"],
-        "limit": ["20", "all"]
+        "limit": ["20", "30", "all"]
     }
     # Call handle_vars, if it returns something (a redirect), return that.
     retval = handle_vars(var_dict)

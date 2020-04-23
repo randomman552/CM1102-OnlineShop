@@ -93,7 +93,7 @@
         <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
             <div class="info-container {{ mode }} image">
                 {% if pictures|length > 0 %}
-                    <img src="{{ url_for('static', filename=pictures[0].URL) }}" alt="Image of Product">
+                    <img src="{{ pictures[0].URL }}" alt="Image of Product">
                 {% else %}
                     <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
                 {% endif %}
@@ -104,22 +104,17 @@
         </div>
         <div class="info-container {{ mode }} reverse">
             <div class="info-container {{ mode }} description">
-                {% set overview = product.information['overview'] -%}
-                {%- if overview|length > 0 -%}
-                    <ul>
-                        {%- for item in overview -%}
-                            <li>{{ item }}</li>
-                        {%- endfor -%}
-                    </ul>
-                {%- else -%}
-                    {# if the product description is longer than 300 characters, limit it to 300 characters #}
-                    {% if product.description|length > 300 %}
-                        {{ product.description[:300] -}} {{- "..." }}
-                    {# Otherwise display the whole description #}
-                    {% else %}
-                        {{ product.description }}
-                    {% endif %}
-                {%- endif %}
+                <ul>
+                    <li>
+                        Mass: {{ product.mass }} kg
+                    </li>
+                    <li>
+                        Surface Gravity: {{ product.surface_gravity }} m/s²
+                    </li>
+                    <li>
+                        Orbital Period: {{ product.orbital_period }} years
+                    </li>
+                </ul>
             </div>
             <div class="info-container grid novis">
                 <div class="info-container {{ mode }} price">
