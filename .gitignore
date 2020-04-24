@@ -1,6 +1,7 @@
 LICENSE.txt
 Include/*
 Lib/*
+venv/*
 Scripts/*
 tcl/*
 .gitignore
