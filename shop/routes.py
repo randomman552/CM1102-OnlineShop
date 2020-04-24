@@ -4,10 +4,11 @@ import random
 from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
 from werkzeug.utils import secure_filename
-from .forms import AddReviewForm
+from .forms import AddReviewForm, ShippingForm, BillingForm, ReviewForm
 from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app
 import time
+from datetime import timedelta
 
 
 @app.route("/")
@@ -505,3 +506,111 @@ def render_view_product(product_id):
         review_form=review_form,
         users=users
     )
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/shipping', methods=['GET', 'POST'])
+def shipping():
+    form = ShippingForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        session.permanent = True
+        firstname = request.form["firstname"]
+        session["firstname"] = firstname
+
+        lastname = request.form["lastname"]
+        session["lastname"] = lastname       
+
+        address1 = request.form["address1"]
+        session["address1"] = address1
+
+        address2 = request.form["address2"]
+        session["address2"] = address2
+       
+        postcode = request.form["postcode"]
+        session["postcode"] = postcode
+
+        email = request.form["email"]
+        session["email"] = email
+
+        #flash('Shipping information valid!')
+        return redirect(url_for('billing'))
+    
+    return render_template('shipping.html', title='Shipping', form=form)
+
+
+@app.route('/billing', methods=['GET', 'POST'])
+def billing():
+    form = BillingForm()
+    
+    if request.method == 'POST' and form.validate_on_submit():
+        req = request.form
+
+        cardholdername = req["cardholdername"]
+        session["cardholdername"] = cardholdername
+
+        cardnumber = req["cardnumber"]
+        session["cardnumber"] = cardnumber
+
+        cardnumber2 = req["cardnumber2"]
+        session["cardnumber2"] = cardnumber2
+
+        cardnumber3 = req["cardnumber3"]
+        session["cardnumber3"] = cardnumber3
+
+        cardnumber4 = req["cardnumber4"]
+        session["cardnumber4"] = cardnumber4
+
+        cvv = req["cvv"]
+        session["cvv"] = cvv
+
+        #expirydate = req["expirydate"]
+        #expirymonth = req["expirymonth"]
+
+        #flash("Billing information valid!")
+        return redirect(url_for('review'))
+
+    return render_template('billing.html', title='Billing', form=form)
+
+
+@app.route('/review', methods=['GET', 'POST'])
+def review():
+    form = ReviewForm()
+
+    #shipping info
+    firstname = session["firstname"]
+    lastname = session["lastname"]
+    address1 = session["address1"]
+    address2 = session["address2"]
+    postcode = session["postcode"]
+
+    #billing info
+    cardholdername = session["cardholdername"]
+    cardnumber = session["cardnumber"]
+    cardnumber2 = session["cardnumber2"]
+    cardnumber3 = session["cardnumber3"]
+    cardnumber4 = session["cardnumber4"]
+    cvv = session["cvv"]
+
+    if request.method == 'POST':
+        if "editshipping" in request.form:
+            return redirect(url_for('shipping'))
+
+        elif "editbilling" in request.form:
+            return redirect(url_for('billing'))
+
+        else:
+            return redirect(url_for('receipt'))
+    
+    return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, cvv=cvv)
+
+
+
+
+
+@app.route('/receipt', methods=['GET', 'POST'])
+def receipt():
+
+    firstname = session["firstname"] 
+    email = session["email"]
+
+    return render_template('receipt.html',  title='Receipt', firstname=firstname, email=email)
+

@@ -1,16 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, IntegerField, RadioField, SelectField
-from wtforms import validators
+from wtforms import StringField, IntegerField, TextAreaField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, Email, NumberRange
-
-
-
-class AddReviewForm(FlaskForm):
-    stars = RadioField("Stars: ", choices=[
-                       ("1", '1 Star'), ("2", '2 Star'), ("3", '3 Star'), ("4", '4 Star'), ("5", '5 Star')])
-    comment = TextAreaField("Comment: ", validators=[
-                            validators.length(max=140, message="Your comment must be a maximum of 140 characers long.")])
-    submit = SubmitField("Add review")
 
 class ShippingForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired(message='Please fill in your first name'), Length(min=2, max=15, message='Last name must be at least 2 characters long')])
