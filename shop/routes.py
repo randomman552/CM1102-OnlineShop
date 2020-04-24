@@ -645,7 +645,6 @@ def render_view_product(product_id):
         users=users
     )
 
-@app.route('/', methods=['GET', 'POST'])
 @app.route('/shipping', methods=['GET', 'POST'])
 def shipping():
     form = ShippingForm()
