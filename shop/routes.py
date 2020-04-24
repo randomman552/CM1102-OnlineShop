@@ -3,7 +3,7 @@ import os
 import random
 from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
-from .forms import AddReviewForm, RegisterForm, LoginForm, PasswordForm, DeleteUserForm
+from .forms import AddReviewForm, RegisterForm, LoginForm, PasswordForm, DeleteUserForm, ShippingForm, BillingForm, ReviewForm
 from flask_login import login_user, logout_user, login_required, login_fresh
 from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app

@@ -1,0 +1,456 @@
+/* Root element for setting variables */
+:root {
+	font-size: 16px;
+	font-family: sans-serif;
+	--bg-color: #dddddd;
+	--fg-color: #ffffff;
+	--border-color: #707070;
+	--button-hover: #dddddd;
+	--text-color: #000000;
+}
+
+/* Body attributes */
+body {
+	background-color: var(--bg-color);
+	margin: 0;
+	padding: 0;
+}
+
+/*Header attributes */
+nav.main {
+	top: 0;
+	z-index: 10;
+	box-sizing: border-box;
+	width: 100%;
+	position: fixed;
+	height: 4rem;
+	margin: 0;
+	padding: 0 3rem 0 3rem;
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	background: var(--fg-color);
+	justify-content: space-evenly;
+}
+nav.sub-nav {
+	display: inline-flex;
+	height: 100%;
+	flex-basis: 33%;
+	flex-shrink: 1;
+}
+nav.sub-nav.search {
+	flex-shrink: 2;
+	align-items: center;
+	justify-content: center;
+}
+nav.reversed {
+	flex-direction: row-reverse;
+}
+
+/* Form attributes */
+form {
+	text-align: center;
+}
+/* Form input attributes */
+input,
+select,
+textarea {
+	padding: 5px 10px 5px 10px;
+	border-radius: 5px;
+	border: 1px solid var(--border-color);
+	transition: 0.3s;
+}
+input:hover,
+select:hover,
+textarea:hover {
+	background-color: var(--button-hover);
+}
+input[type="submit"] {
+	cursor: pointer;
+}
+/* Options in select attributes */
+option {
+	background-color: white;
+}
+/* Search form attributes */
+form.search {
+	display: inline-flex;
+	flex-direction: row;
+	flex-basis: 100%;
+	align-items: center;
+}
+form.search input[type = "text"],
+form.search button[type = "submit"] {
+	padding: 0;
+	font-size: inherit;
+	box-sizing: border-box;
+	margin: 0;
+	border: 1px solid var(--bg-color);
+	text-align: center;
+	height: 2.5rem;
+	flex-basis: 60rem;
+	flex-shrink: 1;
+	transition: 0.5s;
+	border-radius: 0.5rem 0 0 0.5rem;
+}
+form.search button[type = "submit"] {
+	cursor: pointer;
+	flex-basis: 2.5rem;
+	flex-shrink: 0;
+	border-radius: 0 0.5rem 0.5rem 0;
+}
+form.search button > img {
+	width: 90%;
+	height: 90%;
+}
+form.search input[type = "text"]:hover,
+form.search button[type = "submit"]:hover {
+	background: var(--button-hover);
+}
+
+/* Attributes for main section of the page */
+main {
+	margin-left: 15%;
+	border-radius: 1em;
+	width: 70%;
+	text-align: center;
+	background: var(--fg-color);
+	margin-top: 4.5rem;
+	padding: 1rem;
+}
+
+/* Popup container attributes (NOT CURRENTLY IN USE)*/
+.popup {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	display: inline-block;
+	cursor: pointer;
+}
+.popup .popuptext {
+	visibility: hidden;
+	width: 160px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 8px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 125%;
+	left: 50%;
+	margin-left: -80px;
+}
+.popup .show {
+	visibility: visible;
+	transition: 0.2s;
+}
+
+/* Error and warning attributes */
+.error {
+	display: inline-block;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #ff8080;
+}
+
+.warn {
+	display: inline-block;
+	box-shadow: 1px black inset;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #ffec84;
+}
+
+.info {
+	display: inline-block;
+	margin: .5rem;
+	padding: .5rem;
+	width: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-align: center;
+	background: #8fd6ff;
+}
+
+/* Dropdown attributes */
+.dropdown {
+	text-transform: capitalize;
+	width: 240px;
+	height: 40px;
+	display: flex;
+	flex-direction: row;
+	position: relative;
+	z-index: 1;
+	border: 1px solid var(--bg-color);
+	background-color: white;
+	border-radius: 10px 10px 0 0;
+	padding: 5px;
+	cursor: pointer;
+	justify-content: center;
+	align-items: center;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* When hiden, the dropdown has no shadow and has a border radius */
+.dropdown.hidden {
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+/* Dropdown title and arrow attributes */
+.dropdown.title {
+	box-shadow: none;
+	flex-basis: 80%;
+	border: none;
+	border-right: 1px solid var(--bg-color);
+	border-radius: 0;
+	align-items: center;
+	padding: 0;
+	height: 100%;
+}
+.dropdown.arrow {
+	box-shadow: none;
+	overflow: hidden;
+	height: 100%;
+	flex-basis: 20%;
+	border: none;
+	padding: 0;
+}
+
+/* When hidden, then dropdown arrow is flipped and the content is hidden */
+.dropdown.hidden > .dropdown.arrow > img {
+	transform: rotate(180deg);
+}
+.dropdown.hidden > .dropdown.content {
+	display: none;
+}
+
+/* Dropdown content attributes */
+.dropdown.content {
+	border-radius: 0 0 10px 10px;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	width: 100%;
+	flex-direction: column;
+	padding: 0px;
+	position: absolute;
+	top: 100%;
+	height: auto;
+}
+.dropdown.content > * {
+	transition: 0.25s;
+	cursor: pointer;
+	display: flex;
+	height: 40px;
+	width: 100%;
+	background-color: white;
+	border-bottom: 1px solid var(--bg-color);
+	justify-content: center;
+	align-items: center;
+}
+.dropdown.content > *:last-child {
+	border-radius: 0 0 10px 10px;
+}
+
+/* Active dropdown element attributes*/
+.dropdown.content > *:hover {
+	background-color: var(--button-hover);
+}
+.dropdown.content > *.active {
+	font-weight: bold;
+}
+
+/* Required for dropdown labels */
+label.dropdown-label {
+	text-transform: capitalize;
+	padding-right: 15px;
+}
+div.dropdown-container {
+	display: flex;
+	position: relative;
+	align-items: center;
+	justify-items: center;
+	z-index: 1;
+}
+
+/* Star attributes (used for product ratings) */
+/* Is available in the global styles sheet so it can be used anywhere needed */
+.star {
+	width: 15px;
+	height: 15px;
+	margin: 2px;
+	background-size: 100% 100%;
+}
+.star.full {
+	background-image: url(../icons/star-full.svg);
+}
+.star.half {
+	background-image: url(../icons/star-half.svg);
+}
+.star.empty {
+	background-image: url(../icons/star-empty.svg);
+}
+.star.number {
+	width: auto;
+	font-size: smaller;
+}
+.star.number::before {
+	content: "(";
+}
+.star.number::after {
+	content: ")";
+}
+
+/* Rating container attributes (used to contain stars) */
+.rating-container {
+	display: flex;
+	flex-direction: row;
+	margin: 0 5px 0 5px;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+}
+
+/* Button styles */
+.button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	color: initial;
+	border-radius: 10px;
+	padding: 10px 20px 10px 20px;
+	font-size: 1rem;
+	transition: 0.5s;
+	cursor: pointer;
+	margin: 2px;
+	text-transform: capitalize;
+	--border-color: #4855a0;
+	--background-color: white;
+	--text-color: black;
+	--button-hover: rgb(217, 224, 255);
+	--button-hover-border: #4855a0;
+	--text-hover: black;
+}
+/* The hover style of a button can be set by using the variables in the following example */
+.button.green-confirm {
+	--border-color: rgb(74, 129, 48);
+	--background-color: rgb(74, 129, 48);
+	--text-color: white;
+	--button-hover: rgb(51, 88, 33);
+	--button-hover-border: rgb(51, 88, 33);
+	--text-hover: white;
+}
+.button.red-confirm {
+	--border-color: rgb(129, 48, 48);
+	--background-color: rgb(129, 48, 48);
+	--text-color: white;
+	--button-hover: rgb(88, 33, 33);
+	--button-hover-border: rgb(88, 33, 33);
+	--text-hover: white;
+}
+.button {
+	border: 2px solid var(--border-color);
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+.button:hover,
+.button.active {
+	border: 2px solid var(--button-hover-border);
+	background-color: var(--button-hover);
+	color: var(--text-hover);
+}
+/* This button style needs it's height to be constrained by a container */
+.button.bottom-only {
+	border: none;
+	margin: 0;
+	padding: 0 5px 0 5px;
+	height: 100%;
+	box-sizing: border-box;
+	border-radius: 0;
+	--border-color: var(--fg-color);
+	--button-hover-border: blue;
+	border-bottom: 2px solid var(--border-color);
+}
+.button.bottom-only:hover,
+.button.bottom-only.active {
+	background-color: initial;
+	border-bottom: 2px solid var(--button-hover-border);
+}
+/* Small button, intended for use in places like the page switcher */
+.button.small {
+	border: 1px solid var(--border-color);
+	padding: 2px;
+	border-radius: 3px;
+}
+/* For buttons containing images, the image will need to size itself */
+.button > img {
+	max-width: 100%;
+	max-height: 100%;
+	height: auto;
+	width: auto;
+}
+
+/* Heading styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	display: block;
+	text-transform: capitalize;
+	border: none;
+	border-bottom: 1px solid var(--bg-color);
+}
+h1 {
+	font-size: 1.75rem;
+}
+h2 {
+	font-size: 1.25rem;
+}
+
+/* List styles */
+ul {
+	padding: 0 20px 0 20px;
+	margin: 0;
+	text-align: left;
+	width: 90%;
+}
+
+/* HR styles */
+hr {
+	width: 100%;
+	border: none;
+	border-bottom: 1px solid var(--bg-color);
+}
+
+/* Tab select styles */
+.tab.select {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Attributes for mobile (small screen) display */
+@media only screen and (max-width: 1550px) {
+	main {
+		margin-left: unset;
+		border-radius: unset;
+		width: 100%;
+		box-sizing: border-box;
+	}
+}
