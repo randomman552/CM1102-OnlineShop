@@ -109,8 +109,14 @@
                 {{ review_form.comment.label }}
                 {{ review_form.comment(rows='5', cols='50') }}
                 {{ review_form.submit }}
-                {% for error in review_form.stars.errors %}
-                    {{ error }}
+
+                {# For each error, generate a peice of JS which displays an error #}
+                {% for errors in [review_form.stars.errors, review_form.comment.errors] %}
+                    {% for error in errors %}
+                        <script defer>
+                            alert('{{error}}')
+                        </script>
+                    {% endfor %}
                 {% endfor %}
             </form>
             <div id="reviews tab" class="review-container tab">
