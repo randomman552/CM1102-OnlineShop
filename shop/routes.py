@@ -51,10 +51,8 @@ def outputWishlist():
 @app.route("/addWishlist")
 def addWishlist():
     pid= str(request.args.get('pid'))
-    #TODO Change UserID to equal Current_User.ID when login is set up.
     userID = current_user.ID
-    #userValid = db.session.query(User.ID).filter_by(ID=UID).scalar() is not None
-    userValid = True
+    userValid = db.session.query(User.ID).filter_by(ID=UID).scalar() is not None
     if userValid == True:
         productValid = db.session.query(Product.ID).filter_by(ID=pid).scalar() is not None
         if productValid == True:
