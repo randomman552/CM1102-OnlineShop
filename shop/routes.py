@@ -3,18 +3,158 @@ import os
 import random
 from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
-from werkzeug.utils import secure_filename
-from .forms import AddReviewForm, ShippingForm, BillingForm, ReviewForm
+from .forms import AddReviewForm, RegisterForm, LoginForm, PasswordForm, DeleteUserForm
+from flask_login import login_user, logout_user, login_required, login_fresh
 from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app
 import time
 from datetime import timedelta
 
 
+def basket_setup():
+    if "basket" not in session:
+        session["basket"] = []
+
 @app.route("/")
 def render_home():
+    basket_setup()
     return render_template("layout.html")
 
+@app.route("/wishlist")
+def outputWishlist():
+    userID = current_user.ID
+    #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
+    products = Wishlist.query.filter_by(userID = userID).all()
+    wishlistEmpty = db.session.query(Wishlist.ID).filter_by(userID=userID) is not None
+    counter = 0
+    isEmpty = False
+    arrayWishlist = ([])
+    if wishlistEmpty == True:
+        productsOnWishlist = []
+        for i in products:
+            temp = i.productID
+            productsOnWishlist.append(temp)
+            productInformation = Product.query.filter_by(ID=temp).all()
+            for i in productInformation:
+                #making a new list every iteration to append to the 2D array arrayWishlist.
+                wishlistProductDetails = []
+                wishlistProductDetails.append(str(productInformation[0].name))
+                wishlistProductDetails.append(str(productInformation[0].price))
+                wishlistProductDetails.append(str(productInformation[0].description))
+                wishlistProductDetails.append(str(productInformation[0].ID))
+
+                arrayWishlist.append(wishlistProductDetails)
+                print (counter)
+                counter +=1
+        #print (str(finalWishList[0]))
+    else:
+        isEmpty = True
+        
+
+    #END of Function
+    return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
+
+@app.route("/addWishlist")
+def addWishlist():
+    pid= str(request.args.get('pid'))
+    userID = current_user.ID
+    userValid = db.session.query(User.ID).filter_by(ID=userID).scalar() is not None
+    if userValid == True:
+        productValid = db.session.query(Product.ID).filter_by(ID=pid).scalar() is not None
+        if productValid == True:
+            #new_item = User(ID = 5000, email = "BazzTest3", password_hash = "12345")
+            new_item = Wishlist(productID = pid, userID=userID)
+            wishlistValid = db.session.query(Wishlist.ID).filter_by(userID=userID, productID=pid).scalar() is not None
+            if wishlistValid != True:
+                db.session.add(new_item)
+                db.session.commit()
+                return redirect(f'/products/'+pid)
+            else:
+                return "Error message duplicate wishlist listing found. Please return."
+        else:
+            return "Invalid Product ID. please return back to home"
+        return "Present"
+    else:
+        return redirect('/register')
+
+
+@app.route("/deleteWishlist")
+def deleteWish():
+    productID = request.args.get('pid')
+    userID = current_user.ID
+    Wishlist.query.filter_by(userID=userID, productID=productID).delete()
+    db.session.commit()
+    return redirect('/wishlist')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    #check and see if user exists in database
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first() #emails are unique shouldn't get more than one result.
+        if user:
+            if user.verify_password(form.password.data): #check hash password instead of string password.
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('Account'))
+
+        return '<h1>Invalid email or password</h1>' #If there is no match
+
+
+    return render_template('login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def signup():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        new_user = User(email=form.email.data, password=form.password.data)
+        db.session.add(new_user) #Pass to db.
+        db.session.commit()
+
+        return redirect("/login")
+
+    return render_template('signup.html', form=form)
+
+@app.route('/password_change', methods=["GET", "POST"])
+@login_required
+def user_password_change():
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        user = current_user
+        user.password = form.password.data
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect(url_for('Account'))
+
+    return render_template('password_change.html', form=form)
+
+@app.route('/delete_account', methods=["GET", "POST"])
+@login_required
+def delete():
+    form = DeleteUserForm()
+
+    if form.validate_on_submit():
+        user = current_user
+        db.session.delete(user)
+        db.session.commit()
+
+        logout_user()
+        return redirect(url_for('login'))
+
+    return render_template('delete_account.html', form=form)
+
+@app.route('/account')
+@login_required #can not access directly
+def Account():
+    return render_template('Account.html', name=current_user.email)
+
+@app.route('/logout')
+@login_required
+def logout(): #redirect to login when this route is reached.
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route("/products")
 def render_products():
@@ -419,7 +559,6 @@ def render_products():
                            categories=categories,
                            mode="edit")
 
-
 @app.route("/products/new", methods=["GET", "POST"])
 def render_new_product():
     # Give the new product a random name, which we can then use to get its ID from the database
@@ -434,7 +573,6 @@ def render_new_product():
     new_product.name = "Product name"
     db.session.commit()
     return redirect(f"/products/{new_product.ID}")
-
 
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
@@ -614,3 +752,60 @@ def receipt():
 
     return render_template('receipt.html',  title='Receipt', firstname=firstname, email=email)
 
+@app.route("/basket")
+def render_basket():
+    def get_pictures(products: list) -> list:
+        """
+        Get the relevant pictures from the database.\n
+        @param products - The list of products to get the pictures for\n
+        @return - A list of lists containing the pictures for the corresponding products in the products list
+        """
+
+        # Setup return list with lists for each product
+        pictures_return = [[] for _ in range(len(products))]
+
+        # If the products list is empty, return an empty list
+        if len(products) == 0:
+            return pictures_return
+
+        # Create a list of product IDs to get the pictures for
+        product_ids = []
+        for product in products:
+            product_ids.append(product.ID)
+
+        # Get pictures from the database
+        pictures = Picture.query.filter(
+            Picture.productID.in_(product_ids)).all()
+
+        # Append the corresponding pictures to the correct list
+        for i in range(len(products)):
+            for picture in pictures:
+                if picture.productID == products[i].ID:
+                    pictures_return[i].append(picture)
+        return pictures_return
+
+    basket_setup()
+    products = Product.query.filter(Product.ID.in_(session["basket"])).all()
+    pictures = get_pictures(products)
+    #for i in range(len(products)):
+        #for product in products:
+            #products = products.filter(Product._price).all()
+
+
+    return render_template("Basket.html",
+                           products=products,
+                           pictures=pictures,
+                           #TotalPrice = TotalPrice,
+                           mode="edit")
+
+@app.route("/basket/add/<int:product_id>")
+def add_to_basket(product_id):
+    session["basket"].append(product_id)
+    redirect_url = request.args["redirect"]
+    return redirect(redirect_url)
+
+@app.route("/basket/remove/<int:product_id>")
+def remove_from_basket(product_id):
+    session["basket"].remove(product_id)
+    redirect_url = request.args["redirect"]
+    return redirect(redirect_url)

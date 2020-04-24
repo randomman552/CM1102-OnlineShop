@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextAreaField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Length, Email, NumberRange
+from wtforms import StringField, TextAreaField, SubmitField, IntegerField, RadioField, PasswordField, BooleanField
+from wtforms import validators
 
 class ShippingForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired(message='Please fill in your first name'), Length(min=2, max=15, message='Last name must be at least 2 characters long')])
@@ -27,3 +27,25 @@ class ReviewForm(FlaskForm):
     submit3 = SubmitField('Pay now')
     editshipping = SubmitField('Edit Shipping')
     editbilling = SubmitField('Edit Billing')
+class AddReviewForm(FlaskForm):
+    stars = RadioField("Stars: ", choices=[
+                       ("1", '1 Star'), ("2", '2 Star'), ("3", '3 Star'), ("4", '4 Star'), ("5", '5 Star')])
+    comment = TextAreaField("Comment: ", validators=[
+                            validators.length(max=140, message="Your comment must be a maximum of 140 characers long.")])
+    submit = SubmitField("Add review")
+
+class LoginForm(FlaskForm):
+    email = StringField('email', validators=[validators.InputRequired(), validators.Email(message='Invalid email'), validators.Length(max=50)]) #setting minimum and maximum lengths.
+    password = PasswordField('password', validators=[validators.InputRequired(), validators.Length(min=8, max=80)])
+    remember = BooleanField('remember me') #remember me checkbox
+
+class RegisterForm(FlaskForm):
+    email = StringField('email', validators=[validators.InputRequired(), validators.Email(message='Invalid email'), validators.Length(max=50)])
+    password = PasswordField('password', validators=[validators.InputRequired(), validators.Length(min=8, max=80)])
+
+class PasswordForm(FlaskForm):
+    password = PasswordField('password', validators=[validators.InputRequired(), validators.Length(min=8, max=80)])
+
+
+class DeleteUserForm(FlaskForm):
+    delete = SubmitField('Delete')
