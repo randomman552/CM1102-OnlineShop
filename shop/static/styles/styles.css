@@ -437,6 +437,14 @@ hr {
 	border-bottom: 1px solid var(--bg-color);
 }
 
+/* Tab select styles */
+.tab.select {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
 /* Attributes for mobile (small screen) display */
 @media only screen and (max-width: 1550px) {
 	main {

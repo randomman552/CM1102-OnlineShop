@@ -9,8 +9,6 @@ from .models import db, func, Product, Picture, Review, User, Wishlist, Category
 from . import app
 import time
 
-# TODO: Improve mobile experience
-
 
 @app.route("/")
 def render_home():

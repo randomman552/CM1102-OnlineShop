@@ -13,8 +13,8 @@
         <div class="product main_container">
             <h1>{{ product.name }}</h1>
             <div class="product row">
-                <div class="product image" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
-                    <div class="product image container">
+                <div class="product image-container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
+                    <div class="product image">
                         {# Picture slideshow #}
                         {% if pictures|length > 0 -%}
                             {% for picture in pictures %}
@@ -32,7 +32,7 @@
                         <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
                         <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
                     </div>
-                    <div class="product image selector">
+                    <div class="product image-selector">
                         {% for i in range(pictures|length) %}
                             <div class="slide-selector">
                                 <img src="{{ pictures[i].URL }}" alt="Thumb">
@@ -87,7 +87,7 @@
                     </button>
                 </div>
             </div>
-            <div id="reviews" class="product row" style="height: unset; justify-content: center;">
+            <div id="reviews" class="tab select">
                 <button id="reviews button" class="tab-button button bottom-only active" onclick="switchTab('reviews')">
                     <h2 style="border: none;">Reviews</h2>
                 </button>
