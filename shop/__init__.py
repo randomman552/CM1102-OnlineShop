@@ -4,9 +4,11 @@ from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 import os
 
+# Setup the flask app
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+# Setup the flask upload variables (currently not used)
 UPLOAD_FOLDER = 'static/products/temp'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 

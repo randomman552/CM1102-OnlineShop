@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Wishlist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+{% endblock %}
+
+{% block content %}
+{% if isEmpty == False: %}
+{% for i in range(0,counter): %}
+  <div class = "info-container.description"><a href="/products/{{wishListItems[i][3]}}">
+  <p>Name: "{{wishListItems[i][0]}}"</br>
+  Price: "{{wishListItems[i][1]}}"</br>
+  Description: "{{wishListItems[i][2]}}"</br></p>
+
+
+  </a><a href="/deleteWishlist?pid={{wishListItems[i][3]}}" class="button"><p>Delete Item</p></a>
+ </div>
+{% endfor %}
+{%else:%}
+<h1>YOU HAVE NO WISHLIST ITEMS</h1>
+{% endif %}
+
+{% endblock %}

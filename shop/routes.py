@@ -1,24 +1,84 @@
-#File to hold routes (we can split this into many separate files if it gets too big)
+# File to hold routes (we can split this into many separate files if it gets too big)
 import os
 import random
-from flask import render_template, redirect, request, flash, url_for, session, Flask
+from flask_login import current_user, login_required
+from flask import render_template, redirect, request, flash, url_for, session
 from werkzeug.utils import secure_filename
-from .forms import *
-from .models import db, Product, Picture, Review, ProductCategory, Category, User, func
-from sqlalchemy import and_
+from .forms import AddReviewForm
+from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app
-from flask_wtf import FlaskForm
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import time
 
 @app.route("/")
 def render_home():
     return render_template("layout.html")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route("/wishlist")
+
+def outputWishlist():
+    userID = current_user.ID
+    #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
+    products = Wishlist.query.filter_by(userID = userID).all()
+    wishlistEmpty = db.session.query(Wishlist.ID).filter_by(userID=userID) is not None
+    counter = 0
+    isEmpty = False
+    arrayWishlist = ([])
+    if wishlistEmpty == True:
+        productsOnWishlist = []
+        for i in products:
+            temp = i.productID
+            productsOnWishlist.append(temp)
+            productInformation = Product.query.filter_by(ID=temp).all()
+            for i in productInformation:
+                #making a new list every iteration to append to the 2D array arrayWishlist.
+                wishlistProductDetails = []
+                wishlistProductDetails.append(str(productInformation[0].name))
+                wishlistProductDetails.append(str(productInformation[0].price))
+                wishlistProductDetails.append(str(productInformation[0].description))
+                wishlistProductDetails.append(str(productInformation[0].ID))
+
+                arrayWishlist.append(wishlistProductDetails)
+                print (counter)
+                counter +=1
+        #print (str(finalWishList[0]))
+    else:
+        isEmpty = True
+        
+
+    #END of Function
+    return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
+
+@app.route("/addWishlist")
+def addWishlist():
+    pid= str(request.args.get('pid'))
+    userID = current_user.ID
+    userValid = db.session.query(User.ID).filter_by(ID=UID).scalar() is not None
+    if userValid == True:
+        productValid = db.session.query(Product.ID).filter_by(ID=pid).scalar() is not None
+        if productValid == True:
+            #new_item = User(ID = 5000, email = "BazzTest3", password_hash = "12345")
+            new_item = Wishlist(productID = pid, userID=userID)
+            wishlistValid = db.session.query(Wishlist.ID).filter_by(userID=userID, productID=pid).scalar() is not None
+            if wishlistValid != True:
+                db.session.add(new_item)
+                db.session.commit()
+                return redirect(f'/products/'+pid)
+            else:
+                return "Error message duplicate wishlist listing found. Please return."
+        else:
+            return "Invalid Product ID. please return back to home"
+        return "Present"
+    else:
+        return redirect('/register')
+
+
+@app.route("/deleteWishlist")
+def deleteWish():
+    productID = request.args.get('pid')
+    userID = current_user.ID
+    Wishlist.query.filter_by(userID=userID, productID=productID).delete()
+    db.session.commit()
+    return redirect('/wishlist')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

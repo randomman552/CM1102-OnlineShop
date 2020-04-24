@@ -1,0 +1,141 @@
+{% macro rating(score, count=None, link="#reviews") -%}
+    {# Score should be the score to display, and count should be the number of reviews to display after #}
+    <a href="{{- link -}}" class="rating-container">
+        {% for star_num in range(5) -%}
+            {# Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating #}
+            {% set star_num = score - star_num %}
+            {# If the value left over is greater than 1, thats a full star #}
+            {% if star_num >= 1 %}
+                <div class="star full"></div>
+            {# If the value left over is between 1 and 0, thats a half star #}
+            {% elif star_num < 1 and star_num > 0 %}
+                <div class="star half"></div>
+            {# If the value left over is lower than 1, thats an empty star #}
+            {% else %}
+                <div class="star empty"></div>
+            {% endif %}
+        {%- endfor %}
+
+        {# Put the number of reviews after the stars if it has been set #}
+        {% if count != None -%}
+            <div class="star number">{{ count }}</div>
+        {%- endif %}
+    </a>
+{%- endmacro %}
+
+{% macro page_slider(cur_page, max_page) -%}
+    {# Build a page slider #}
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;">
+        {# Round the max_page up to ensure it is the right value #}
+        {% set max_page = max_page + 0.5|round %}
+        
+        <label>Page</label>
+        
+        {# Build the base redirect URL #}
+        {# Have to do this a stupid way with namespaces 
+            as jinja2 can't update a variable that is outside the local scope #}
+        {% set urlns = namespace(url=request.base_url) %}
+        {% set urlns.url = urlns.url + "?" %}
+        {% for arg in request.args %}
+            {# Ignore the page arg, so we don't end up with duplicate variables #}
+            {% if arg != "page" %}
+                {% set urlns.url = urlns.url + arg + request.args[arg] + "&" %}
+            {% endif %}
+        {% endfor %}
+        
+        <div>
+            {# Create a back link for the previous page if it is needed #}
+            {% if cur_page - 1 > 0 -%}
+                <a href="{{ urlns.url + 'page=' + (cur_page - 1)|string }}">
+                    {{- "&#8592;" -}}
+                </a>
+            {%- endif %}
+
+            {# Create a link for the current page #}
+            &nbsp;
+            <a href="{{ urlns.url + 'page=' + cur_page|string }}">
+                {{- cur_page -}}
+            </a>
+            &nbsp;
+
+            {# Create a link for the next page if needed #}
+            {% if cur_page + 1 <= max_page -%}
+                <a href="{{ urlns.url + 'page=' + (cur_page + 1)|string }}">
+                    {{- "&#8594;" -}}
+                </a>
+            {%- endif %}
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro arg_preserver(to_ignore) -%}
+    {# This macro will build a series of hidden inputs for a form, 
+        these will preserve any arguments in the URL.
+        Any arguments specified in the to_ignore list will not be added #}
+    {% for arg in request.args -%}
+        {# If the arg is not in to_ignore, add an input for it #}
+        {% if arg not in to_ignore -%}
+            <input type="hidden" name="{{- arg -}}" value="{{- request.args[arg] -}}">
+        {%- endif %}
+    {%- endfor -%}
+{%- endmacro %}
+
+{% macro product(product, pictures, ratings, mode) -%}
+    {# This macro will build a representation of a product (as shown on the product page)
+        The mode can be "grid" or "list" and changes the styles for the product #}
+    <article class="product {{ mode }}">
+        {# Add an anchor tag which covers the whole product (better for acsesibility) #}
+        <a class="hidden-link" href="/products/{{- product.ID -}}"></a>
+
+        <div class="actions">
+            <a class="button green-confirm">Add to cart</a>
+            <a class="button">Add to wishlist</a>
+        </div>
+        <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
+            <div class="info-container {{ mode }} image">
+                {% if pictures|length > 0 %}
+                    <img src="{{ pictures[0].URL }}" alt="Image of Product">
+                {% else %}
+                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                {% endif %}
+            </div>
+            <div class="info-container {{ mode }} name">
+                {{ product.name }}
+            </div>
+        </div>
+        <div class="info-container {{ mode }} reverse">
+            <div class="info-container {{ mode }} description">
+                <ul>
+                    <li>
+                        Mass: {% if product._mass > 0 -%} 
+                                {{- product.mass -}} 
+                            {%- else -%}
+                                {{- "N/A" -}}
+                            {%- endif -%}
+                    </li>
+                    <li>
+                        Surface Gravity: {% if product._surface_gravity > 0 -%} 
+                                {{- product.surface_gravity -}} 
+                            {%- else -%}
+                                {{- "N/A" -}}
+                            {%- endif -%}
+                    </li>
+                    <li>
+                        Orbital Period: {% if product._orbital_period > 0 -%} 
+                                {{- product.orbital_period -}} 
+                            {%- else -%}
+                                {{- "N/A" -}}
+                            {%- endif -%}
+                    </li>
+                </ul>
+            </div>
+            <div class="info-container grid novis">
+                <div class="info-container {{ mode }} price">
+                    {{ product.price }}
+                </div>
+                {# Call the rating macro #}
+                {{ rating(ratings[0], count=ratings[1], link="/products/" + product.ID|string + "#reviews") }}
+            </div>
+        </div>
+    </article>
+{%- endmacro %}

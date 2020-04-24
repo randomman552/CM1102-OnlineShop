@@ -1,71 +1,169 @@
 {% extends 'layout.html' %}
+{% from 'products/macros.html' import rating, page_slider, arg_preserver, product %}
 
 {% block head %}
     <title>Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/dropdown.js') }}"></script>
+    <script defer type="text/javascript">
+        /** 
+         * This function is used to change the url depending on the selected sort and order options.
+         * @param {string} sort The option to change the sort variable to.
+         * @param {string} order The option to change the order variable to.
+         */
+        function setSort(sort, order){
+            //Get the current location as a string
+            let curLocation = window.location.toString();
+
+            //These options lists are used to make it easier to edit the variables in the url
+            //Using the loops below
+            let sort_options = [
+                "rating",
+                "price",
+                "no.ratings",
+                "mass",
+                "surface_gravity",
+                "orbital_period"
+            ];
+            let order_options =  [
+                "asc",
+                "desc"
+            ];
+            
+            //For each sort option, run a replace operation (this ensures we replace any option present)
+            sort_options.forEach(element => {
+                //Dont bother replacing an element if it is the same as the desired option
+                if (element != sort){
+                    curLocation = curLocation.replace(`sort=${element}`, `sort=${sort}`);
+                }
+            });
+
+            //For each order option, run a replace operation
+            order_options.forEach(element => {
+                //Dont bother replacing an element if it is the same as the desired option
+                if (element != order){
+                    curLocation = curLocation.replace(`order=${element}`, `order=${order}`);
+                }
+            });
+
+            //Redirect the user to the new url
+            window.location = curLocation
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <form class="container filters" action="" novalidate autocomplete="off">
-            <div>
-                <h2>Filters:</h2>
-                <button value="submit">Filter</button>
+        <form method="GET" class="container filters" action="" novalidate autocomplete="off">
+            {# Store the current search query in this hidden field so that it is preserved after filtering #}
+            {{ arg_preserver(["minprice", "maxprice", "category", "page"]) }}
+            
+            {# Each of the divs is a row in the form #}
+            <div class="container controls" style="flex-basis: unset;">
+                {# Filter form heading #}
+                <h2 style="border: none;">Filters:</h2>
+                <button class="button" type="submit">Filter</button>
+            </div>
+
+            <div class="row">
+                <label>Price range</label>
+            </div>
+
+            <div class="row">
+                {# Price range selector #}
+                <label for="minprice">From: £</label>
+                <input class="price" name="minprice" id="minprice" 
+                type="number" placeholder="Min Price" min="0"
+                value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}"
+                size="30">
+            </div>
+
+            <div class="row">
+                <label for="maxprice">To: £</label>
+                <input class="price" name="maxprice" id="maxprice" 
+                type="number" placeholder="Max Price" min="0"
+                value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}"
+                size="30">
+            </div>
+
+            <div class="row">
+                {# Category selector (can only browse one at once) #}
+                <label for="category">Category: </label>
+                <select id="category" name="category">
+                    <option value="">Select category</option>
+                    {% for category in categories -%}
+                        <option value="{{- category.ID -}}"
+                        {%- if "category" in request.args and request.args["category"]|int == category.ID -%} selected="selected" {%- endif -%}>
+                            {{ category.name }}
+                        </option>
+                    {%- endfor %}
+                </select>
             </div>
         </form>
         <div class="container products">
             <div class="container controls">
-                <div class="container">
-                    Sort by:&#32;<div class="dropdown selector"><span>Current selection</span></div>
+                {# Sort selection dropdown #}
+                <div class="dropdown-container" style="flex-basis: initial;">
+                    <label class="dropdown-label" for="sort-by">Sort By:</label>
+                    <div id="sort-by" class="dropdown hidden" onclick="toggleDropdown('sort-by')">
+                        <span class="dropdown title">
+                            {% if request.args['sort'] != "none" %}
+                                {{ request.args['sort'].replace("_", " ") }} - {{ request.args['order'].replace("_", " ") }} 
+                            {% else %}
+                                none
+                            {% endif %}
+                        </span>
+                        <span class="dropdown arrow"><img src="{{ url_for('static', filename='icons/angle.svg') }}"></span>
+                        <div id="sort-by content" class="dropdown content">
+                            <a onclick="setSort('price', 'asc')">price - ascending</a>
+                            <a onclick="setSort('price', 'desc')">price - descending</a>
+                            <a onclick="setSort('rating', 'desc')">rating - descending</a>
+                            <a onclick="setSort('no.ratings', 'desc')">no.ratings - descending</a>
+                            <a onclick="setSort('surface_gravity', 'asc')">surface gravity - ascending</a>
+                            <a onclick="setSort('surface_gravity', 'desc')">surface gravity - descending</a>
+                            <a onclick="setSort('mass', 'asc')">mass - ascending</a>
+                            <a onclick="setSort('mass', 'desc')">mass - descending</a>
+                            <a onclick="setSort('orbital_period', 'asc')">orbital period - ascending</a>
+                            <a onclick="setSort('orbital_period', 'desc')">orbital period - descending</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="container">
+                <div>
+                    {% if "page" in request.args -%}
+                        {{ page_slider(request.args["page"] | int, max_page) }}
+                    {%- else -%}
+                        {{ page_slider(1, max_page) }}
+                    {%- endif %}
+                </div>
+                <div>
                     View:&#32;
-                    <button onclick="window.location = window.location.toString().replace('view=list', 'view=grid');">Grid</button>
-                    <button onclick="window.location = window.location.toString().replace('view=grid', 'view=list');">List</button>
+                    <button 
+                    onclick="window.location = window.location.toString().replace('view=list', 'view=grid');"
+                    class="button"
+                    >Grid</button>
+                    <button 
+                    onclick="window.location = window.location.toString().replace('view=grid', 'view=list');"
+                    class="button"
+                    >List</button>
                 </div>
             </div>
-            {% for i in range(products|length) %}
-                {% if products[i].public or mode == "edit" %}
-                    <product class="{{ session['product display'] }}" onclick="window.location = '/products/{{ products[i].ID }}'">
-                        <div class="info-container grid novis {% if session['product display'] == 'list' %} reverse {% endif %}">
-                            <div class="info-container {{ session['product display'] }} image">
-                                {% if pictures[i]|length > 0 %}
-                                    <img src="{{ url_for('static', filename=pictures[i][0].URL) }}" alt="Image of Product">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
-                                {% endif %}
-                            </div>
-                            <div class="info-container {{ session['product display'] }} name">
-                                {{ products[i].name }}
-                            </div>
-                        </div>
-                        <div class="info-container {{ session['product display'] }} reverse">
-                            <div class="info-container {{ session['product display'] }} description">
-                                {% if products[i].description|length > 300 %}
-                                    {{ products[i].description[:300] }}
-                                    {{ "..." }}
-                                {% else %}
-                                    {{ products[i].description }}
-                                {% endif %}
-                            </div>
-                            <div class="info-container grid novis">
-                                <div class="info-container {{ session['product display'] }} price">
-                                    {{ products[i].price }}
-                                </div>
-                                <div class="info-container {{ session['product display'] }} rating">
-                                    <!-- TODO: REPLACE PLACEHOLDER RATINGS-->
-                                    <div class="star"></div>
-                                    <div class="star"></div>
-                                    <div class="star"></div>
-                                    <div class="star half"></div>
-                                    <div class="star empty"></div>
-                                    <div class="number">5</div>
-                                </div>
-                            </div>
-                        </div>
-                    </product>
-                {% endif %}
-            {% endfor %}
+            {% if products|length > 0 %}
+                {% for i in range(products|length) %}
+                    {% if products[i].public or mode == "edit" %}
+                        {{ product(products[i], pictures[i], ratings[i], session["view"]) }}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <h1 style="border: none;">There were no products that match your search criteria.</h1>
+            {% endif %}
+            
+            <div class="container controls bottom">
+                {% if "page" in request.args -%}
+                    {{ page_slider(request.args["page"] | int, max_page) }}
+                {%- else -%}
+                    {{ page_slider(1, max_page) }}
+                {%- endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% from 'products/macros.html' import arg_preserver %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,18 +11,21 @@
         <!-- Main navigation panel -->
         <nav class="main">
             <nav class="sub-nav">
-                <a href="/" class="button"><p>Home</p></a>
-                <a href="/products" class="button"><p>Products</p></a>
+                <a class="button bottom-only" href="/"><p>Home</p></a>
+                <a class="button bottom-only" href="/products"><p>Products</p></a>
             </nav>
             <nav class="sub-nav search">
                 <form class="search" action="/products" method="get">
-                    <input type="text" placeholder="Search" name="query" autocomplete="off">
+                    {{ arg_preserver(["query"]) }}
+                    {# If query is present in GET variables, then it will be placed in the search box #}
+                    <input type="text" placeholder="Search" name="query" autocomplete="off" 
+                    value="{% if 'query' in request.args %}{{ request.args['query'] }}{% endif %}">
                     <button type="submit"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search"></button>
                 </form>
             </nav>
             <nav class="sub-nav reversed">
-                <a href="/login" class="button"><p>Login</p></a>
-                <a href="/register" class="button"><p>Register</p></a>
+                <a class="button bottom-only" href="/login"><p>Login</p></a>
+                <a class="button bottom-only" href="/register"><p>Register</p></a>
             </nav>
         </nav>
         <main>
