@@ -1,0 +1,39 @@
+{% block content %}
+<head>
+    <title>Checkout - {{ title }}</title>
+
+  <h1>Checkout</h1>
+  <h2>3. {{ title }}</h2>
+</head>
+    <form method="POST" action="">
+    {{ form.csrf_token }}
+  <p1><u><em>Your shipping information:</em></u><br><br>
+
+    <b>First name: </b> {{ firstname }}<br>
+    <b>Last name: </b> {{ lastname }}<br>
+    <b>Address: </b>
+    {{ address1 }}<br>
+    {{ address2 }}<br>
+    {{ postcode }}<br>
+</p1>
+
+    {{ form.editshipping }}
+<br><br>
+
+  <p2>
+        <u><em>Your billing information:</em></u><br><br>
+      <b>Card holders name: </b>{{ cardholdername }}<br>
+      <b>Card Number: </b>{{ cardnumber }} - {{ cardnumber2 }} - {{ cardnumber3 }} - {{ cardnumber4 }}  <br>
+      <b>CVV: </b> {{ cvv }}<br>
+  </p2>
+  {{ form.editbilling }}
+  <br><br><br>
+  <p3>
+      <u><em>Your total is:</em></u> + totalcost<br><br>
+  </p3>
+
+<br>
+    {{ form.submit3 }}
+</form>
+
+{% endblock content %}

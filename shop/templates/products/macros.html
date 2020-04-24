@@ -25,51 +25,34 @@
 
 {% macro page_slider(cur_page, max_page) -%}
     {# Build a page slider #}
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;">
-        {# Round the max_page up to ensure it is the right value #}
-        {% set max_page = max_page + 0.5|round %}
-        
-        <label>Page</label>
-        
-        {# Build the base redirect URL #}
-        {# Have to do this a stupid way with namespaces 
-            as jinja2 can't update a variable that is outside the local scope #}
-        {% set urlns = namespace(url=request.base_url) %}
-        {% set urlns.url = urlns.url + "?" %}
-        {% for arg in request.args %}
-            {# Ignore the page arg, so we don't end up with duplicate variables #}
-            {% if arg != "page" %}
-                {% set urlns.url = urlns.url + arg + request.args[arg] + "&" %}
+    <form action="" method="get" style="display: flex; flex-direction: row; align-items: center;">
+        <label>Page: </label>
+        {# Create hidden fields for each of the args in the URL,
+            means they are not lost with the form submit #}
+            {{ arg_preserver(["page"]) }}
+
+        {# Check if we need to have links to the previous pages #}
+        {% if cur_page > 1 -%}
+            {% if max_page > cur_page + 1 %}
+                <button class="button small" name="page" type="submit" value="1">{{- "..." -}}</button>
+            {%- endif %}
+            <button name="page" class="button small" type="submit" value="{{- cur_page - 1 -}}">{{- cur_page - 1 -}}</button>
+        {%- endif %}
+
+        <button name="page" class="button small" type="submit" value="{{- cur_page -}}">{{- cur_page -}}</button>
+
+        {# Check if we need to have links to the next pages #}
+        {% if max_page > cur_page %}
+            <button name="page" class="button small" type="submit" value="{{- cur_page + 1 -}}">{{- cur_page + 1 -}}</button>
+            {% if max_page > cur_page + 1 %}
+                <button name="page" class="button small" type="submit" value="{{- max_page -}}">{{- "..." -}}</button>
             {% endif %}
-        {% endfor %}
-        
-        <div>
-            {# Create a back link for the previous page if it is needed #}
-            {% if cur_page - 1 > 0 -%}
-                <a href="{{ urlns.url + 'page=' + (cur_page - 1)|string }}">
-                    {{- "&#8592;" -}}
-                </a>
-            {%- endif %}
-
-            {# Create a link for the current page #}
-            &nbsp;
-            <a href="{{ urlns.url + 'page=' + cur_page|string }}">
-                {{- cur_page -}}
-            </a>
-            &nbsp;
-
-            {# Create a link for the next page if needed #}
-            {% if cur_page + 1 <= max_page -%}
-                <a href="{{ urlns.url + 'page=' + (cur_page + 1)|string }}">
-                    {{- "&#8594;" -}}
-                </a>
-            {%- endif %}
-        </div>
-    </div>
+        {% endif %}
+    </form>
 {%- endmacro %}
 
 {% macro arg_preserver(to_ignore) -%}
-    {# This macro will build a series of hidden inputs for a form, 
+    {# This macro will build a series of hidden inputs for a form,
         these will preserve any arguments in the URL.
         Any arguments specified in the to_ignore list will not be added #}
     {% for arg in request.args -%}
@@ -137,5 +120,33 @@
                 {{ rating(ratings[0], count=ratings[1], link="/products/" + product.ID|string + "#reviews") }}
             </div>
         </div>
+    </article>
+{%- endmacro %}
+
+{% macro basket_view(product, pictures, mode="list") -%}
+    {# This macro will build a representation of a product (as shown on the product page)
+        The mode can be "grid" or "list" and changes the styles for the product #}
+    <article class="product {{ mode }}" onclick="window.location = '/products/{{- product.ID -}}'">
+        <div class="actions">
+            {# TODO: Need to add actions to these buttons #}
+            <a href="/basket/remove/{{product.ID}}?redirect=%2Fbasket" class="button">Remove From Basket</a>
+        </div>
+        <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
+            <div class="info-container {{ mode }} image">
+                {% if pictures|length > 0 %}
+                    <img src="{{ url_for('static', filename=pictures[0].URL) }}" alt="Image of Product">
+                {% else %}
+                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                {% endif %}
+            </div>
+            <div class="info-container {{ mode }} name">
+                {{ product.name }}
+            </div>
+        </div>
+            <div class="info-container grid novis">
+                <div class="info-container {{ mode }} price">
+                    {{ product.price }}
+                </div>
+            </div>
     </article>
 {%- endmacro %}
