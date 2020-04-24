@@ -18,19 +18,20 @@
                 <form class="search" action="/products" method="get">
                     {{ arg_preserver(["query"]) }}
                     {# If query is present in GET variables, then it will be placed in the search box #}
-                    <input type="text" placeholder="Search" name="query" autocomplete="off" 
+                    <input type="text" placeholder="Search" name="query" autocomplete="off"
                     value="{% if 'query' in request.args %}{{ request.args['query'] }}{% endif %}">
                     <button type="submit"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search"></button>
                 </form>
             </nav>
             <nav class="sub-nav reversed">
+                <a href="/basket" class="button"><img src="{{ url_for('static', filename='icons/cart.svg') }}" alt="Cart"></a>
                 <a class="button bottom-only" href="/login"><p>Login</p></a>
                 <a class="button bottom-only" href="/register"><p>Register</p></a>
             </nav>
         </nav>
         <main>
             {% block content %}
-            
+
             {% endblock %}
         </main>
     </body>

@@ -79,24 +79,15 @@
 }
 
 /* Actions container rules (used for buttons) */
+
 .actions {
 	position: absolute;
 	display: flex;
-	bottom: 10px;
-	z-index: 1;
-}
-.product.grid > .actions {
-	left: 10px;
-	width: calc(100% - 20px);
-	flex-direction: column;
-}
-.product.list > .actions {
-	right: 10px;
-	height: calc(100% - 20px);
 	box-sizing: border-box;
-	width: 20%;
+	right: 10px;
+	top: 10px;
+	z-index: 0;
 	flex-direction: column;
-	justify-content: space-between;
 }
 
 /* Info container general rules */
@@ -189,16 +180,6 @@
 	max-height: 100%;
 	width: auto;
 	height: auto;
-}
-
-/* product link style */
-.product > a.hidden-link {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 0;
 }
 
 @media only screen and (max-width: 1240px) {
