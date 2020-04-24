@@ -3,36 +3,58 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-evenly;
-	border: 1px dashed #707070;
+	padding: 5px;
 }
 .container.filters {
 	flex-basis: 30%;
 	flex-direction: column;
 	justify-content: start;
+	border: 1px solid var(--bg-color);
+	border-top: none;
+	border-left: none;
+	border-bottom: none;
 }
-.container.filters > div {
-	height: 40px;
+.container.filters > .row {
+	height: auto;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
+	overflow: hidden;
+	width: calc(100% - 10px);
 }
-.container.filters > div > * {
-	margin: 0 10px 0 10px;
+.container.filters > .row > * {
+	margin: 1px;
 }
 .container.products {
+	flex-direction: row;
 	flex-wrap: wrap;
 	flex-basis: 70%;
 }
 .container.controls {
 	flex-basis: 100%;
-	height: 30px;
+	flex-direction: row;
+	height: 50px;
 	justify-content: space-between;
 	align-items: center;
+	margin-bottom: 10px;
+	border-bottom: 1px solid var(--bg-color);
+}
+.container.controls.bottom {
+	border: none;
+	border-top: 1px solid var(--bg-color);
+	justify-content: center;
+}
+.container.controls > div {
+	align-items: inherit;
+	justify-content: inherit;
+	display: inherit;
+	flex-direction: row;
 }
 
 /* Product container rules */
-product {
+.product {
+	position: relative;
 	padding: 10px;
 	cursor: pointer;
 	display: flex;
@@ -44,16 +66,37 @@ product {
 	transition: 0.3s ease;
 	border: 1px solid var(--bg-color);
 }
-
-product.list {
+.product.list {
 	flex-direction: row;
 	width: 100%;
 	height: 200px;
 }
 
-product:hover {
+.product:hover,
+.product:focus-within {
 	border: 1px solid var(--border-color);
 	text-decoration: underline;
+}
+
+/* Actions container rules (used for buttons) */
+.actions {
+	position: absolute;
+	display: flex;
+	bottom: 10px;
+	z-index: 1;
+}
+.product.grid > .actions {
+	left: 10px;
+	width: calc(100% - 20px);
+	flex-direction: column;
+}
+.product.list > .actions {
+	right: 10px;
+	height: calc(100% - 20px);
+	box-sizing: border-box;
+	width: 20%;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 /* Info container general rules */
@@ -71,11 +114,11 @@ product:hover {
 .info-container.grid.reverse {
 	flex-direction: column-reverse;
 }
-/* These two rules are used to change the look of the list mode */
-/* DO NOT USE THEM ANYWHERE ELSE */
-/* TODO: Could replace with better names with some edits to products.html */
-.info-container.grid.novis.reverse {
+/* These rules are used to change the look of the list mode */
+/* I would advise against using them anywhere else if you can avoid it */
+.info-container.grid.novis {
 	flex-basis: 30%;
+	flex-shrink: 0;
 }
 .info-container.list.reverse {
 	flex-basis: 70%;
@@ -107,33 +150,6 @@ product:hover {
 	border: none;
 }
 
-/* Info container rating */
-.info-container.rating.grid {
-	flex-direction: row;
-	padding: 2px;
-	border-bottom: 1px solid var(--bg-color);
-}
-.info-container.rating > .star {
-	background-color: green;
-	width: 15px;
-	height: 15px;
-}
-.info-container.rating > .star.half {
-	background-color: yellow;
-}
-.info-container.rating > .star.empty {
-	background-color: red;
-}
-.info-container.rating > .number {
-	font-size: smaller;
-}
-.info-container.rating > .number::before {
-	content: "(";
-}
-.info-container.rating > .number::after {
-	content: ")";
-}
-
 /* Info container description */
 .info-container.description {
 	overflow: hidden;
@@ -142,14 +158,17 @@ product:hover {
 .info-container.description.list {
 	height: 100%;
 	flex-basis: 80%;
-	flex-shrink: 0;
 	border-left: 1px solid var(--bg-color);
+}
+.info-container.description.grid {
+	border: none;
+	width: 100%;
 }
 
 /* Info container image */
 .info-container.image {
 	margin: 2px;
-	flex-shrink: 0;
+	flex-shrink: 1;
 	text-align: center;
 	align-items: center;
 	justify-content: center;
@@ -170,4 +189,26 @@ product:hover {
 	max-height: 100%;
 	width: auto;
 	height: auto;
+}
+
+/* product link style */
+.product > a.hidden-link {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+}
+
+@media only screen and (max-width: 1240px) {
+	.container {
+		flex-direction: column;
+	}
+	.container.controls {
+		border-top: 1px solid var(--bg-color);
+	}
+	.container.filters {
+		border-right: none;
+	}
 }

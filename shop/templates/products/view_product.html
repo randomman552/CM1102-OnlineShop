@@ -1,97 +1,150 @@
 {% extends 'layout.html' %}
+{% from 'products/macros.html' import rating %}
 
 {% block head %}
     <title>{{ product.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/view_product.css')}}">
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/slideshow.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/tabs.js') }}"></script>
 {% endblock %}
 
 {% block content %}
     {% if product != None %}
-        {% if mode == "edit" %}
-        <!-- If the mode is set to edit when this template is rendered, then edit controls will appear -->
-            <div style="text-align: left;">
-                {% if product.public %}
-                    <button onclick="setPublic(false)">Make Private</button>
-                {% else %}
-                    <button onclick="setPublic(true)">Make Public</button>
-                {% endif %}
-                <button onclick="deleteProduct('{{ product.ID }}')">Delete</button>
-            </div>
-        {% endif %}
         <div class="product main_container">
+            <h1>{{ product.name }}</h1>
             <div class="product row">
-                <div class="product image container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
-                    <!-- Picture slideshow -->
-                    {% for picture in pictures %}
-                        <div class="slide-content">
-                            <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
-                        </div>
-                    {% endfor %}
-                    <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
-                    <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
+                <div class="product image-container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
+                    <div class="product image">
+                        {# Picture slideshow #}
+                        {% if pictures|length > 0 -%}
+                            {% for picture in pictures %}
+                                {# The pictures here can be internal or external content, 
+                                    as long as the string in the database is correct #}
+                                <div class="slide-content">
+                                    <img src="{{ picture.URL }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                                </div>
+                            {% endfor %}
+                        {%- else -%}
+                            <div class="slide-content">
+                                <img src="{{ url_for('static', filename='products/default.png') }}" alt="No images" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                            </div>
+                        {%- endif %}
+                        <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
+                        <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
+                    </div>
+                    <div class="product image-selector">
+                        {% for i in range(pictures|length) %}
+                            <div class="slide-selector">
+                                <img src="{{ pictures[i].URL }}" alt="Thumb">
+                                <div onclick="slideJmp({{i}})" class="slide-selector overlay"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="product description container">
-                    <div class="product description name">
-                        <span id="name">{{ product.name }}</span>
-                        {% if mode == "edit" %}
-                            <button id="name-edit" class="edit" onclick="openEdit('name')"></button>
-                            <button style="display: none;" id="name-close" class="edit close" onclick="closeEdit('name')"></button>
-                            <form id="name-form" class="edit-popup" action="" method="post">
-                                <input type="text">
-                                <button type="submit">Update</button>
-                            </form>
-                        {% endif %}
-                    </div>
+                    <h2>description</h2>
                     <div class="product description text">
                         <span id="description">{{ product.description }}</span>
-                        {% if mode == "edit" %}
-                            <button id="description-edit" class="edit" onclick="openEdit('description')"></button>
-                            <button style="display: none;" id="description-close" class="edit close" onclick="closeEdit('description')"></button>
-                            <form id="description-form" class="edit-popup" action="" method="post">
-                                <textarea></textarea>
-                                <button type="submit">Update</button>
-                            </form>
+                    </div>
+                </div>
+                <div class="product purchase">
+                    <h2>Overview</h2>
+                        <ul>
+                            <li>
+                                Mass: {% if product._mass > 0 -%} 
+                                        {{- product.mass -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
+                            </li>
+                            <li>
+                                Surface Gravity: {% if product._surface_gravity > 0 -%} 
+                                        {{- product.surface_gravity -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
+                            </li>
+                            <li>
+                                Orbital Period: {% if product._orbital_period > 0 -%} 
+                                        {{- product.orbital_period -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
+                            </li>
+                        </ul>
+                    <h2>purchase</h2>
+                    <div class="product price">
+                        <span id="price" style="width: 100%;">{{ product.price }}</span>
+                    </div>
+                    <div class="product rating">
+                        {{ rating(review_avg, review_count) }}
+                    </div>
+                    <button class="button green-confirm">
+                        Add to cart
+                    </button>
+                    <button class="button">
+                        Add to wishlist
+                    </button>
+                </div>
+            </div>
+            <div id="reviews" class="tab select">
+                <button id="reviews button" class="tab-button button bottom-only active" onclick="switchTab('reviews')">
+                    <h2 style="border: none;">Reviews</h2>
+                </button>
+                <button id="add_review button" class="tab-button button bottom-only" onclick="switchTab('add_review')"">
+                    <h2 style="border: none;">Add Review</h2>
+                </button>
+            </div>
+            <form id="add_review tab" class="review-container tab hidden" action="" novalidate method="POST">
+                {{ review_form.hidden_tag() }}
+                {{ review_form.stars.label }}
+                <div class="star-selector">
+                    {# for each field, add a span and a label for us to manipulate #}
+                    {%- for field in review_form.stars -%}
+                        {{ field }}
+                        <label for="{{- field.id -}}" class="{{- field.id -}}">{{ field.id }}</label>
+                    {%- endfor -%}
+                    <span></span>
+                </div>
+                {{ review_form.comment.label }}
+                {{ review_form.comment(rows='5', cols='50') }}
+                {{ review_form.submit }}
+
+                {# For each error, generate a peice of JS which displays an error #}
+                {% for errors in [review_form.stars.errors, review_form.comment.errors] %}
+                    {% for error in errors %}
+                        <script defer>
+                            alert('{{error}}')
+                        </script>
+                    {% endfor %}
+                {% endfor %}
+            </form>
+            <div id="reviews tab" class="review-container tab">
+                {# TODO: Add review sorting/filtering #}
+                {# For each review, add the review to the DOM #}
+                {% for i in range(reviews|length) %}
+                    <div class="review">
+                        <div>
+                            {%- if users[i] -%}
+                                {{ users[i].email }}
+                            {%- else -%}
+                                Anonymous
+                            {%- endif %}
+                            {{ rating(reviews[i].rating) }}
+                        </div>
+                        {% if reviews[i].content %}
+                            <div class="content">
+                                {{ reviews[i].content }}
+                            </div>
+                        {% else %}
+                            <div class="content emtpy">
+                                User left no comment.
+                            </div>
                         {% endif %}
                     </div>
-                    <div class="product row" style="height: 3rem;">
-                        <div class="product spacer" style="flex-basis: 100%;"></div>
-                        <div class="product description price">
-                            {% if mode == "edit" %}
-                                <button id="price-edit" class="edit" onclick="openEdit('price')"></button>
-                                <button style="display: none;" id="price-close" class="edit close" onclick="closeEdit('price')"></button>
-                                <form id="price-form" class="edit-popup" action="" method="post" style="text-align: right;">
-                                    <input id="price-input" type="text">
-                                    <button type="submit" style="bottom: -30px;">Update</button>
-                                </form>
-                            {% endif %}
-                            <span id="price">{{ product.price[1:] }}</span><label for="price-input">Price:&nbsp;£</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="product description purchase">
-                    <button>Add to cart</button>
-                    <button>Add to wishlist</button>
-                </div>
+                {% endfor %}
             </div>
-            <div class="product row">
-                <div class="product image selector">
-                    {% if mode == "edit" %}
-                        <!-- TODO: IMPLEMENT THIS -->
-                    {% endif %}
-                    {% for i in range(pictures|length) %}
-                        <div class="slide-selector container">
-                            <img style="width: 100%;" src="{{ url_for( 'static', filename=pictures[i].URL) }}" alt="Thumb Image">
-                            <div onclick="slideJmp({{i}})" class="slide-selector overlay"></div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="product row">
-                <h1>MORE INFO</h1>
-            </div>
-            
         </div>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/product.js') }}"></script>
     {% else %}
         <h1>The requested product does not exist.</h1>
     {% endif %}

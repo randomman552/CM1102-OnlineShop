@@ -1,0 +1,152 @@
+{% macro rating(score, count=None, link="#reviews") -%}
+    {# Score should be the score to display, and count should be the number of reviews to display after #}
+    <a href="{{- link -}}" class="rating-container">
+        {% for star_num in range(5) -%}
+            {# Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating #}
+            {% set star_num = score - star_num %}
+            {# If the value left over is greater than 1, thats a full star #}
+            {% if star_num >= 1 %}
+                <div class="star full"></div>
+            {# If the value left over is between 1 and 0, thats a half star #}
+            {% elif star_num < 1 and star_num > 0 %}
+                <div class="star half"></div>
+            {# If the value left over is lower than 1, thats an empty star #}
+            {% else %}
+                <div class="star empty"></div>
+            {% endif %}
+        {%- endfor %}
+
+        {# Put the number of reviews after the stars if it has been set #}
+        {% if count != None -%}
+            <div class="star number">{{ count }}</div>
+        {%- endif %}
+    </a>
+{%- endmacro %}
+
+{% macro page_slider(cur_page, max_page) -%}
+    {# Build a page slider #}
+    <form action="" method="get" style="display: flex; flex-direction: row; align-items: center;">
+        <label>Page: </label>
+        {# Create hidden fields for each of the args in the URL,
+            means they are not lost with the form submit #}
+            {{ arg_preserver(["page"]) }}
+
+        {# Check if we need to have links to the previous pages #}
+        {% if cur_page > 1 -%}
+            {% if max_page > cur_page + 1 %}
+                <button class="button small" name="page" type="submit" value="1">{{- "..." -}}</button>
+            {%- endif %}
+            <button name="page" class="button small" type="submit" value="{{- cur_page - 1 -}}">{{- cur_page - 1 -}}</button>
+        {%- endif %}
+
+        <button name="page" class="button small" type="submit" value="{{- cur_page -}}">{{- cur_page -}}</button>
+
+        {# Check if we need to have links to the next pages #}
+        {% if max_page > cur_page %}
+            <button name="page" class="button small" type="submit" value="{{- cur_page + 1 -}}">{{- cur_page + 1 -}}</button>
+            {% if max_page > cur_page + 1 %}
+                <button name="page" class="button small" type="submit" value="{{- max_page -}}">{{- "..." -}}</button>
+            {% endif %}
+        {% endif %}
+    </form>
+{%- endmacro %}
+
+{% macro arg_preserver(to_ignore) -%}
+    {# This macro will build a series of hidden inputs for a form,
+        these will preserve any arguments in the URL.
+        Any arguments specified in the to_ignore list will not be added #}
+    {% for arg in request.args -%}
+        {# If the arg is not in to_ignore, add an input for it #}
+        {% if arg not in to_ignore -%}
+            <input type="hidden" name="{{- arg -}}" value="{{- request.args[arg] -}}">
+        {%- endif %}
+    {%- endfor -%}
+{%- endmacro %}
+
+{% macro product(product, pictures, ratings, mode) -%}
+    {# This macro will build a representation of a product (as shown on the product page)
+        The mode can be "grid" or "list" and changes the styles for the product #}
+    <article class="product {{ mode }}">
+        {# Add an anchor tag which covers the whole product (better for acsesibility) #}
+        <a class="hidden-link" href="/products/{{- product.ID -}}"></a>
+
+        <div class="actions">
+            <a class="button green-confirm">Add to cart</a>
+            <a class="button">Add to wishlist</a>
+        </div>
+        <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
+            <div class="info-container {{ mode }} image">
+                {% if pictures|length > 0 %}
+                    <img src="{{ pictures[0].URL }}" alt="Image of Product">
+                {% else %}
+                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                {% endif %}
+            </div>
+            <div class="info-container {{ mode }} name">
+                {{ product.name }}
+            </div>
+        </div>
+        <div class="info-container {{ mode }} reverse">
+            <div class="info-container {{ mode }} description">
+                <ul>
+                    <li>
+                        Mass: {% if product._mass > 0 -%} 
+                                {{- product.mass -}} 
+                            {%- else -%}
+                                {{- "N/A" -}}
+                            {%- endif -%}
+                    </li>
+                    <li>
+                        Surface Gravity: {% if product._surface_gravity > 0 -%} 
+                                {{- product.surface_gravity -}} 
+                            {%- else -%}
+                                {{- "N/A" -}}
+                            {%- endif -%}
+                    </li>
+                    <li>
+                        Orbital Period: {% if product._orbital_period > 0 -%} 
+                                {{- product.orbital_period -}} 
+                            {%- else -%}
+                                {{- "N/A" -}}
+                            {%- endif -%}
+                    </li>
+                </ul>
+            </div>
+            <div class="info-container grid novis">
+                <div class="info-container {{ mode }} price">
+                    {{ product.price }}
+                </div>
+                {# Call the rating macro #}
+                {{ rating(ratings[0], count=ratings[1], link="/products/" + product.ID|string + "#reviews") }}
+            </div>
+        </div>
+    </article>
+{%- endmacro %}
+
+{% macro basket_view(product, pictures, mode="list") -%}
+    {# This macro will build a representation of a product (as shown on the product page)
+        The mode can be "grid" or "list" and changes the styles for the product #}
+    <article class="product {{ mode }}" onclick="window.location = '/products/{{- product.ID -}}'">
+        <div class="actions">
+            {# TODO: Need to add actions to these buttons #}
+            <a href="/basket/remove/{{product.ID}}?redirect=%2Fbasket" class="button">Remove From Basket</a>
+        </div>
+        <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
+            <div class="info-container {{ mode }} image">
+                {% if pictures|length > 0 %}
+                    <img src="{{ url_for('static', filename=pictures[0].URL) }}" alt="Image of Product">
+                {% else %}
+                    <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
+                {% endif %}
+            </div>
+            <div class="info-container {{ mode }} name">
+                {{ product.name }}
+            </div>
+        </div>
+            <div class="info-container grid novis">
+                <div class="info-container {{ mode }} price">
+                    {{ product.price }}
+                </div>
+            </div>
+    </article>
+{%- endmacro %}
