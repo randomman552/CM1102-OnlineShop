@@ -1,0 +1,48 @@
+{% block content %}
+<body>
+    {% for message in get_flashed_messages() %}
+      <p>{{ message }}</p>
+    {% endfor %}
+</body>
+
+  <head>
+
+      
+    <title>Checkout - {{ title }}</title>
+    <h1>Checkout</h1>
+    <h2>2. {{ title }}</h2>
+  </head>
+
+  <form method="POST" action="">
+    {{ form.csrf_token }}
+
+    {{ form.cardholdername.label }} {{ form.cardholdername(placeholder='Fill in card holders name') }}
+    {% for error in form.cardholdername.errors %}
+    {{ error }}
+    {% endfor %}
+    <br>
+
+    {{ form.cardnumber.label }} {{ form.cardnumber(size=4 , placeholder='0000') }} - {{ form.cardnumber2(size=4 , placeholder='0000') }} - {{ form.cardnumber3(size=4 , placeholder='0000') }} - {{ form.cardnumber4(size=4 , placeholder='0000') }}
+    {% for error in form.cardnumber.errors %}
+    {{ error }}
+    {% endfor %}
+    <br>
+
+  
+    {{ form.expirydate.label }} {{form.expirymonth}} / {{ form.expirydate }} 
+
+    <br>
+
+
+    {{ form.cvv.label }} {{ form.cvv(size=3, placeholder='000') }}
+    {% for error in form.cvv.errors %}
+    {{ error }}
+    {% endfor %}
+    <br><br>
+    
+    {{ form. submit2 }}
+</form>
+
+
+{% endblock content %}
+

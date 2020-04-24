@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% from 'products/macros.html' import basket_view %}
+
+{% block head %}
+<title>Products</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+{% endblock head %}
+
+{% block content %}
+<h1>Basket</h1>
+      {% if products|length > 0 %}
+            {% for i in range(products|length) %}
+                  {% if products[i].public or mode == "edit" %}
+                        {{ basket_view(products[i], pictures[i]) }}
+                  {% endif %}
+            {% endfor %}
+      {% else %}
+                <h1 style="border: none;">There are no products in your basket</h1>
+                <a href="/products" class="button">Return to Products Page</a>
+            {% endif %}
+<!-- <a href="/checkout" class="button"></a> -->
+{% endblock content %}
