@@ -71,8 +71,8 @@
         <a class="hidden-link" href="/products/{{- product.ID -}}"></a>
 
         <div class="actions">
-            <a class="button green-confirm">Add to cart</a>
-            <a class="button">Add to wishlist</a>
+          <a href="/basket/add/{{product.ID}}?redirect={{ request.url }}" class="button green-confirm">Add to cart</a>
+          <a class="button">Add to wishlist</a>
         </div>
         <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
             <div class="info-container {{ mode }} image">
@@ -90,22 +90,22 @@
             <div class="info-container {{ mode }} description">
                 <ul>
                     <li>
-                        Mass: {% if product._mass > 0 -%} 
-                                {{- product.mass -}} 
+                        Mass: {% if product._mass > 0 -%}
+                                {{- product.mass -}}
                             {%- else -%}
                                 {{- "N/A" -}}
                             {%- endif -%}
                     </li>
                     <li>
-                        Surface Gravity: {% if product._surface_gravity > 0 -%} 
-                                {{- product.surface_gravity -}} 
+                        Surface Gravity: {% if product._surface_gravity > 0 -%}
+                                {{- product.surface_gravity -}}
                             {%- else -%}
                                 {{- "N/A" -}}
                             {%- endif -%}
                     </li>
                     <li>
-                        Orbital Period: {% if product._orbital_period > 0 -%} 
-                                {{- product.orbital_period -}} 
+                        Orbital Period: {% if product._orbital_period > 0 -%}
+                                {{- product.orbital_period -}}
                             {%- else -%}
                                 {{- "N/A" -}}
                             {%- endif -%}

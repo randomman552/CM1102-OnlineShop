@@ -15,6 +15,7 @@ def basket_setup():
     if "basket" not in session:
         session["basket"] = []
 
+
 @app.route("/")
 def render_home():
     basket_setup()
@@ -22,6 +23,7 @@ def render_home():
 
 @app.route("/wishlist")
 def outputWishlist():
+    basket_setup()
     userID = current_user.ID
     #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
     products = Wishlist.query.filter_by(userID = userID).all()
@@ -49,13 +51,14 @@ def outputWishlist():
         #print (str(finalWishList[0]))
     else:
         isEmpty = True
-        
+
 
     #END of Function
     return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
 
 @app.route("/addWishlist")
 def addWishlist():
+    basket_setup()
     pid= str(request.args.get('pid'))
     userID = current_user.ID
     userValid = db.session.query(User.ID).filter_by(ID=userID).scalar() is not None
@@ -80,6 +83,7 @@ def addWishlist():
 
 @app.route("/deleteWishlist")
 def deleteWish():
+    basket_setup()
     productID = request.args.get('pid')
     userID = current_user.ID
     Wishlist.query.filter_by(userID=userID, productID=productID).delete()
@@ -104,6 +108,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def signup():
+    basket_setup()
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -118,6 +123,7 @@ def signup():
 @app.route('/password_change', methods=["GET", "POST"])
 @login_required
 def user_password_change():
+    basket_setup()
     form = PasswordForm()
 
     if form.validate_on_submit():
@@ -158,6 +164,7 @@ def logout(): #redirect to login when this route is reached.
 
 @app.route("/products")
 def render_products():
+    basket_setup()
     def handle_vars(variable_list: dict):
         """Handle setting of session variables for product display.\n
         @param variable_list - A dict, each entry in the dict is a variable name (str),
@@ -561,6 +568,7 @@ def render_products():
 
 @app.route("/products/new", methods=["GET", "POST"])
 def render_new_product():
+    basket_setup()
     # Give the new product a random name, which we can then use to get its ID from the database
     random_name = str(random.randint(0, 500000000))
     new_product = Product(name=random_name)
@@ -576,6 +584,7 @@ def render_new_product():
 
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
+    basket_setup()
     # Create a review form object
     review_form = AddReviewForm()
 
@@ -647,6 +656,7 @@ def render_view_product(product_id):
 
 @app.route('/shipping', methods=['GET', 'POST'])
 def shipping():
+    basket_setup()
     form = ShippingForm()
     if request.method == 'POST' and form.validate_on_submit():
         session.permanent = True
@@ -654,14 +664,14 @@ def shipping():
         session["firstname"] = firstname
 
         lastname = request.form["lastname"]
-        session["lastname"] = lastname       
+        session["lastname"] = lastname
 
         address1 = request.form["address1"]
         session["address1"] = address1
 
         address2 = request.form["address2"]
         session["address2"] = address2
-       
+
         postcode = request.form["postcode"]
         session["postcode"] = postcode
 
@@ -670,14 +680,15 @@ def shipping():
 
         #flash('Shipping information valid!')
         return redirect(url_for('billing'))
-    
+
     return render_template('shipping.html', title='Shipping', form=form)
 
 
 @app.route('/billing', methods=['GET', 'POST'])
 def billing():
+    basket_setup()
     form = BillingForm()
-    
+
     if request.method == 'POST' and form.validate_on_submit():
         req = request.form
 
@@ -710,6 +721,7 @@ def billing():
 
 @app.route('/review', methods=['GET', 'POST'])
 def review():
+    basket_setup()
     form = ReviewForm()
 
     #shipping info
@@ -736,7 +748,7 @@ def review():
 
         else:
             return redirect(url_for('receipt'))
-    
+
     return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, cvv=cvv)
 
 
@@ -745,8 +757,8 @@ def review():
 
 @app.route('/receipt', methods=['GET', 'POST'])
 def receipt():
-
-    firstname = session["firstname"] 
+    basket_setup()
+    firstname = session["firstname"]
     email = session["email"]
 
     return render_template('receipt.html',  title='Receipt', firstname=firstname, email=email)
@@ -790,7 +802,6 @@ def render_basket():
         #for product in products:
             #products = products.filter(Product._price).all()
 
-
     return render_template("Basket.html",
                            products=products,
                            pictures=pictures,
@@ -799,12 +810,15 @@ def render_basket():
 
 @app.route("/basket/add/<int:product_id>")
 def add_to_basket(product_id):
-    session["basket"].append(product_id)
+    session["basket"] += [product_id]
+    #session["basket"].append(product_id)
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
 
 @app.route("/basket/remove/<int:product_id>")
 def remove_from_basket(product_id):
-    session["basket"].remove(product_id)
+    basket = session["basket"]
+    basket.remove(product_id)
+    session["basket"] = basket
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
