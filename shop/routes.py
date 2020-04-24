@@ -3,8 +3,8 @@ import os
 import random
 from flask_login import current_user, login_required
 from flask import render_template, redirect, request, flash, url_for, session
-from werkzeug.utils import secure_filename
-from .forms import AddReviewForm
+from .forms import AddReviewForm, RegisterForm, LoginForm, PasswordForm, DeleteUserForm
+from flask_login import login_user, logout_user, login_required, login_fresh
 from .models import db, func, Product, Picture, Review, User, Wishlist, Category, ProductCategory
 from . import app
 import time
@@ -14,7 +14,6 @@ def render_home():
     return render_template("layout.html")
 
 @app.route("/wishlist")
-
 def outputWishlist():
     userID = current_user.ID
     #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
@@ -52,7 +51,7 @@ def outputWishlist():
 def addWishlist():
     pid= str(request.args.get('pid'))
     userID = current_user.ID
-    userValid = db.session.query(User.ID).filter_by(ID=UID).scalar() is not None
+    userValid = db.session.query(User.ID).filter_by(ID=userID).scalar() is not None
     if userValid == True:
         productValid = db.session.query(Product.ID).filter_by(ID=pid).scalar() is not None
         if productValid == True:
@@ -116,7 +115,7 @@ def user_password_change():
 
     if form.validate_on_submit():
         user = current_user
-        user.password = generate_password_hash(form.password.data, method='sha256')
+        user.password = form.password.data
         db.session.add(user)
         db.session.commit()
 
