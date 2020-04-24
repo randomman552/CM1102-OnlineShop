@@ -290,7 +290,10 @@ def render_products():
             key_dict = {
                 "price": Product._price,
                 "rating": avg_rating.c.avg_rating,
-                "no.ratings": rating_count.c.rating_count
+                "no.ratings": rating_count.c.rating_count,
+                "mass": Product._mass,
+                "surface_gravity": Product._surface_gravity,
+                "orbital_period": Product._orbital_period
             }
 
             # Get the relevant variables
@@ -402,7 +405,13 @@ def render_products():
 
             # Product category filtering
             if "category" in request.args:
-                category = request.args["category"]
+                # Attempt to get category value
+                category = 0
+                try:
+                    if request.args["category"]:
+                        category = int(request.args["category"])
+                except:
+                    pass
 
                 # If the category is set (not null), then proceed to filter the products
                 if category:
@@ -418,7 +427,7 @@ def render_products():
 
                     # Filter the products
                     products = products.filter(
-                        product_categories.c.productID == category)
+                        product_categories.c.categoryID == category)
 
             # Return altered products query
             return products
@@ -441,8 +450,6 @@ def render_products():
         # Return our products list
         return products, product_count
 
-    # TODO: Could improve the functions for getting ratings
-    # using a join method like the one for the sort in the products function
     def get_pictures(products: list) -> list:
         """
         Get the relevant pictures from the database.\n
@@ -514,16 +521,13 @@ def render_products():
         categories = Category.query.all()
         return categories
 
-
-    basket_setup()
-
     # Create the dict of required variables
     # THIS SHOULD ONLY BE DONE FOR VARIABLES WHICH SHOULD BE REMEMBERED BY THE SERVER (in session)
     var_dict = {
         "view": ["grid", "list"],
-        "sort": ["rating", "price", "no.ratings"],
+        "sort": ["rating", "price", "no.ratings", "mass", "surface_gravity", "orbital_period"],
         "order": ["desc", "asc"],
-        "limit": ["20", "all"]
+        "limit": ["20", "30", "all"]
     }
     # Call handle_vars, if it returns something (a redirect), return that.
     retval = handle_vars(var_dict)
@@ -541,7 +545,7 @@ def render_products():
 
     # Get the maximum number of pages
     limit = int(request.args["limit"])
-    max_page = product_count / limit
+    max_page = round((product_count / limit) + 0.5)
 
     # Get a list of all the categories from the database
     categories = get_categories()
@@ -555,11 +559,8 @@ def render_products():
                            categories=categories,
                            mode="edit")
 
-
 @app.route("/products/new", methods=["GET", "POST"])
 def render_new_product():
-
-    basket_setup()
     # Give the new product a random name, which we can then use to get its ID from the database
     random_name = str(random.randint(0, 500000000))
     new_product = Product(name=random_name)
@@ -573,11 +574,8 @@ def render_new_product():
     db.session.commit()
     return redirect(f"/products/{new_product.ID}")
 
-
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
-
-    basket_setup()
     # Create a review form object
     review_form = AddReviewForm()
 
@@ -597,13 +595,26 @@ def render_view_product(product_id):
     product = Product.query.filter(Product.ID.like(product_id)).first()
     pictures = Picture.query.filter(Picture.productID.like(product_id)).all()
     reviews = Review.query.filter(Review.productID.like(product_id)).all()
+    users_temp = User.query.filter()
 
+    # Create review subquery to join with
+    review_subquery = Review.query.subquery()
+
+    users_temp = users_temp.outerjoin(
+        review_subquery, review_subquery.c.userID == User.ID).all()
+
+    # Make users list the right format (in order for reviews)
     users = []
-    # TODO: Make this a join query
-    # For each review, add the user that made that review to a list of users.
     for review in reviews:
-        user = User.query.filter(User.ID == review.userID).first()
-        users.append(user)
+        # For each user in the temp list
+        for user in users_temp:
+            # If a user in the temp list matches the user who wrote the review,
+            # append that user to the list
+            if user.ID == review.userID:
+                users.append(user)
+        else:
+            # If we finish the loop through users and did not find a match, add a None
+            users.append(None)
 
     review_avg = (db.session
                   .query(func.avg(Review.rating)

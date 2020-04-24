@@ -13,13 +13,15 @@
         <div class="product main_container">
             <h1>{{ product.name }}</h1>
             <div class="product row">
-                <div class="product image" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
-                    <div class="product image container">
+                <div class="product image-container" onmouseover="slideShowControlsState(true)" onmouseout="slideShowControlsState(false)">
+                    <div class="product image">
                         {# Picture slideshow #}
                         {% if pictures|length > 0 -%}
                             {% for picture in pictures %}
+                                {# The pictures here can be internal or external content, 
+                                    as long as the string in the database is correct #}
                                 <div class="slide-content">
-                                    <img src="{{ url_for( 'static', filename=picture.URL) }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
+                                    <img src="{{ picture.URL }}" alt="Product Image" onmouseover="slideShowPause()" onmouseout="slideShowResume()">
                                 </div>
                             {% endfor %}
                         {%- else -%}
@@ -30,10 +32,10 @@
                         <a id="slideshow-prev" class="prev" onclick="slideMov(-1)">&#10094;</a>
                         <a id="slideshow-next" class="next" onclick="slideMov(1)">&#10095;</a>
                     </div>
-                    <div class="product image selector">
+                    <div class="product image-selector">
                         {% for i in range(pictures|length) %}
                             <div class="slide-selector">
-                                <img src="{{ url_for( 'static', filename=pictures[i].URL) }}" alt="Thumbnail">
+                                <img src="{{ pictures[i].URL }}" alt="Thumb">
                                 <div onclick="slideJmp({{i}})" class="slide-selector overlay"></div>
                             </div>
                         {% endfor %}
@@ -46,16 +48,30 @@
                     </div>
                 </div>
                 <div class="product purchase">
-                    {%- set overview = product.information["overview"] -%}
-                    {% if overview|length > 0 -%}
-                        <h2>overview</h2>
+                    <h2>Overview</h2>
                         <ul>
-                            {% for item in overview -%}
-                                <li>{{- item -}}</li>
-                            {%- endfor %}
+                            <li>
+                                Mass: {% if product._mass > 0 -%} 
+                                        {{- product.mass -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
+                            </li>
+                            <li>
+                                Surface Gravity: {% if product._surface_gravity > 0 -%} 
+                                        {{- product.surface_gravity -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
+                            </li>
+                            <li>
+                                Orbital Period: {% if product._orbital_period > 0 -%} 
+                                        {{- product.orbital_period -}} 
+                                    {%- else -%}
+                                        {{- "N/A" -}}
+                                    {%- endif -%}
+                            </li>
                         </ul>
-                        <hr>
-                    {%- endif %}
                     <h2>purchase</h2>
                     <div class="product price">
                         <span id="price" style="width: 100%;">{{ product.price }}</span>
@@ -63,13 +79,15 @@
                     <div class="product rating">
                         {{ rating(review_avg, review_count) }}
                     </div>
-                    <a href="/basket/add/{{product.ID}}?redirect={{request.url}}" class="button green-confirm">Add To Basket</a>
+                    <button class="button green-confirm">
+                        Add to cart
+                    </button>
                     <button class="button">
                         Add to wishlist
                     </button>
                 </div>
             </div>
-            <div id="reviews" class="product row" style="height: unset; justify-content: center;">
+            <div id="reviews" class="tab select">
                 <button id="reviews button" class="tab-button button bottom-only active" onclick="switchTab('reviews')">
                     <h2 style="border: none;">Reviews</h2>
                 </button>
@@ -91,8 +109,14 @@
                 {{ review_form.comment.label }}
                 {{ review_form.comment(rows='5', cols='50') }}
                 {{ review_form.submit }}
-                {% for error in review_form.stars.errors %}
-                    {{ error }}
+
+                {# For each error, generate a peice of JS which displays an error #}
+                {% for errors in [review_form.stars.errors, review_form.comment.errors] %}
+                    {% for error in errors %}
+                        <script defer>
+                            alert('{{error}}')
+                        </script>
+                    {% endfor %}
                 {% endfor %}
             </form>
             <div id="reviews tab" class="review-container tab">

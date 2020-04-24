@@ -48,7 +48,8 @@ function openDropdown(id) {
 	//Go through the list of dropdown options, if any contain the content, make that active and break
 	for (let i = 0; i < dropdownOptions.length; i++) {
 		//Get the text from the option and convert it to a string
-		const text = dropdownOptions[i].textContent.toString();
+		//Any underscores in the text is treated as a space
+		const text = dropdownOptions[i].textContent.toString().replace('_', ' ');
 
 		//If the text contains the title of the dropdown, it is the active item and is selected
 		if (text.includes(content)) {
