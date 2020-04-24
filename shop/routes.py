@@ -9,7 +9,6 @@ from .models import db, func, Product, Picture, Review, User, Wishlist, Category
 from . import app
 import time
 
-
 @app.route("/")
 def render_home():
     return render_template("layout.html")
@@ -48,6 +47,7 @@ def outputWishlist():
 
     #END of Function
     return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
+
 @app.route("/addWishlist")
 def addWishlist():
     pid= str(request.args.get('pid'))
@@ -80,6 +80,75 @@ def deleteWish():
     db.session.commit()
     return redirect('/wishlist')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    #check and see if user exists in database
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first() #emails are unique shouldn't get more than one result.
+        if user:
+            if user.verify_password(form.password.data): #check hash password instead of string password.
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('Account'))
+
+        return '<h1>Invalid email or password</h1>' #If there is no match
+
+
+    return render_template('login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def signup():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        new_user = User(email=form.email.data, password=form.password.data)
+        db.session.add(new_user) #Pass to db.
+        db.session.commit()
+
+        return redirect("/login")
+
+    return render_template('signup.html', form=form)
+
+@app.route('/password_change', methods=["GET", "POST"])
+@login_required
+def user_password_change():
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        user = current_user
+        user.password = generate_password_hash(form.password.data, method='sha256')
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect(url_for('Account'))
+
+    return render_template('password_change.html', form=form)
+
+@app.route('/delete_account', methods=["GET", "POST"])
+@login_required
+def delete():
+    form = DeleteUserForm()
+
+    if form.validate_on_submit():
+        user = current_user
+        db.session.delete(user)
+        db.session.commit()
+
+        logout_user()
+        return redirect(url_for('login'))
+
+    return render_template('delete_account.html', form=form)
+
+@app.route('/account')
+@login_required #can not access directly
+def Account():
+    return render_template('Account.html', name=current_user.email)
+
+@app.route('/logout')
+@login_required
+def logout(): #redirect to login when this route is reached.
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route("/products")
 def render_products():
