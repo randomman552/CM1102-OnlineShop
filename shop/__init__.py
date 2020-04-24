@@ -8,12 +8,6 @@ import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# Setup the flask upload variables (currently not used)
-UPLOAD_FOLDER = 'static/products/temp'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 bootstrap = Bootstrap(app)
 
 login_manager = LoginManager()
@@ -21,6 +15,14 @@ login_manager.init_app(app)
 
 from . import routes
 from . import models
+
+from flask_admin import Admin
+from shop.views import AdminView
+from flask_admin.contrib.sqla import ModelView
+from shop.models import Picture
+from shop.models import Product
+admin = Admin(app, name='Admin panel', template_mode='bootstrap3')
+admin.add_view(ModelView(Product, models.db.session))
 
 @login_manager.user_loader
 def load_user(user_id):
