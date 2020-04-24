@@ -14,7 +14,6 @@ def basket_setup():
     if "basket" not in session:
         session["basket"] = []
 
-
 @app.route("/")
 def render_home():
     basket_setup()
@@ -693,12 +692,12 @@ def render_basket():
 
 @app.route("/basket/add/<int:product_id>")
 def add_to_basket(product_id):
-    basket.append(product_id)
+    session["basket"].append(product_id)
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
 
 @app.route("/basket/remove/<int:product_id>")
 def remove_from_basket(product_id):
-    basket.remove(product_id)
+    session["basket"].remove(product_id)
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
