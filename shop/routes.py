@@ -14,6 +14,74 @@ import time
 def render_home():
     return render_template("layout.html")
 
+@app.route("/wishlist")
+
+def outputWishlist():
+    userID = current_user.ID
+    #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
+    products = Wishlist.query.filter_by(userID = userID).all()
+    wishlistEmpty = db.session.query(Wishlist.ID).filter_by(userID=userID) is not None
+    counter = 0
+    isEmpty = False
+    arrayWishlist = ([])
+    if wishlistEmpty == True:
+        productsOnWishlist = []
+        for i in products:
+            temp = i.productID
+            productsOnWishlist.append(temp)
+            productInformation = Product.query.filter_by(ID=temp).all()
+            for i in productInformation:
+                #making a new list every iteration to append to the 2D array arrayWishlist.
+                wishlistProductDetails = []
+                wishlistProductDetails.append(str(productInformation[0].name))
+                wishlistProductDetails.append(str(productInformation[0].price))
+                wishlistProductDetails.append(str(productInformation[0].description))
+                wishlistProductDetails.append(str(productInformation[0].ID))
+
+                arrayWishlist.append(wishlistProductDetails)
+                print (counter)
+                counter +=1
+        #print (str(finalWishList[0]))
+    else:
+        isEmpty = True
+        
+
+    #END of Function
+    return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
+@app.route("/addWishlist")
+def addWishlist():
+    pid= str(request.args.get('pid'))
+    #TODO Change UserID to equal Current_User.ID when login is set up.
+    userID = current_user.ID
+    #userValid = db.session.query(User.ID).filter_by(ID=UID).scalar() is not None
+    userValid = True
+    if userValid == True:
+        productValid = db.session.query(Product.ID).filter_by(ID=pid).scalar() is not None
+        if productValid == True:
+            #new_item = User(ID = 5000, email = "BazzTest3", password_hash = "12345")
+            new_item = Wishlist(productID = pid, userID=userID)
+            wishlistValid = db.session.query(Wishlist.ID).filter_by(userID=userID, productID=pid).scalar() is not None
+            if wishlistValid != True:
+                db.session.add(new_item)
+                db.session.commit()
+                return redirect(f'/products/'+pid)
+            else:
+                return "Error message duplicate wishlist listing found. Please return."
+        else:
+            return "Invalid Product ID. please return back to home"
+        return "Present"
+    else:
+        return redirect('/register')
+
+
+@app.route("/deleteWishlist")
+def deleteWish():
+    productID = request.args.get('pid')
+    userID = current_user.ID
+    Wishlist.query.filter_by(userID=userID, productID=productID).delete()
+    db.session.commit()
+    return redirect('/wishlist')
+
 
 @app.route("/products")
 def render_products():
