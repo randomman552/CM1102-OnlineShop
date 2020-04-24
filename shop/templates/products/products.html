@@ -20,10 +20,7 @@
             let sort_options = [
                 "rating",
                 "price",
-                "no.ratings",
-                "mass",
-                "surface_gravity",
-                "orbital_period"
+                "no.ratings"
             ];
             let order_options =  [
                 "asc",
@@ -75,15 +72,12 @@
                 <input class="price" name="minprice" id="minprice" 
                 type="number" placeholder="Min Price" min="0"
                 value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}"
-                size="30">
-            </div>
-
-            <div class="row">
+                size="10">
                 <label for="maxprice">To: £</label>
                 <input class="price" name="maxprice" id="maxprice" 
                 type="number" placeholder="Max Price" min="0"
                 value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}"
-                size="30">
+                size="10">
             </div>
 
             <div class="row">
@@ -108,23 +102,17 @@
                     <div id="sort-by" class="dropdown hidden" onclick="toggleDropdown('sort-by')">
                         <span class="dropdown title">
                             {% if request.args['sort'] != "none" %}
-                                {{ request.args['sort'].replace("_", " ") }} - {{ request.args['order'].replace("_", " ") }} 
+                                {{ request.args['sort'] }} - {{ request.args['order'] }} 
                             {% else %}
                                 none
                             {% endif %}
                         </span>
                         <span class="dropdown arrow"><img src="{{ url_for('static', filename='icons/angle.svg') }}"></span>
                         <div id="sort-by content" class="dropdown content">
-                            <a onclick="setSort('price', 'asc')">price - ascending</a>
-                            <a onclick="setSort('price', 'desc')">price - descending</a>
-                            <a onclick="setSort('rating', 'desc')">rating - descending</a>
-                            <a onclick="setSort('no.ratings', 'desc')">no.ratings - descending</a>
-                            <a onclick="setSort('surface_gravity', 'asc')">surface gravity - ascending</a>
-                            <a onclick="setSort('surface_gravity', 'desc')">surface gravity - descending</a>
-                            <a onclick="setSort('mass', 'asc')">mass - ascending</a>
-                            <a onclick="setSort('mass', 'desc')">mass - descending</a>
-                            <a onclick="setSort('orbital_period', 'asc')">orbital period - ascending</a>
-                            <a onclick="setSort('orbital_period', 'desc')">orbital period - descending</a>
+                            <a onclick="setSort('price', 'asc')">price - ascending (low - high)</a>
+                            <a onclick="setSort('price', 'desc')">price - descending (high - low)</a>
+                            <a onclick="setSort('rating', 'desc')">rating - descending (high - low)</a>
+                            <a onclick="setSort('no.ratings', 'desc')">no.ratings - descending (high - low)</a>
                         </div>
                     </div>
                 </div>

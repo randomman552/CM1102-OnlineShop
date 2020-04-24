@@ -79,11 +79,11 @@ function slideShowControlsState(state) {
 	var controls = [ document.getElementById('slideshow-prev'), document.getElementById('slideshow-next') ];
 	if (state == false) {
 		controls.forEach((element) => {
-			element.classList.add('hidden');
+			element.style.display = 'none';
 		});
 	} else {
 		controls.forEach((element) => {
-			element.classList.remove('hidden');
+			element.style.display = 'inline';
 		});
 	}
 }

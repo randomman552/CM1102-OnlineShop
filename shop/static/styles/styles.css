@@ -1,3 +1,4 @@
+/* TODO: Add some other color modes? */
 /* Root element for setting variables */
 :root {
 	font-size: 16px;
@@ -435,14 +436,6 @@ hr {
 	width: 100%;
 	border: none;
 	border-bottom: 1px solid var(--bg-color);
-}
-
-/* Tab select styles */
-.tab.select {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
 }
 
 /* Attributes for mobile (small screen) display */
