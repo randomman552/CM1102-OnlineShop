@@ -10,6 +10,7 @@
     <h2>2. {{ title }}</h2><br><br>
   </head>
 
+    
   <form method="POST" action="">
     {{ form.csrf_token }}
 
@@ -19,7 +20,9 @@
     {% endfor %}
     <br>
 
-    {{ form.cardnumber.label }} {{ form.cardnumber(size=4 , placeholder='0000') }} - {{ form.cardnumber2(size=4 , placeholder='0000') }} - {{ form.cardnumber3(size=4 , placeholder='0000') }} - {{ form.cardnumber4(size=4 , placeholder='0000') }}
+
+
+    {{ form.cardnumber.label }} {{ form.cardnumber(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber2(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber3(size=4 , placeholder='0000',class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber4(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }}
     {% for error in form.cardnumber.errors %}
     <span class="error">{{ error }}!</span>
     {% endfor %}
@@ -29,7 +32,7 @@
 
     <br>
 
-    {{ form.cvv.label }} {{ form.cvv(size=3, placeholder='000') }}
+    {{ form.cvv.label }} {{ form.cvv(size=3, placeholder='000', minlength="3", maxlength="3") }}
     {% for error in form.cvv.errors %}
     <span class="error">{{ error }}!</span>
     {% endfor %}
@@ -37,6 +40,19 @@
     
     {{ form. submit2 }}
 </form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
 
+    $(".input").keyup(function() {
+      if (this.value.length == this.maxLength) {
+        var $next = $(this).next('.input');
+        if ($next.length)
+          $(this).next('.input').focus();
+        else
+          $(this).blur();
+      }
+    });
+    </script>
+    
 {% endblock content %}
 

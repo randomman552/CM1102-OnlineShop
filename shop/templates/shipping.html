@@ -30,7 +30,13 @@
   <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
-  
+
+  {{ form.phone.label }} {{ form.phone(placeholder='Type your 11 digit phone number, withoutspaces', minlength="11", maxlength="11", message='Phone number must be 11 digits') }}
+  {% for error in form.phone.errors %}
+  <span class="error">{{ error }}!</span>
+  {% endfor %}
+  <br>
+
   {{ form.address1.label }} {{ form.address1(placeholder='Fill in the first line of your address') }}
   {% for error in form.address1.errors %}
   <span class="error">{{ error }}!</span>
