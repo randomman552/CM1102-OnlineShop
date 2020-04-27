@@ -26,6 +26,9 @@ Account
   <div class="panel-body"><a href="{{ url_for('user_password_change') }}">Change Password</a></div>
   <div class="panel-body"><a href="{{ url_for('delete') }}">Delete Account</a></div>
   <div class="panel-body"><a href="{{ url_for('logout') }}">Log Out</a></div>
+  {% if current_user.is_admin %}
+    <div class="panel-body"><a href="{{ url_for('admin.index') }}">Admin Panel</a></div>
+  {% endif %}
   {% if not current_user.email_confirmed %}
 
   {% endif %}
