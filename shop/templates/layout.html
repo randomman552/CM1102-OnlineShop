@@ -8,7 +8,7 @@
         {% endblock %}
     </head>
     <body>
-        <!-- Main navigation panel -->
+        {# Main navigation panel #}
         <nav class="main">
             <nav class="sub-nav">
                 <a class="button bottom-only" href="/"><p>Home</p></a>
@@ -23,10 +23,16 @@
                     <button type="submit"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search"></button>
                 </form>
             </nav>
+            {# Display different navigation on the right hand side if logged in #}
             <nav class="sub-nav reversed">
-                <a href="/basket" class="button"><img src="{{ url_for('static', filename='icons/cart.svg') }}" alt="Cart"></a>
-                <a class="button bottom-only" href="/login"><p>Login</p></a>
-                <a class="button bottom-only" href="/register"><p>Register</p></a>
+                <a href="/basket" class="button bottom-only"><img src="{{ url_for('static', filename='icons/cart.svg') }}" alt="Cart"></a>
+                {% if current_user.is_authenticated %}
+                    <a class="button bottom-only" href="/logout"><p>Logout</p></a>
+                    <a href="/account" class="button bottom-only"><p>Account</p></a>
+                {% else %}
+                    <a class="button bottom-only" href="/login"><p>Login</p></a>
+                    <a class="button bottom-only" href="/register"><p>Register</p></a>
+                {% endif %}
             </nav>
         </nav>
         <main>

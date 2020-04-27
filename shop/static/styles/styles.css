@@ -47,10 +47,6 @@ nav.reversed {
 	flex-direction: row-reverse;
 }
 
-/* Form attributes */
-form {
-	text-align: center;
-}
 /* Form input attributes */
 input,
 select,
@@ -72,6 +68,25 @@ input[type="submit"] {
 option {
 	background-color: white;
 }
+
+/* Form */
+form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-transform: capitalize;
+	text-align: center;
+}
+/* Used to align form elements for the way luca did his login forms */
+form > .form-group {
+	margin-top: 2px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
 /* Search form attributes */
 form.search {
 	display: inline-flex;
@@ -351,11 +366,11 @@ div.dropdown-container {
 	--text-hover: white;
 }
 .button.red-confirm {
-	--border-color: rgb(129, 48, 48);
-	--background-color: rgb(129, 48, 48);
+	--border-color: rgb(199, 71, 71);
+	--background-color: rgb(199, 71, 71);
 	--text-color: white;
-	--button-hover: rgb(88, 33, 33);
-	--button-hover-border: rgb(88, 33, 33);
+	--button-hover: rgb(156, 56, 56);
+	--button-hover-border: rgb(156, 56, 56);
 	--text-hover: white;
 }
 .button {

@@ -14,11 +14,11 @@
 	border-left: none;
 	border-bottom: none;
 }
-.container.filters > .row {
+form.filter-form > .row {
 	height: auto;
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content:  space-between;
 	align-items: center;
 	overflow: hidden;
 	width: calc(100% - 10px);
@@ -32,9 +32,10 @@
 	flex-basis: 70%;
 }
 .container.controls {
-	flex-basis: 100%;
+	width: 100%;
+	box-sizing: border-box;
 	flex-direction: row;
-	height: 50px;
+	height: 70px;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
@@ -209,6 +210,15 @@
 		border-top: 1px solid var(--bg-color);
 	}
 	.container.filters {
+		border-top: 1px solid var(--bg-color);
 		border-right: none;
+		justify-content: center;
+		align-items: center;
+	}
+	form.filter-form{
+		width: 50%;
+	}
+	form.filter-form > .container.controls{
+		border-top: none;
 	}
 }
