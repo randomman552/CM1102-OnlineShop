@@ -11,7 +11,7 @@ from decimal import Decimal
 from . import app
 
 # Set config location here
-config_location = "shop/static/config.json"
+config_location = "shop/config/dbconfig.json"
 
 
 def read_json(file_location: str) -> dict:

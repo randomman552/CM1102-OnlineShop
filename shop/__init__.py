@@ -40,7 +40,7 @@ def unauthorized():
 
 
 #The code section below is only used when some environment variables are set
-sample_data_location = "shop/static/sample_data.json"
+sample_data_location = "shop/config/sample_data.json"
 
 # If the environment variable "SHOP_CLEAR_DATA" is set to "1", this will drop all tables from the database
 if bool(os.getenv("SHOP_CLEAR_DATA", "")):
