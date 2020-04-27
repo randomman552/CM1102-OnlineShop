@@ -654,8 +654,8 @@ def render_view_product(product_id):
         users=users
     )
 
-@app.route('/shipping', methods=['GET', 'POST'])
-def shipping():
+@app.route('/shipping/<int:TotalPrice>', methods=['GET', 'POST'])
+def shipping(TotalPrice):
     basket_setup()
     form = ShippingForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -679,13 +679,13 @@ def shipping():
         session["email"] = email
 
         #flash('Shipping information valid!')
-        return redirect(url_for('billing'))
+        return redirect(f'/billing/{TotalPrice}')
 
     return render_template('shipping.html', title='Shipping', form=form)
 
 
-@app.route('/billing', methods=['GET', 'POST'])
-def billing():
+@app.route('/billing/<int:TotalPrice>', methods=['GET', 'POST'])
+def billing(TotalPrice):
     basket_setup()
     form = BillingForm()
 
@@ -714,13 +714,13 @@ def billing():
         #expirymonth = req["expirymonth"]
 
         #flash("Billing information valid!")
-        return redirect(url_for('review'))
+        return redirect(f'/review/{TotalPrice}')
 
     return render_template('billing.html', title='Billing', form=form)
 
 
-@app.route('/review', methods=['GET', 'POST'])
-def review():
+@app.route('/review/<int:TotalPrice>', methods=['GET', 'POST'])
+def review(TotalPrice):
     basket_setup()
     form = ReviewForm()
 
@@ -749,7 +749,7 @@ def review():
         else:
             return redirect(url_for('receipt'))
 
-    return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, cvv=cvv)
+    return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, TotalPrice=TotalPrice, cvv=cvv)
 
 
 
@@ -798,14 +798,17 @@ def render_basket():
     basket_setup()
     products = Product.query.filter(Product.ID.in_(session["basket"])).all()
     pictures = get_pictures(products)
-    #for i in range(len(products)):
-        #for product in products:
-            #products = products.filter(Product._price).all()
+    TotalPrice = 0
+
+    for i in range(len(products)):
+        for product in products:
+            price = product._price
+            TotalPrice += price
 
     return render_template("Basket.html",
                            products=products,
                            pictures=pictures,
-                           #TotalPrice = TotalPrice,
+                           TotalPrice=TotalPrice,
                            mode="edit")
 
 @app.route("/basket/add/<int:product_id>")

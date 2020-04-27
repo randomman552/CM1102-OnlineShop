@@ -134,7 +134,7 @@
         <div class="info-container grid novis {% if mode == 'list' %} reverse {% endif %}">
             <div class="info-container {{ mode }} image">
                 {% if pictures|length > 0 %}
-                    <img src="{{ url_for('static', filename=pictures[0].URL) }}" alt="Image of Product">
+                    <img src="{{ pictures[0].URL }}" alt="Image of Product">
                 {% else %}
                     <img src="{{ url_for('static', filename='products/default.png') }}" alt="No Image">
                 {% endif %}
