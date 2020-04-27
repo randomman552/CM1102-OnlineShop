@@ -25,11 +25,9 @@
     {% endfor %}
     <br>
 
-  
     {{ form.expirydate.label }} {{form.expirymonth}} / {{ form.expirydate }} 
 
     <br>
-
 
     {{ form.cvv.label }} {{ form.cvv(size=3, placeholder='000') }}
     {% for error in form.cvv.errors %}
