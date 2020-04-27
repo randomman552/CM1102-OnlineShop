@@ -6,7 +6,6 @@ class ShippingForm(FlaskForm):
     firstname = StringField('First Name', validators=[validators.DataRequired(message='Please fill in your first name'), validators.Length(min=2, max=15, message='Last name must be at least 2 characters long')])
     lastname = StringField('Last Name', validators=[validators.DataRequired(message='Please fill in your last name'), validators.Length(min=2, max=15, message='Last name must be at least 2 characters long')])
     email = StringField('Email', validators=[validators.DataRequired(message='Please fill in your email address'), validators.Email(message='Invalid email address')])
-    phone = IntegerField('Phone', validators=[validators.DataRequired(message='Please choose an 11 digit phone number')])
     address1 = TextAreaField('Address 1', validators=[validators.DataRequired(message='Please fill in the first line of your address'), validators.Length(min=3, max=30, message='Please type an address between 3 and 30 characters long')])
     address2 = TextAreaField('Address 2 ', validators=[validators.DataRequired(message='Please fill in the second line of your address'), validators.Length(min=3, max=30, message='Please type an address between 3 and 30 characters long')])
     postcode = StringField('Postcode ', validators=[validators.DataRequired(message='Please fill in your postcode'), validators.Length(min=6, max=9, message='Your postcode must be between 6 and 8 characters long')])
