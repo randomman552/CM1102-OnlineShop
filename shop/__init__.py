@@ -57,6 +57,10 @@ if bool(os.getenv("SHOP_CLEAR_DATA", "")):
 # this will load the data in the sample data file and put it in the database
 # This code could be stripped out in a production setting
 if bool(os.getenv("SHOP_SAMPLE_DATA", "")):
+
+    # Print status
+    print(f"Loading data from: '{sample_data_location}'")
+
     def load_categories(categories: list) -> dict:
         """
         Load the category data into the database.\n
@@ -131,7 +135,7 @@ if bool(os.getenv("SHOP_SAMPLE_DATA", "")):
         for product in products:
 
             # Add categories
-            for category in product["categories"]:
+            for category in product.get("categories", []):
                 new_category = ProductCategory(productID=product_map.get(product.get("name")),
                                                categoryID=category_map.get(
                                                    category)
@@ -139,14 +143,14 @@ if bool(os.getenv("SHOP_SAMPLE_DATA", "")):
                 db.session.add(new_category)
 
             # Add pictures
-            for picture in product["pictures"]:
+            for picture in product.get("pictures", []):
                 new_picture = Picture(productID=product_map.get(product.get("name", "Product Name")),
                                       URL=picture
                                       )
                 db.session.add(new_picture)
 
             # Add reviews
-            for review in product["reviews"]:
+            for review in product.get("reviews", []):
                 new_review = Review(productID=product_map[product.get("name")],
                                     userID=user_map.get(review.get("author")),
                                     rating=review.get("rating", 5),
@@ -194,9 +198,10 @@ if bool(os.getenv("SHOP_SAMPLE_DATA", "")):
 
     sample_data = read_json(sample_data_location)
 
-    category_map = load_categories(sample_data["categories"])
+    category_map = load_categories(sample_data.get("categories", []))
 
-    user_map = load_users(sample_data["users"])
+    user_map = load_users(sample_data.get("users", []))
 
-    product_map = load_products(
-        sample_data["products"], category_map, user_map)
+    product_map = load_products(sample_data.get("products", []), category_map, user_map)
+
+    print("Finished data loading")
