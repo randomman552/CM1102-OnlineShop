@@ -775,7 +775,7 @@ def add_to_basket(product_id):
 
     # Re-assign basket from session
     session["basket"] = session.get("basket", []) + [product_id]
-    
+    print(session.get("basket", []))
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
 
@@ -790,6 +790,7 @@ def remove_from_basket(product_id):
     
     # Re-assign basket
     session["basket"] = basket
+    print(session.get("basket", []))
     
     # Redirect
     redirect_url = request.args.get("redirect", "/")
