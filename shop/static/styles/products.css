@@ -84,7 +84,6 @@ form.filter-form > .row {
 	position: absolute;
 	display: flex;
 	bottom: 10px;
-	z-index: 1;
 }
 .product.grid > .actions {
 	left: 10px;
