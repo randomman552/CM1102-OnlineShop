@@ -113,8 +113,6 @@ def render_home():
     pictures = CommonProductFunctions.get_pictures(products)
     ratings = CommonProductFunctions.get_ratings(products)
 
-    print(products, pictures, ratings)
-
     basket_setup()
     return render_template("home.html", products=products, pictures=pictures, ratings=ratings)
 
@@ -142,9 +140,7 @@ def outputWishlist():
                 wishlistProductDetails.append(str(productInformation[0].ID))
 
                 arrayWishlist.append(wishlistProductDetails)
-                print (counter)
                 counter +=1
-        #print (str(finalWishList[0]))
     else:
         isEmpty = True
         
