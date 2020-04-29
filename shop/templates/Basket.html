@@ -14,7 +14,7 @@
                         {{ basket_view(products[i], pictures[i]) }}
                   {% endif %}
             {% endfor %}
-            <p>£{{ TotalPrice }} </p>
+            <p>Total price: £{{ TotalPrice }} </p>
             <a href="/shipping/{{TotalPrice}}" class="button">Proceed to Checkout</a>
       {% else %}
                 <h1 style="border: none;">There are no products in your basket</h1>
