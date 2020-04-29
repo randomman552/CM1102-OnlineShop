@@ -26,7 +26,7 @@ from shop.views import CategoryView, PictureView, AdminView, pCategoryView, Admi
 admin = Admin(app, name='Admin panel', template_mode='bootstrap3')
 admin.add_view(AdminView(Product, db.session))
 admin.add_view(PictureView(Picture, db.session))
-admin.add_view(CategoryViewView(Category, db.session))
+admin.add_view(CategoryView(Category, db.session))
 admin.add_view(pCategoryView(ProductCategory, db.session))
 admin.add_view(AdminView(Review, db.session))
 
