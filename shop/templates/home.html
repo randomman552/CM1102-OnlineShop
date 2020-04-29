@@ -17,7 +17,7 @@
             {# import the product macro #}
             {% from 'products/macros.html' import product %}
             <h1>Our highest rated products</h1>
-            <div class="container">
+            <div class="container products">
                 {%- for i in range(3) -%}
                     {% if products|length >= i -%}
                         {{ product(products[i], pictures[i], ratings[i], mode="grid") }}
