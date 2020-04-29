@@ -1,4 +1,5 @@
 # File to hold database models
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,22 +10,33 @@ from decimal import Decimal
 
 from . import app
 
-
-def import_config():
-    """Import the username and password from the config.json file in static."""
-    config = dict()
-    with open("shop/static/config.json", "r") as file:
-        config = json.load(file)
-    return config
+# Set config location here
+config_location = "shop/config/dbconfig.json"
 
 
-def save_config(config):
-    """Save config to a file."""
-    with open("shop/static/config.json", "w") as file:
-        json.dump(config, file, indent=4)
+def read_json(file_location: str) -> dict:
+    """Read a json file and return it as a dict.\n
+    @param file_location - The location of the file to read.\n
+    @return - A dict with the contents of the file.
+    """
+
+    result = dict()
+    with open(file_location, "r") as file:
+        result = json.load(file)
+    return result
 
 
-config = import_config()
+def write_json(to_write: dict, file_location: str) -> None:
+    """Write a dict to a json file.\n
+    @param to_write - The dict to write to the file.\n
+    @param file_location - The location to write to.
+    """
+
+    with open(file_location, "w") as file:
+        json.dump(to_write, file, indent=4)
+
+
+config = read_json(config_location)
 
 # Create the connect string for this database, if ssl options are specified in the file, add those to the uri.
 db_connect_string = f"mysql+pymysql://{config['username']}:{config['password']}@{config['host']}:3306/{config['database']}"
@@ -65,8 +77,7 @@ class Product(db.Model):
     name = Column(Text, nullable=False)
 
     # Price is stored as an decimal so no precision is lost to floating point accuracy
-    # As this is currently a signed number, its largest value is 9,223,372,036,854,775,807‬ (9 Quintillion)
-    _price = Column(BigInteger, nullable=False, default=0)
+    _price = Column(DECIMAL(65, 2), nullable=False, default=0)
     public = Column(Boolean, default=False)
     description = Column(Text, nullable=False, default="This is a description")
 
@@ -74,8 +85,8 @@ class Product(db.Model):
     # Using DECIMAL here, so we can store numbers of massive size.
     # These all have a default of -1 so we can treat any value less than 0 as n/a
     _mass = Column(DECIMAL(65, 0), default=-1)
-    _surface_gravity = Column(DECIMAL(64, 2), default=-1)
-    _orbital_period = Column(DECIMAL(64, 2), default=-1)
+    _surface_gravity = Column(DECIMAL(65, 4), default=-1)
+    _orbital_period = Column(DECIMAL(65, 4), default=-1)
 
     # Properties so that the format of our attributes are in the right format
     # This common function handles the formatting
@@ -129,11 +140,11 @@ class Product(db.Model):
 
     @property
     def price(self) -> str:
-        return self.__format_decimal(self._price / 100, before="£")
+        return self.__format_decimal(self._price, before="£")
 
     @price.setter
     def set_price(self, number: float):
-        self._price = round(number * 100)
+        self._price = Decimal(str(number))
 
 # Review class
 
@@ -177,6 +188,5 @@ class ProductCategory(db.Model):
     productID = Column(Integer, ForeignKey(Product.ID), nullable=False)
 
 
-# UNCOMMENT THIS LINE TO CLEAR THE DATABASE
-# db.drop_all()
+# Create all the tables (if not already created)
 db.create_all()

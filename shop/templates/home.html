@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Galaxy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="site-banner">
+        <img class="site-icon" src="{{ url_for('static', filename='icons/favicon.svg') }}">
+        <h2 class="site-contact">Contact Number: INSERT NUMBER HERE</h2>
+        <h1 class="site-name">Galaxy</h1>
+    </div>
+        {# Show the 3 most popular products (highly rated) on the site 
+            if they are defined in the render call and we are on the home page#}
+        {% if products is defined and pictures is defined and ratings is defined -%}
+            {# import the product macro #}
+            {% from 'products/macros.html' import product %}
+            <h1>Our highest rated products</h1>
+            <div class="container products">
+                {%- for i in range(3) -%}
+                    {% if products|length >= i -%}
+                        {{ product(products[i], pictures[i], ratings[i], mode="grid") }}
+                    {%-endif %}
+                {%- endfor -%}
+            </div>
+        {%- endif %}
+    <p>Website icon made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></p>
+    <p>All other icons are from the <a href="https://clarity.design/icons" title="Clarity Icons">clarity icon set</a>.</p>
+{% endblock %}

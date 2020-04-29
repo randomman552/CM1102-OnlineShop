@@ -1,12 +1,14 @@
-{% extends "bootstrap/base.html" %}
+{% extends "layout.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block head %}
+    <title>Delete Account</title>
+{% endblock %}
+
 {% block content %}
-<div>
-<h1> Click this Button to Delete your Account
-<form action="{{ url_for('delete') }}" method="POST">
-{{ form.csrf_token }}
-<button type="submit" class="btn btn-danger">Delete Account</button>
-</form>
-</div>
+    <h2>Delete Account</h2>
+    <form action="{{ url_for('delete') }}" method="POST">
+		{{ form.csrf_token }}
+		<button id="delete" type="submit" class="button red-confirm">Delete Account</button>
+    </form>
 {% endblock %}

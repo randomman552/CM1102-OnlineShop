@@ -1,43 +1,12 @@
-{% extends "bootstrap/base.html" %}
+{% extends "layout.html" %}
 
-{% block title %}
-Account
-{% endblock %}
-
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='Account.css')}}">
+{% block head %}
+<title>Account</title>
 {% endblock %}
 
 {% block content %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Account Actions</a>
-        </div>
-        <div class="panel panel-info">
-  <div class="panel-heading">What Would You Like to do?</div>
-  <div class="panel-body"><a href="{{ url_for('user_password_change') }}">Change Password</a></div>
-  <div class="panel-body"><a href="{{ url_for('delete') }}">Delete Account</a></div>
-  <div class="panel-body"><a href="{{ url_for('logout') }}">Log Out</a></div>
-  {% if not current_user.email_confirmed %}
-
-  {% endif %}
-      </div>
-    </nav>
-
-</div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-          <h1 class="page-header">Manage your Account, {{ name }}</h1>
-
-        </div>
-
-
+  <h2>Account management for {{ name }}.</h2>
+  <a class="button" href="{{ url_for('user_password_change') }}">Change Password</a>
+  <a class="button red-confirm" href="{{ url_for('delete') }}">Delete Account</a>
+  <a class="button red-confirm" href="{{ url_for('logout') }}">Log Out</a>
 {% endblock %}

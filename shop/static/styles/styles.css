@@ -47,10 +47,6 @@ nav.reversed {
 	flex-direction: row-reverse;
 }
 
-/* Form attributes */
-form {
-	text-align: center;
-}
 /* Form input attributes */
 input,
 select,
@@ -72,6 +68,25 @@ input[type="submit"] {
 option {
 	background-color: white;
 }
+
+/* Form */
+form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-transform: capitalize;
+	text-align: center;
+}
+/* Used to align form elements for the way luca did his login forms */
+form > .form-group {
+	margin-top: 2px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
 /* Search form attributes */
 form.search {
 	display: inline-flex;
@@ -117,6 +132,53 @@ main {
 	background: var(--fg-color);
 	margin-top: 4.5rem;
 	padding: 1rem;
+}
+
+/* Site Banner styles */
+.site-banner {
+	background-image: url(https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fgetwallpapers.com%2Fwallpaper%2Ffull%2Ff%2Fd%2Fa%2F8555.jpg&f=1&nofb=1);
+	background-size: 100% 200%;
+	background-position: center;
+	width: 100%;
+	height: 300px;
+	border-radius: 10px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+.site-banner > * {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: none;
+	justify-content: center;
+}
+.site-banner > .site-icon {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	left: 10px;
+	top: 10px;
+}
+.site-banner > .site-name {
+	width: 100%;
+	height: 100%;
+	background-image: radial-gradient( rgba(255,255,255,1) 5%,rgba(0,0,0,0) 20%);
+	color: black;
+	text-transform: uppercase;
+}
+.site-banner > .site-contact {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	color: white;
+}
+
+/* Help Block styling for logging in */
+p.help-block {
+	color: red;
 }
 
 /* Popup container attributes (NOT CURRENTLY IN USE)*/
@@ -318,6 +380,7 @@ div.dropdown-container {
 	align-items: center;
 	text-decoration: none;
 	color: inherit;
+	z-index: 0;
 }
 
 /* Button styles */
@@ -351,11 +414,11 @@ div.dropdown-container {
 	--text-hover: white;
 }
 .button.red-confirm {
-	--border-color: rgb(129, 48, 48);
-	--background-color: rgb(129, 48, 48);
+	--border-color: rgb(199, 71, 71);
+	--background-color: rgb(199, 71, 71);
 	--text-color: white;
-	--button-hover: rgb(88, 33, 33);
-	--button-hover-border: rgb(88, 33, 33);
+	--button-hover: rgb(156, 56, 56);
+	--button-hover-border: rgb(156, 56, 56);
 	--text-hover: white;
 }
 .button {
