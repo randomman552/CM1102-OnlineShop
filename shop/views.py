@@ -3,8 +3,9 @@ import flask_login as login
 from shop.models import User
 from flask_admin import expose
 
-class AdminView(ModelView):
+class ProductView(ModelView):
     column_display_pk = True
+    form_columns = ['name', '_price', 'description', '-mass', '_surface_gravity', '_orbital_period']
 
     def is_accessible(self):
         if login.current_user.is_authenticated:
