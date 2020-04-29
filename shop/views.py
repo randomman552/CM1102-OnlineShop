@@ -54,7 +54,7 @@ class CategoryView(ModelView):
 class ReviewView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
-    column_list = ['ID', 'productID', 'Rating', 'Content']
+    column_list = ['ID', 'productID', 'rating', 'content']
 
     def is_accessible(self):
         if login.current_user.is_authenticated:
