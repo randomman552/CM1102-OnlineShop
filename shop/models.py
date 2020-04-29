@@ -77,8 +77,7 @@ class Product(db.Model):
     name = Column(Text, nullable=False)
 
     # Price is stored as an decimal so no precision is lost to floating point accuracy
-    # As this is currently a signed number, its largest value is 9,223,372,036,854,775,807‬ (9 Quintillion)
-    _price = Column(BigInteger, nullable=False, default=0)
+    _price = Column(DECIMAL(65, 2), nullable=False, default=0)
     public = Column(Boolean, default=False)
     description = Column(Text, nullable=False, default="This is a description")
 
@@ -86,8 +85,8 @@ class Product(db.Model):
     # Using DECIMAL here, so we can store numbers of massive size.
     # These all have a default of -1 so we can treat any value less than 0 as n/a
     _mass = Column(DECIMAL(65, 0), default=-1)
-    _surface_gravity = Column(DECIMAL(64, 2), default=-1)
-    _orbital_period = Column(DECIMAL(64, 2), default=-1)
+    _surface_gravity = Column(DECIMAL(65, 4), default=-1)
+    _orbital_period = Column(DECIMAL(65, 4), default=-1)
 
     # Properties so that the format of our attributes are in the right format
     # This common function handles the formatting
@@ -141,11 +140,11 @@ class Product(db.Model):
 
     @property
     def price(self) -> str:
-        return self.__format_decimal(self._price / 100, before="£")
+        return self.__format_decimal(self._price, before="£")
 
     @price.setter
     def set_price(self, number: float):
-        self._price = round(number * 100)
+        self._price = Decimal(str(number))
 
 # Review class
 
