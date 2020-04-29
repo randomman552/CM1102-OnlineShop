@@ -11,10 +11,6 @@ import time
 from datetime import timedelta
 
 
-def basket_setup():
-    if "basket" not in session:
-        session["basket"] = []
-
 class CommonProductFunctions:
     """
     A few functions which relate to products which might be useful outside of the product route.
@@ -113,12 +109,10 @@ def render_home():
     pictures = CommonProductFunctions.get_pictures(products)
     ratings = CommonProductFunctions.get_ratings(products)
 
-    basket_setup()
     return render_template("home.html", products=products, pictures=pictures, ratings=ratings)
 
 @app.route("/wishlist")
 def outputWishlist():
-    basket_setup()
     userID = current_user.ID
     #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
     products = Wishlist.query.filter_by(userID = userID).all()
@@ -151,7 +145,6 @@ def outputWishlist():
 
 @app.route("/addWishlist")
 def addWishlist():
-    basket_setup()
     pid= str(request.args.get('pid'))
     userID = current_user.ID
     userValid = db.session.query(User.ID).filter_by(ID=userID).scalar() is not None
@@ -176,7 +169,6 @@ def addWishlist():
 
 @app.route("/deleteWishlist")
 def deleteWish():
-    basket_setup()
     productID = request.args.get('pid')
     userID = current_user.ID
     Wishlist.query.filter_by(userID=userID, productID=productID).delete()
@@ -201,7 +193,6 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def signup():
-    basket_setup()
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -216,7 +207,6 @@ def signup():
 @app.route('/password_change', methods=["GET", "POST"])
 @login_required
 def user_password_change():
-    basket_setup()
     form = PasswordForm()
 
     if form.validate_on_submit():
@@ -257,7 +247,6 @@ def logout(): #redirect to login when this route is reached.
 
 @app.route("/products")
 def render_products():
-    basket_setup()
     def handle_vars(variable_list: dict):
         """Handle setting of session variables for product display.\n
         @param variable_list - A dict, each entry in the dict is a variable name (str),
@@ -590,7 +579,6 @@ def render_products():
 
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
-    basket_setup()
     # Create a review form object
     review_form = AddReviewForm()
 
@@ -662,7 +650,6 @@ def render_view_product(product_id):
 
 @app.route('/shipping/<int:TotalPrice>', methods=['GET', 'POST'])
 def shipping(TotalPrice):
-    basket_setup()
     form = ShippingForm()
     if request.method == 'POST' and form.validate_on_submit():
         session.permanent = True
@@ -692,7 +679,6 @@ def shipping(TotalPrice):
 
 @app.route('/billing/<int:TotalPrice>', methods=['GET', 'POST'])
 def billing(TotalPrice):
-    basket_setup()
     form = BillingForm()
 
     if request.method == 'POST' and form.validate_on_submit():
@@ -727,7 +713,6 @@ def billing(TotalPrice):
 
 @app.route('/review/<int:TotalPrice>', methods=['GET', 'POST'])
 def review(TotalPrice):
-    basket_setup()
     form = ReviewForm()
 
     #shipping info
@@ -763,7 +748,6 @@ def review(TotalPrice):
 
 @app.route('/receipt', methods=['GET', 'POST'])
 def receipt():
-    basket_setup()
     firstname = session["firstname"]
     email = session["email"]
 
@@ -771,39 +755,8 @@ def receipt():
 
 @app.route("/basket")
 def render_basket():
-    def get_pictures(products: list) -> list:
-        """
-        Get the relevant pictures from the database.\n
-        @param products - The list of products to get the pictures for\n
-        @return - A list of lists containing the pictures for the corresponding products in the products list
-        """
-
-        # Setup return list with lists for each product
-        pictures_return = [[] for _ in range(len(products))]
-
-        # If the products list is empty, return an empty list
-        if len(products) == 0:
-            return pictures_return
-
-        # Create a list of product IDs to get the pictures for
-        product_ids = []
-        for product in products:
-            product_ids.append(product.ID)
-
-        # Get pictures from the database
-        pictures = Picture.query.filter(
-            Picture.productID.in_(product_ids)).all()
-
-        # Append the corresponding pictures to the correct list
-        for i in range(len(products)):
-            for picture in pictures:
-                if picture.productID == products[i].ID:
-                    pictures_return[i].append(picture)
-        return pictures_return
-
-    basket_setup()
-    products = Product.query.filter(Product.ID.in_(session["basket"])).all()
-    pictures = get_pictures(products)
+    products = Product.query.filter(Product.ID.in_(session.get("basket", []))).all()
+    pictures = CommonProductFunctions.get_pictures(products)
     TotalPrice = 0
 
     for i in range(len(products)):
@@ -819,15 +772,25 @@ def render_basket():
 
 @app.route("/basket/add/<int:product_id>")
 def add_to_basket(product_id):
-    session["basket"] += [product_id]
-    #session["basket"].append(product_id)
+
+    # Re-assign basket from session
+    session["basket"] = session.get("basket", []) + [product_id]
+    
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
 
 @app.route("/basket/remove/<int:product_id>")
 def remove_from_basket(product_id):
-    basket = session["basket"]
-    basket.remove(product_id)
+    basket = session.get("session", [])
+    # Attmept to remove the product from the basket
+    try:
+        basket.remove(product_id)
+    except:
+        pass
+    
+    # Re-assign basket
     session["basket"] = basket
-    redirect_url = request.args["redirect"]
+    
+    # Redirect
+    redirect_url = request.args.get("redirect", "/")
     return redirect(redirect_url)
