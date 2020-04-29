@@ -1,6 +1,6 @@
 {% macro rating(score, count=None, link="#reviews") -%}
     {# Score should be the score to display, and count should be the number of reviews to display after #}
-    <a href="{{- link -}}" class="rating-container" style="z-index: 3;">
+    <a href="{{- link -}}" class="rating-container">
         {% for star_num in range(5) -%}
             {# Max value is 5 for a review, so we take away an increasing value (up to 5) from the rating #}
             {% set star_num = score - star_num %}

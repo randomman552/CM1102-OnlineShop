@@ -380,6 +380,7 @@ div.dropdown-container {
 	align-items: center;
 	text-decoration: none;
 	color: inherit;
+	z-index: 0;
 }
 
 /* Button styles */
