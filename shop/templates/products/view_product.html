@@ -79,12 +79,12 @@
                     <div class="product rating">
                         {{ rating(review_avg, review_count) }}
                     </div>
-                    <button class="button green-confirm">
+                    <a class="button green-confirm" href="/basket/add/{{product.ID}}?redirect={{ request.url }}">
                         Add to cart
-                    </button>
-                    <button class="button">
+                    </a>
+                    <a class="button" href="/addWishlist?pid={{product.ID}}">
                         Add to wishlist
-                    </button>
+                    </a>
                 </div>
             </div>
             <div id="reviews" class="tab select">

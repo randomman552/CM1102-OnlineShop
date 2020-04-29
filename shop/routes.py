@@ -112,6 +112,7 @@ def render_home():
     return render_template("home.html", products=products, pictures=pictures, ratings=ratings)
 
 @app.route("/wishlist")
+@login_required
 def outputWishlist():
     userID = current_user.ID
     #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
@@ -144,6 +145,7 @@ def outputWishlist():
     return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
 
 @app.route("/addWishlist")
+@login_required
 def addWishlist():
     pid= str(request.args.get('pid'))
     userID = current_user.ID
@@ -168,6 +170,7 @@ def addWishlist():
 
 
 @app.route("/deleteWishlist")
+@login_required
 def deleteWish():
     productID = request.args.get('pid')
     userID = current_user.ID
@@ -775,13 +778,13 @@ def add_to_basket(product_id):
 
     # Re-assign basket from session
     session["basket"] = session.get("basket", []) + [product_id]
-    print(session.get("basket", []))
+    
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
 
 @app.route("/basket/remove/<int:product_id>")
 def remove_from_basket(product_id):
-    basket = session.get("session", [])
+    basket = session.get("basket", [])
     # Attmept to remove the product from the basket
     try:
         basket.remove(product_id)
@@ -790,7 +793,6 @@ def remove_from_basket(product_id):
     
     # Re-assign basket
     session["basket"] = basket
-    print(session.get("basket", []))
     
     # Redirect
     redirect_url = request.args.get("redirect", "/")
