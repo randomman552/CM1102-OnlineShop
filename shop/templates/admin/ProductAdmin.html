@@ -1,10 +1,11 @@
-{% from 'products/macros.html' import arg_preserver %}
+
+{% extends 'admin/master.html' %}
 <!DOCTYPE html>
 <html>
     <head>
         <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
         {% block head %}
-            <title>Admin Pages</title>
+            <title>Product Edit Page</title>
         {% endblock %}
     </head>
     <body>
@@ -29,16 +30,4 @@
           </nav>
       </nav>
     </body>
-    <body>
-    {% extends'admin/master.html' %}
-    {% block body %}
-    {% if current_user.is_admin %}
-      Welcome to the admin panel {{ current_user.username }}!
-      <p>Press on the tabs above to view, edit or add products</p>
-    {% else %}
-      Hello, please login as an admin before accessing this panel &nbsp|
-      <a href="{{ url_for('login') }}">Login&nbsp;</a>
-    {% endif %}
-    {% endblock %}
-  </body>
 </html>

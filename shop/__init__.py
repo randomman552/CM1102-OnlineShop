@@ -25,6 +25,10 @@ from shop.models import db, User, Product, Category, ProductCategory, Wishlist, 
 
 admin = Admin(app, name='Admin panel', template_mode='bootstrap3')
 admin.add_view(ModelView(Product, db.session))
+admin.add_view(PictureView(Picture, db.session))
+admin.add_view(AdminView(Category, db.session))
+admin.add_view(pCategoryView(ProductCategory, db.session))
+admin.add_view(AdminView(Review, db.session))
 
 #User loader
 @login_manager.user_loader
