@@ -15,13 +15,110 @@ def basket_setup():
     if "basket" not in session:
         session["basket"] = []
 
+class CommonProductFunctions:
+    """
+    A few functions which relate to products which might be useful outside of the product route.
+    """
+    @staticmethod
+    def get_pictures(products: list) -> list:
+        """
+        Get the relevant pictures from the database.\n
+        @param products - The list of products to get the pictures for\n
+        @return - A list of lists containing the pictures for the corresponding products in the products list
+        """
+
+        # Setup return list with lists for each product
+        pictures_return = [[] for _ in range(len(products))]
+
+        # If the products list is empty, return an empty list
+        if len(products) == 0:
+            return pictures_return
+
+        # Create a list of product IDs to get the pictures for
+        product_ids = []
+        for product in products:
+            product_ids.append(product.ID)
+
+        # Get pictures from the database
+        pictures = Picture.query.filter(
+            Picture.productID.in_(product_ids)).all()
+
+        # Append the corresponding pictures to the correct list
+        for i in range(len(products)):
+            for picture in pictures:
+                if picture.productID == products[i].ID:
+                    pictures_return[i].append(picture)
+        return pictures_return
+
+    @staticmethod
+    def get_ratings(products: list) -> list:
+        """
+        Get the relevant rating averages from the database.\n
+        @param products - The list of products to get the average ratings for.\n
+        @return - A list of average ratings, position of each rating matches the product list.
+        """
+
+        # Setup return list with lists for each product
+        ratings_return = [[] for _ in range(len(products))]
+
+        # This is really slow if you have high ping to the sql server, as it requires multiple sql requests
+        # Append the corresponding pictures to the correct list
+        for i in range(len(products)):
+            # Get the average rating and add that to the list
+            avg_rating = db.session.query(func.avg(Review.rating).label(
+                "average")).filter(Review.productID == products[i].ID).first()[0]
+            if avg_rating:
+                ratings_return[i].append(float(avg_rating))
+            else:
+                ratings_return[i].append(0)
+
+            # Get the number of ratings and add that to the list
+            count = db.session.query(func.count(Review.rating).label("count")).filter(
+                Review.productID == products[i].ID).first()
+            ratings_return[i] += count
+
+        # Each rating in the list is a tuple,
+        # the first element in the tuple is the average review score
+        # and the second is the number of reviews
+
+        # Return our list of ratings
+        return ratings_return
+
 @app.route("/")
 def render_home():
+    # Get the average rating
+    avg_rating = (db.session
+                .query(Review.productID, func.avg(Review.rating)
+                        .label("avg_rating"))
+                .group_by(Review.productID)
+                .subquery()
+                )
+
+    # Create a products query
+    products = Product.query.filter_by()
+
+    # Join the two together
+    products = (products
+                        .outerjoin(avg_rating, Product.ID == avg_rating.c.productID)
+                        .group_by(Product.ID)
+                        )
+
+    # Sort by highest rating
+    products = products.order_by(avg_rating.c.avg_rating.desc())
+
+    #Get the products, with a limit of 3
+    products = products.limit(3).all()
+
+    #Get the pictures and ratings for the products
+    pictures = CommonProductFunctions.get_pictures(products)
+    ratings = CommonProductFunctions.get_ratings(products)
+
     basket_setup()
-    return render_template("layout.html")
+    return render_template("home.html", products=products, pictures=pictures, ratings=ratings)
 
 @app.route("/wishlist")
 def outputWishlist():
+    basket_setup()
     userID = current_user.ID
     #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
     products = Wishlist.query.filter_by(userID = userID).all()
@@ -44,18 +141,17 @@ def outputWishlist():
                 wishlistProductDetails.append(str(productInformation[0].ID))
 
                 arrayWishlist.append(wishlistProductDetails)
-                print (counter)
                 counter +=1
-        #print (str(finalWishList[0]))
     else:
         isEmpty = True
-        
+
 
     #END of Function
     return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
 
 @app.route("/addWishlist")
 def addWishlist():
+    basket_setup()
     pid= str(request.args.get('pid'))
     userID = current_user.ID
     userValid = db.session.query(User.ID).filter_by(ID=userID).scalar() is not None
@@ -80,6 +176,7 @@ def addWishlist():
 
 @app.route("/deleteWishlist")
 def deleteWish():
+    basket_setup()
     productID = request.args.get('pid')
     userID = current_user.ID
     Wishlist.query.filter_by(userID=userID, productID=productID).delete()
@@ -104,6 +201,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def signup():
+    basket_setup()
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -118,6 +216,7 @@ def signup():
 @app.route('/password_change', methods=["GET", "POST"])
 @login_required
 def user_password_change():
+    basket_setup()
     form = PasswordForm()
 
     if form.validate_on_submit():
@@ -158,6 +257,7 @@ def logout(): #redirect to login when this route is reached.
 
 @app.route("/products")
 def render_products():
+    basket_setup()
     def handle_vars(variable_list: dict):
         """Handle setting of session variables for product display.\n
         @param variable_list - A dict, each entry in the dict is a variable name (str),
@@ -376,13 +476,8 @@ def render_products():
             if "minprice" in request.args:
                 # Contained in a try loop to prevent any incorrect values from breaking the page
                 try:
-                    if request.args["minprice"]:
-                        # Multiply by 100 as they are stored as integers after being multiplied by 100
-                        min_price = round(
-                            float(request.args["minprice"]) * 100)
-                    else:
-                        # Set to zero if not set in args
-                        min_price = 0
+                    min_price = round(
+                        float(request.args.get("minprice", "0").replace(",", "")) * 100)
 
                     # Apply the filter to the query
                     products = products.filter(Product._price >= min_price)
@@ -392,11 +487,8 @@ def render_products():
             # Max price filtering
             if "maxprice" in request.args:
                 try:
-                    if request.args["maxprice"]:
-                        max_price = round(
-                            float(request.args["maxprice"]) * 100)
-                    else:
-                        max_price = 0
+                    max_price = round(
+                        float(request.args.get("maxprice", "0").replace(",", "")) * 100)
                     # If max_price is equal to 0, we should ignore it and not filter by max price
                     if max_price != 0:
                         products = products.filter(Product._price <= max_price)
@@ -450,69 +542,6 @@ def render_products():
         # Return our products list
         return products, product_count
 
-    def get_pictures(products: list) -> list:
-        """
-        Get the relevant pictures from the database.\n
-        @param products - The list of products to get the pictures for\n
-        @return - A list of lists containing the pictures for the corresponding products in the products list
-        """
-
-        # Setup return list with lists for each product
-        pictures_return = [[] for _ in range(len(products))]
-
-        # If the products list is empty, return an empty list
-        if len(products) == 0:
-            return pictures_return
-
-        # Create a list of product IDs to get the pictures for
-        product_ids = []
-        for product in products:
-            product_ids.append(product.ID)
-
-        # Get pictures from the database
-        pictures = Picture.query.filter(
-            Picture.productID.in_(product_ids)).all()
-
-        # Append the corresponding pictures to the correct list
-        for i in range(len(products)):
-            for picture in pictures:
-                if picture.productID == products[i].ID:
-                    pictures_return[i].append(picture)
-        return pictures_return
-
-    def get_ratings(products: list) -> list:
-        """
-        Get the relevant rating averages from the database.\n
-        @param products - The list of products to get the average ratings for.\n
-        @return - A list of average ratings, position of each rating matches the product list.
-        """
-
-        # Setup return list with lists for each product
-        ratings_return = [[] for _ in range(len(products))]
-
-        # This is really slow if you have high ping to the sql server, as it requires multiple sql requests
-        # Append the corresponding pictures to the correct list
-        for i in range(len(products)):
-            # Get the average rating and add that to the list
-            avg_rating = db.session.query(func.avg(Review.rating).label(
-                "average")).filter(Review.productID == products[i].ID).first()[0]
-            if avg_rating:
-                ratings_return[i].append(float(avg_rating))
-            else:
-                ratings_return[i].append(0)
-
-            # Get the number of ratings and add that to the list
-            count = db.session.query(func.count(Review.rating).label("count")).filter(
-                Review.productID == products[i].ID).first()
-            ratings_return[i] += count
-
-        # Each rating in the list is a tuple,
-        # the first element in the tuple is the average review score
-        # and the second is the number of reviews
-
-        # Return our list of ratings
-        return ratings_return
-
     def get_categories() -> list:
         """Get the categories from the database and return them as a list of category objects.
         @return - A list of categories
@@ -538,10 +567,10 @@ def render_products():
     products, product_count = get_products()
 
     # Get pictures
-    pictures = get_pictures(products)
+    pictures = CommonProductFunctions.get_pictures(products)
 
     # Get ratings
-    ratings = get_ratings(products)
+    ratings = CommonProductFunctions.get_ratings(products)
 
     # Get the maximum number of pages
     limit = int(request.args["limit"])
@@ -559,23 +588,9 @@ def render_products():
                            categories=categories,
                            mode="edit")
 
-@app.route("/products/new", methods=["GET", "POST"])
-def render_new_product():
-    # Give the new product a random name, which we can then use to get its ID from the database
-    random_name = str(random.randint(0, 500000000))
-    new_product = Product(name=random_name)
-    # Add product to database
-    db.session.add(new_product)
-    db.session.commit()
-    # Extract the newly created product and redirect to the edit page for it
-    new_product = Product.query.filter(Product.name.like(random_name)).first()
-    # Change the product name from the random one
-    new_product.name = "Product name"
-    db.session.commit()
-    return redirect(f"/products/{new_product.ID}")
-
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
+    basket_setup()
     # Create a review form object
     review_form = AddReviewForm()
 
@@ -645,8 +660,9 @@ def render_view_product(product_id):
         users=users
     )
 
-@app.route('/shipping', methods=['GET', 'POST'])
-def shipping():
+@app.route('/shipping/<int:TotalPrice>', methods=['GET', 'POST'])
+def shipping(TotalPrice):
+    basket_setup()
     form = ShippingForm()
     if request.method == 'POST' and form.validate_on_submit():
         session.permanent = True
@@ -654,14 +670,14 @@ def shipping():
         session["firstname"] = firstname
 
         lastname = request.form["lastname"]
-        session["lastname"] = lastname       
+        session["lastname"] = lastname
 
         address1 = request.form["address1"]
         session["address1"] = address1
 
         address2 = request.form["address2"]
         session["address2"] = address2
-       
+
         postcode = request.form["postcode"]
         session["postcode"] = postcode
 
@@ -669,15 +685,16 @@ def shipping():
         session["email"] = email
 
         #flash('Shipping information valid!')
-        return redirect(url_for('billing'))
-    
+        return redirect(f'/billing/{TotalPrice}')
+
     return render_template('shipping.html', title='Shipping', form=form)
 
 
-@app.route('/billing', methods=['GET', 'POST'])
-def billing():
+@app.route('/billing/<int:TotalPrice>', methods=['GET', 'POST'])
+def billing(TotalPrice):
+    basket_setup()
     form = BillingForm()
-    
+
     if request.method == 'POST' and form.validate_on_submit():
         req = request.form
 
@@ -703,13 +720,14 @@ def billing():
         #expirymonth = req["expirymonth"]
 
         #flash("Billing information valid!")
-        return redirect(url_for('review'))
+        return redirect(f'/review/{TotalPrice}')
 
     return render_template('billing.html', title='Billing', form=form)
 
 
-@app.route('/review', methods=['GET', 'POST'])
-def review():
+@app.route('/review/<int:TotalPrice>', methods=['GET', 'POST'])
+def review(TotalPrice):
+    basket_setup()
     form = ReviewForm()
 
     #shipping info
@@ -736,8 +754,8 @@ def review():
 
         else:
             return redirect(url_for('receipt'))
-    
-    return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, cvv=cvv)
+
+    return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, TotalPrice=TotalPrice, cvv=cvv)
 
 
 
@@ -745,8 +763,8 @@ def review():
 
 @app.route('/receipt', methods=['GET', 'POST'])
 def receipt():
-
-    firstname = session["firstname"] 
+    basket_setup()
+    firstname = session["firstname"]
     email = session["email"]
 
     return render_template('receipt.html',  title='Receipt', firstname=firstname, email=email)
@@ -786,25 +804,30 @@ def render_basket():
     basket_setup()
     products = Product.query.filter(Product.ID.in_(session["basket"])).all()
     pictures = get_pictures(products)
-    #for i in range(len(products)):
-        #for product in products:
-            #products = products.filter(Product._price).all()
+    TotalPrice = 0
 
+    for i in range(len(products)):
+        for product in products:
+            price = product._price
+            TotalPrice += price
 
     return render_template("Basket.html",
                            products=products,
                            pictures=pictures,
-                           #TotalPrice = TotalPrice,
+                           TotalPrice=TotalPrice,
                            mode="edit")
 
 @app.route("/basket/add/<int:product_id>")
 def add_to_basket(product_id):
-    session["basket"].append(product_id)
+    session["basket"] += [product_id]
+    #session["basket"].append(product_id)
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
 
 @app.route("/basket/remove/<int:product_id>")
 def remove_from_basket(product_id):
-    session["basket"].remove(product_id)
+    basket = session["basket"]
+    basket.remove(product_id)
+    session["basket"] = basket
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)

@@ -2,7 +2,7 @@
 {% from 'products/macros.html' import rating, page_slider, arg_preserver, product %}
 
 {% block head %}
-    <title>Products</title>
+    <title>Galaxy - Products</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
     <script defer type="text/javascript" src="{{ url_for('static', filename='js/dropdown.js') }}"></script>
     <script defer type="text/javascript">
@@ -54,52 +54,54 @@
 
 {% block content %}
     <div class="container">
-        <form method="GET" class="container filters" action="" novalidate autocomplete="off">
-            {# Store the current search query in this hidden field so that it is preserved after filtering #}
-            {{ arg_preserver(["minprice", "maxprice", "category", "page"]) }}
-            
-            {# Each of the divs is a row in the form #}
-            <div class="container controls" style="flex-basis: unset;">
-                {# Filter form heading #}
-                <h2 style="border: none;">Filters:</h2>
-                <button class="button" type="submit">Filter</button>
-            </div>
+        <div class="container filters">
+            <form method="GET" class="filter-form" action="" novalidate autocomplete="off">
+                {# Store the current search query in this hidden field so that it is preserved after filtering #}
+                {{ arg_preserver(["minprice", "maxprice", "category", "page"]) }}
+                
+                {# Each of the divs is a row in the form #}
+                <div class="container controls">
+                    {# Filter form heading #}
+                    <h2 style="border: none;">Filters:</h2>
+                    <button class="button" type="submit">Filter</button>
+                </div>
 
-            <div class="row">
-                <label>Price range</label>
-            </div>
+                <div class="row" style="justify-content: center;">
+                    <label>Price range</label>
+                </div>
 
-            <div class="row">
-                {# Price range selector #}
-                <label for="minprice">From: £</label>
-                <input class="price" name="minprice" id="minprice" 
-                type="number" placeholder="Min Price" min="0"
-                value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}"
-                size="30">
-            </div>
+                <div class="row">
+                    {# Price range selector #}
+                    <label for="minprice">From: £</label>
+                    <input class="price" name="minprice" id="minprice" 
+                    type="number" placeholder="Min Price" min="0"
+                    value="{% if 'minprice' in request.args -%} {{ request.args['minprice'] }} {%- endif %}"
+                    size="30">
+                </div>
 
-            <div class="row">
-                <label for="maxprice">To: £</label>
-                <input class="price" name="maxprice" id="maxprice" 
-                type="number" placeholder="Max Price" min="0"
-                value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}"
-                size="30">
-            </div>
+                <div class="row">
+                    <label for="maxprice">To: £</label>
+                    <input class="price" name="maxprice" id="maxprice" 
+                    type="number" placeholder="Max Price" min="0"
+                    value="{% if 'maxprice' in request.args -%} {{ request.args['maxprice'] }} {%- endif %}"
+                    size="30">
+                </div>
 
-            <div class="row">
-                {# Category selector (can only browse one at once) #}
-                <label for="category">Category: </label>
-                <select id="category" name="category">
-                    <option value="">Select category</option>
-                    {% for category in categories -%}
-                        <option value="{{- category.ID -}}"
-                        {%- if "category" in request.args and request.args["category"]|int == category.ID -%} selected="selected" {%- endif -%}>
-                            {{ category.name }}
-                        </option>
-                    {%- endfor %}
-                </select>
-            </div>
-        </form>
+                <div class="row">
+                    {# Category selector (can only browse one at once) #}
+                    <label for="category">Category: </label>
+                    <select id="category" name="category">
+                        <option value="">Select category</option>
+                        {% for category in categories -%}
+                            <option value="{{- category.ID -}}"
+                            {%- if "category" in request.args and request.args["category"]|int == category.ID -%} selected="selected" {%- endif -%}>
+                                {{ category.name }}
+                            </option>
+                        {%- endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
         <div class="container products">
             <div class="container controls">
                 {# Sort selection dropdown #}

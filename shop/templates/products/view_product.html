@@ -2,7 +2,7 @@
 {% from 'products/macros.html' import rating %}
 
 {% block head %}
-    <title>{{ product.name }}</title>
+    <title>Galaxy - {{ product.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/view_product.css')}}">
     <script defer type="text/javascript" src="{{ url_for('static', filename='js/slideshow.js') }}"></script>
     <script defer type="text/javascript" src="{{ url_for('static', filename='js/tabs.js') }}"></script>
@@ -120,29 +120,33 @@
                 {% endfor %}
             </form>
             <div id="reviews tab" class="review-container tab">
-                {# TODO: Add review sorting/filtering #}
                 {# For each review, add the review to the DOM #}
-                {% for i in range(reviews|length) %}
-                    <div class="review">
-                        <div>
-                            {%- if users[i] -%}
-                                {{ users[i].email }}
-                            {%- else -%}
-                                Anonymous
-                            {%- endif %}
-                            {{ rating(reviews[i].rating) }}
+                {% if reviews|length > 0 %}
+                    {% for i in range(reviews|length) %}
+                        <div class="review">
+                            <div>
+                                {%- if users[i] -%}
+                                    {# Split the email and remove the second part to protect users emails #}
+                                    {{ users[i].email.split("@")[0] }}
+                                {%- else -%}
+                                    Anonymous
+                                {%- endif %}
+                                {{ rating(reviews[i].rating) }}
+                            </div>
+                            {% if reviews[i].content %}
+                                <div class="content">
+                                    {{ reviews[i].content }}
+                                </div>
+                            {% else %}
+                                <div class="content emtpy">
+                                    User left no comment.
+                                </div>
+                            {% endif %}
                         </div>
-                        {% if reviews[i].content %}
-                            <div class="content">
-                                {{ reviews[i].content }}
-                            </div>
-                        {% else %}
-                            <div class="content emtpy">
-                                User left no comment.
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <h2>There are no reviews for this product yet!</h2>
+                {% endif %}
             </div>
         </div>
     {% else %}
