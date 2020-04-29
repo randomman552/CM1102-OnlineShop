@@ -1,14 +1,12 @@
-{% block content %}
-<body>
-    {% for message in get_flashed_messages() %}
-      <p>{{ message }}</p>
-    {% endfor %}
-</body>
-  <head>
+{% extends 'layout.html' %}
 
-    <title>Checkout - {{ title }}</title>
+{% block content %}
+
+  <head>
+      <link rel="stylesheet" type="text/css" href="static/styles/styles.css">
+    <title>Checkout - {{ title }}</title><br>
     <h1>Checkout</h1>
-    <h2>1. {{ title }}</h2>
+    <h2>1. {{ title }}</h2><br><br>
   </head>
 
   <form method="POST" action="">
@@ -17,43 +15,43 @@
 
   {{ form.firstname.label }} {{ form.firstname( placeholder='Type your first name here') }}
   {% for error in form.firstname.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
 
   {{ form.lastname.label }} {{ form.lastname(placeholder='Type your last name here') }}
   {% for error in form.lastname.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
 
   {{ form.email.label }} {{ form.email(placeholder='Type your email here') }}
   {% for error in form.email.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
 
-  {{ form.phone.label }} {{ form.phone(placeholder='Type your 11 digit phone number, withoutspaces') }}
+  {{ form.phone.label }} {{ form.phone(placeholder='Type your 11 digit phone number, withoutspaces', minlength="11", maxlength="11", message='Phone number must be 11 digits') }}
   {% for error in form.phone.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
-  
+
   {{ form.address1.label }} {{ form.address1(placeholder='Fill in the first line of your address') }}
   {% for error in form.address1.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
   
   {{ form.address2.label }} {{ form.address2(placeholder='Fill in the second line of your address') }}
   {% for error in form.address2.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br>
 
   {{ form.postcode.label }} {{ form.postcode(placeholder='Fill in your postcode here') }}
   {% for error in form.postcode.errors %}
-  <span style="color: red;">{{ error }}!</span>
+  <span class="error">{{ error }}!</span>
   {% endfor %}
   <br><br>
   {{form.submit1}}

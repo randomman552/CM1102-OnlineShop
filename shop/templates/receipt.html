@@ -1,12 +1,18 @@
+{% extends 'layout.html' %}
 {% block content %}
   <head>
+    <link rel="stylesheet" type="text/css" href="static/styles/styles.css">
+
     <title>Checkout - {{ title }}</title>
     <h1>Checkout</h1>
-    <h2>4. {{ title }}</h2>
+    <h2>4. {{ title }}</h2><br><br>
   </head>
+  <form>
+  <body>
   <p>
-      Thank you for your purchase, {{ firstname }} !<br>
-      You will be sent a receipt to your email, {{ email }}
+      Thank you for your purchase, <b>{{ firstname }}!</b><br>
+      You will be sent a receipt to your email, <b>{{ email }}</b>
   </p>
-
+</body>
+</form>
 {% endblock content %}

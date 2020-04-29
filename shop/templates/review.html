@@ -1,9 +1,13 @@
+{% extends 'layout.html' %}
 {% block content %}
+
 <head>
+    <link rel="stylesheet" type="text/css" href="static/styles/styles.css">
+
     <title>Checkout - {{ title }}</title>
 
   <h1>Checkout</h1>
-  <h2>3. {{ title }}</h2>
+  <h2>3. {{ title }}</h2><br><br>
 </head>
     <form method="POST" action="">
     {{ form.csrf_token }}
@@ -14,11 +18,11 @@
     <b>Address: </b>
     {{ address1 }}<br>
     {{ address2 }}<br>
-    {{ postcode }}<br>
+    <b>Postcode: </b>{{ postcode }}<br>
 </p1>
 
     {{ form.editshipping }}
-<br><br>
+<br><br><br>
 
   <p2>
         <u><em>Your billing information:</em></u><br><br>
@@ -29,7 +33,8 @@
   {{ form.editbilling }}
   <br><br><br>
   <p3>
-      <u><em>Your total is: {{ TotalPrice }}</em></u><br><br>
+      <u><em>Your total is:</em></u> {{ TotalPrice }}
+      <br><br>
   </p3>
 
 <br>
