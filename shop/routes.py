@@ -735,10 +735,10 @@ def review(TotalPrice):
 
     if request.method == 'POST':
         if "editshipping" in request.form:
-            return redirect(url_for('shipping'))
+            return redirect(f'/shipping/{TotalPrice}')
 
         elif "editbilling" in request.form:
-            return redirect(url_for('billing'))
+            return redirect(f'/billing/{TotalPrice}')
 
         else:
             return redirect(url_for('receipt'))
