@@ -1,40 +1,14 @@
 {% from 'products/macros.html' import arg_preserver %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
-        {% block head %}
-            <title>Admin Pages</title>
-        {% endblock %}
-    </head>
-    <body>
-      <nav class="main">
-          <nav class="sub-nav">
-              <a class="button bottom-only" href="/"><p>Home</p></a>
-              <a class="button bottom-only" href="/products"><p>Products</p></a>
-          </nav>
-          <nav class="sub-nav search">
-              <form class="search" action="/products" method="get">
-                  {{ arg_preserver(["query"]) }}
-                  {# If query is present in GET variables, then it will be placed in the search box #}
-                  <input type="text" placeholder="Search" name="query" autocomplete="off"
-                  value="{% if 'query' in request.args %}{{ request.args['query'] }}{% endif %}">
-                  <button type="submit"><img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search"></button>
-              </form>
-          </nav>
-          <nav class="sub-nav reversed">
-              <a href="/basket" class="button"><img src="{{ url_for('static', filename='icons/cart.svg') }}" alt="Cart"></a>
-              <a class="button bottom-only" href="/login"><p>Login</p></a>
-              <a class="button bottom-only" href="/register"><p>Register</p></a>
-          </nav>
-      </nav>
-    </body>
-    <body>
-    {% extends'admin/master.html' %}
+{% extends 'admin/master.html' %}
+    {% block head %}
+        <title>Admin Pages</title>
+    {% endblock %}
+      
     {% block body %}
     {% if current_user.is_admin %}
       Welcome to the admin panel {{ current_user.username }}!
       <p>Press on the tabs above to view, edit or add products</p>
+      <a href="{{ "/" }}">Back to Home</a>
     {% else %}
       Hello, please login as an admin before accessing this panel &nbsp|
       <a href="{{ url_for('login') }}">Login&nbsp;</a>
