@@ -21,12 +21,12 @@ login_manager.init_app(app)
 from . import routes
 from shop.views import AdminView
 from shop.models import db, User, Product, Category, ProductCategory, Wishlist, Picture, Review, User, read_json
-from shop.views import ModelView, PictureView, AdminView, pCategoryView, AdminView
+from shop.views import CategoryView, PictureView, AdminView, pCategoryView, AdminView
 
 admin = Admin(app, name='Admin panel', template_mode='bootstrap3')
 admin.add_view(AdminView(Product, db.session))
 admin.add_view(PictureView(Picture, db.session))
-admin.add_view(AdminView(Category, db.session))
+admin.add_view(CategoryViewView(Category, db.session))
 admin.add_view(pCategoryView(ProductCategory, db.session))
 admin.add_view(AdminView(Review, db.session))
 
