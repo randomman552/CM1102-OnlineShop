@@ -5,7 +5,7 @@ from flask_admin import expose
 
 class ProductView(ModelView):
     column_display_pk = True
-    form_columns = ['name', '_price', 'description', '_mass', '_surface_gravity', '_orbital_period']
+    form_columns = ['name', 'public', '_price', 'description', '_mass', '_surface_gravity', '_orbital_period']
 
     def is_accessible(self):
         if login.current_user.is_authenticated:
