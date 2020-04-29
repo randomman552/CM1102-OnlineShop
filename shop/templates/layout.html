@@ -28,6 +28,7 @@
             <nav class="sub-nav reversed">
                 <a href="/basket" class="button bottom-only"><img src="{{ url_for('static', filename='icons/cart.svg') }}" alt="Cart"></a>
                 {% if current_user.is_authenticated %}
+                    <a href="/wishlist" class="button bottom-only"><p>Wishlist</p></a>
                     <a class="button bottom-only" href="/logout"><p>Logout</p></a>
                     <a href="/account" class="button bottom-only"><p>Account</p></a>
                 {% else %}
