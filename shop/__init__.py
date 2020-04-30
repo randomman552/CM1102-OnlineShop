@@ -19,12 +19,11 @@ login_manager.init_app(app)
 
 #Imports from lower level packages
 from . import routes
-from shop.views import AdminView
 from shop.models import db, User, Product, Category, ProductCategory, Wishlist, Picture, Review, User, read_json
-from shop.views import CategoryView, PictureView, ReviewView, pCategoryView, AdminView
+from shop.views import CategoryView, PictureView, ReviewView, pCategoryView, ProductView
 
 admin = Admin(app, name='Admin panel', template_mode='bootstrap3')
-admin.add_view(AdminView(Product, db.session))
+admin.add_view(ProductView(Product, db.session))
 admin.add_view(PictureView(Picture, db.session))
 admin.add_view(CategoryView(Category, db.session))
 admin.add_view(pCategoryView(ProductCategory, db.session))
