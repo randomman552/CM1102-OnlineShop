@@ -8,8 +8,12 @@ from flask_admin import expose
 
 class ProductView(ModelView):
     column_display_pk = True
+    column_hide_backrefs = False
     form_columns = ['name', 'public', '_price', 'description',
                     '_mass', '_surface_gravity', '_orbital_period']
+    column_list = ['ID' , 'name', 'public', '_price', 'description',
+                    '_mass', '_surface_gravity', '_orbital_period']
+    column_searchable_list = ['name']
 
     def is_accessible(self):
         if login.current_user.is_authenticated:
@@ -23,6 +27,7 @@ class pCategoryView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
     form_columns = ['categoryID', 'productID']
+    column_searchable_list = ['categoryID', 'productID']
     column_list = ['ID', 'categoryID', 'productID']
 
     def is_accessible(self):
@@ -37,6 +42,7 @@ class PictureView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
     form_columns = ['productID', 'URL']
+    column_searchable_list = ['productID']
     column_list = ['ID', 'productID', 'URL']
 
     def is_accessible(self):
@@ -50,6 +56,7 @@ class PictureView(ModelView):
 class CategoryView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
+    column_searchable_list = ['name']
     column_list = ['ID', 'name']
 
     def is_accessible(self):
@@ -63,6 +70,7 @@ class CategoryView(ModelView):
 class ReviewView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
+    column_searchable_list = ['productID']
     column_list = ['ID', 'productID', 'rating', 'content']
 
     def is_accessible(self):
