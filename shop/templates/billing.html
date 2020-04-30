@@ -21,18 +21,23 @@
     <br>
 
 
+    <div>
+      {{ form.cardnumber.label }} {{ form.cardnumber(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber2(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber3(size=4 , placeholder='0000',class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber4(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }}
+      {% for error in form.cardnumber.errors %}
+      <span class="error">{{ error }}!</span>
+      {% endfor %}
+      <br>
+    </div>
 
-    {{ form.cardnumber.label }} {{ form.cardnumber(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber2(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber3(size=4 , placeholder='0000',class="input", minlength="4", maxlength="4") }} - {{ form.cardnumber4(size=4 , placeholder='0000', class="input", minlength="4", maxlength="4") }}
-    {% for error in form.cardnumber.errors %}
-    <span class="error">{{ error }}!</span>
-    {% endfor %}
+    <div>
+      {{ form.expirydate.label }} {{form.expirymonth}} / {{ form.expirydate }} 
+    </div>
+
     <br>
 
-    {{ form.expirydate.label }} {{form.expirymonth}} / {{ form.expirydate }} 
-
-    <br>
-
-    {{ form.cvv.label }} {{ form.cvv(size=3, placeholder='000', minlength="3", maxlength="3") }}
+    <div>
+      {{ form.cvv.label }} {{ form.cvv(size=3, placeholder='000', minlength="3", maxlength="3") }}
+    </div>
     {% for error in form.cvv.errors %}
     <span class="error">{{ error }}!</span>
     {% endfor %}

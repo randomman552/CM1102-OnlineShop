@@ -6,6 +6,9 @@
 
 {% block content %}
   <h2>Account management for {{ name }}.</h2>
+  {% if current_user.is_admin %}
+    <a class="button" href="{{ url_for('admin.index') }}">Admin Panel</a>
+  {% endif %}
   <a class="button" href="{{ url_for('user_password_change') }}">Change Password</a>
   <a class="button red-confirm" href="{{ url_for('delete') }}">Delete Account</a>
   <a class="button red-confirm" href="{{ url_for('logout') }}">Log Out</a>

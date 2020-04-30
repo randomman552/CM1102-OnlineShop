@@ -7,7 +7,7 @@ import os
 
 # Setup the flask app
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = b'T\xb8\xb8\x84\xa4\x17J\x07\xb7A\xd4\xca8\xcb1\xfb\xda\t\x81\x0b\xfa\x1e\xde['
 
 #Initalise bootstrap
 bootstrap = Bootstrap(app)
@@ -19,12 +19,15 @@ login_manager.init_app(app)
 
 #Imports from lower level packages
 from . import routes
-from shop.views import AdminView
-from flask_admin.contrib.sqla import ModelView
 from shop.models import db, User, Product, Category, ProductCategory, Wishlist, Picture, Review, User, read_json
+from shop.views import CategoryView, PictureView, ReviewView, pCategoryView, ProductView
 
 admin = Admin(app, name='Admin panel', template_mode='bootstrap3')
-admin.add_view(ModelView(Product, db.session))
+admin.add_view(ProductView(Product, db.session))
+admin.add_view(PictureView(Picture, db.session))
+admin.add_view(CategoryView(Category, db.session))
+admin.add_view(pCategoryView(ProductCategory, db.session))
+admin.add_view(ReviewView(Review, db.session))
 
 #User loader
 @login_manager.user_loader
