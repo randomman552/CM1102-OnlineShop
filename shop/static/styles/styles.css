@@ -137,8 +137,7 @@ main {
 /* Site Banner styles */
 .site-banner {
 	background-image: url(https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fgetwallpapers.com%2Fwallpaper%2Ffull%2Ff%2Fd%2Fa%2F8555.jpg&f=1&nofb=1);
-	background-size: 100% 200%;
-	background-position: center;
+	background-position: center 45%;
 	width: 100%;
 	height: 300px;
 	border-radius: 10px;
@@ -165,7 +164,7 @@ main {
 .site-banner > .site-name {
 	width: 100%;
 	height: 100%;
-	background-image: radial-gradient( rgba(255,255,255,1) 5%,rgba(0,0,0,0) 20%);
+	background-image: radial-gradient(rgba(255, 255, 255, 1) 5%, rgba(0, 0, 0, 0) 20%);
 	color: black;
 	text-transform: uppercase;
 }
