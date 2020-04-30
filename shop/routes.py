@@ -594,8 +594,8 @@ def render_products():
                            pictures=pictures,
                            ratings=ratings,
                            max_page=max_page,
-                           categories=categories,
-                           mode="edit")
+                           categories=categories
+                           )
 
 
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
