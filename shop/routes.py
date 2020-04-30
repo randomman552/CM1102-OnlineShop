@@ -80,44 +80,48 @@ class CommonProductFunctions:
         # Return our list of ratings
         return ratings_return
 
+# Home Route
 @app.route("/")
 def render_home():
     # Get the average rating
     avg_rating = (db.session
-                .query(Review.productID, func.avg(Review.rating)
-                        .label("avg_rating"))
-                .group_by(Review.productID)
-                .subquery()
-                )
+                  .query(Review.productID, func.avg(Review.rating)
+                         .label("avg_rating"))
+                  .group_by(Review.productID)
+                  .subquery()
+                  )
 
     # Create a products query
     products = Product.query.filter_by()
 
     # Join the two together
     products = (products
-                        .outerjoin(avg_rating, Product.ID == avg_rating.c.productID)
-                        .group_by(Product.ID)
-                        )
+                .outerjoin(avg_rating, Product.ID == avg_rating.c.productID)
+                .group_by(Product.ID)
+                )
 
     # Sort by highest rating
     products = products.order_by(avg_rating.c.avg_rating.desc())
 
-    #Get the products, with a limit of 3
+    # Get the products, with a limit of 3
     products = products.limit(3).all()
 
-    #Get the pictures and ratings for the products
+    # Get the pictures and ratings for the products
     pictures = CommonProductFunctions.get_pictures(products)
     ratings = CommonProductFunctions.get_ratings(products)
 
     return render_template("home.html", products=products, pictures=pictures, ratings=ratings)
 
+
+# Wishlist routes
 @app.route("/wishlist")
 @login_required
 def outputWishlist():
     userID = current_user.ID
     #wishlistEmpty = Wishlist.query.filter_by(userID = 5000).scalar() is not None
-    products = Wishlist.query.filter_by(userID = userID).all()
-    wishlistEmpty = db.session.query(Wishlist.ID).filter_by(userID=userID) is not None
+    products = Wishlist.query.filter_by(userID=userID).all()
+    wishlistEmpty = db.session.query(
+        Wishlist.ID).filter_by(userID=userID) is not None
     counter = 0
     isEmpty = False
     arrayWishlist = ([])
@@ -128,34 +132,37 @@ def outputWishlist():
             productsOnWishlist.append(temp)
             productInformation = Product.query.filter_by(ID=temp).all()
             for i in productInformation:
-                #making a new list every iteration to append to the 2D array arrayWishlist.
+                # making a new list every iteration to append to the 2D array arrayWishlist.
                 wishlistProductDetails = []
                 wishlistProductDetails.append(str(productInformation[0].name))
                 wishlistProductDetails.append(str(productInformation[0].price))
-                wishlistProductDetails.append(str(productInformation[0].description))
+                wishlistProductDetails.append(
+                    str(productInformation[0].description))
                 wishlistProductDetails.append(str(productInformation[0].ID))
 
                 arrayWishlist.append(wishlistProductDetails)
-                counter +=1
+                counter += 1
     else:
         isEmpty = True
+    # END of Function
+    return render_template("wishlist.html", counter=counter, userID=5000, wishListItems=arrayWishlist, isEmpty=isEmpty)
 
-
-    #END of Function
-    return render_template("wishlist.html", counter = counter, userID = 5000, wishListItems = arrayWishlist, isEmpty = isEmpty)
 
 @app.route("/addWishlist")
 @login_required
 def addWishlist():
-    pid= str(request.args.get('pid'))
+    pid = str(request.args.get('pid'))
     userID = current_user.ID
-    userValid = db.session.query(User.ID).filter_by(ID=userID).scalar() is not None
+    userValid = db.session.query(User.ID).filter_by(
+        ID=userID).scalar() is not None
     if userValid == True:
-        productValid = db.session.query(Product.ID).filter_by(ID=pid).scalar() is not None
+        productValid = db.session.query(
+            Product.ID).filter_by(ID=pid).scalar() is not None
         if productValid == True:
             #new_item = User(ID = 5000, email = "BazzTest3", password_hash = "12345")
-            new_item = Wishlist(productID = pid, userID=userID)
-            wishlistValid = db.session.query(Wishlist.ID).filter_by(userID=userID, productID=pid).scalar() is not None
+            new_item = Wishlist(productID=pid, userID=userID)
+            wishlistValid = db.session.query(Wishlist.ID).filter_by(
+                userID=userID, productID=pid).scalar() is not None
             if wishlistValid != True:
                 db.session.add(new_item)
                 db.session.commit()
@@ -178,21 +185,25 @@ def deleteWish():
     db.session.commit()
     return redirect('/wishlist')
 
+
+# User accounts routes
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    #check and see if user exists in database
+    # check and see if user exists in database
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first() #emails are unique shouldn't get more than one result.
+        # emails are unique shouldn't get more than one result.
+        user = User.query.filter_by(email=form.email.data).first()
         if user:
-            if user.verify_password(form.password.data): #check hash password instead of string password.
+            # check hash password instead of string password.
+            if user.verify_password(form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('Account'))
 
-        return '<h1>Invalid email or password</h1>' #If there is no match
-
+        return '<h1>Invalid email or password</h1>'  # If there is no match
 
     return render_template('login.html', form=form)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def signup():
@@ -200,12 +211,13 @@ def signup():
 
     if form.validate_on_submit():
         new_user = User(email=form.email.data, password=form.password.data)
-        db.session.add(new_user) #Pass to db.
+        db.session.add(new_user)  # Pass to db.
         db.session.commit()
 
         return redirect("/login")
 
     return render_template('signup.html', form=form)
+
 
 @app.route('/password_change', methods=["GET", "POST"])
 @login_required
@@ -222,6 +234,7 @@ def user_password_change():
 
     return render_template('password_change.html', form=form)
 
+
 @app.route('/delete_account', methods=["GET", "POST"])
 @login_required
 def delete():
@@ -237,17 +250,21 @@ def delete():
 
     return render_template('delete_account.html', form=form)
 
+
 @app.route('/account')
-@login_required #can not access directly
+@login_required  # can not access directly
 def Account():
     return render_template('Account.html', name=current_user.email)
 
+
 @app.route('/logout')
 @login_required
-def logout(): #redirect to login when this route is reached.
+def logout():  # redirect to login when this route is reached.
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('/'))
 
+
+# Product routes
 @app.route("/products")
 def render_products():
     def handle_vars(variable_list: dict):
@@ -580,6 +597,7 @@ def render_products():
                            categories=categories,
                            mode="edit")
 
+
 @app.route("/products/<int:product_id>", methods=["GET", "POST"])
 def render_view_product(product_id):
     # Create a review form object
@@ -651,6 +669,8 @@ def render_view_product(product_id):
         users=users
     )
 
+
+# Checkout routes
 @app.route('/shipping/<int:TotalPrice>', methods=['GET', 'POST'])
 def shipping(TotalPrice):
     form = ShippingForm()
@@ -718,14 +738,14 @@ def billing(TotalPrice):
 def review(TotalPrice):
     form = ReviewForm()
 
-    #shipping info
+    # shipping info
     firstname = session["firstname"]
     lastname = session["lastname"]
     address1 = session["address1"]
     address2 = session["address2"]
     postcode = session["postcode"]
 
-    #billing info
+    # billing info
     cardholdername = session["cardholdername"]
     cardnumber = session["cardnumber"]
     cardnumber2 = session["cardnumber2"]
@@ -746,9 +766,6 @@ def review(TotalPrice):
     return render_template('review.html', title='Review', form=form, firstname=firstname, lastname=lastname, address1=address1, address2=address2, postcode=postcode, cardholdername=cardholdername, cardnumber=cardnumber, cardnumber2=cardnumber2, cardnumber3=cardnumber3, cardnumber4=cardnumber4, TotalPrice=TotalPrice, cvv=cvv)
 
 
-
-
-
 @app.route('/receipt', methods=['GET', 'POST'])
 def receipt():
     firstname = session["firstname"]
@@ -756,9 +773,12 @@ def receipt():
 
     return render_template('receipt.html',  title='Receipt', firstname=firstname, email=email)
 
+
+# Basket routes
 @app.route("/basket")
 def render_basket():
-    products = Product.query.filter(Product.ID.in_(session.get("basket", []))).all()
+    products = Product.query.filter(
+        Product.ID.in_(session.get("basket", []))).all()
     pictures = CommonProductFunctions.get_pictures(products)
     TotalPrice = 0
 
@@ -773,14 +793,16 @@ def render_basket():
                            TotalPrice=TotalPrice,
                            mode="edit")
 
+
 @app.route("/basket/add/<int:product_id>")
 def add_to_basket(product_id):
 
     # Re-assign basket from session
     session["basket"] = session.get("basket", []) + [product_id]
-    
+
     redirect_url = request.args["redirect"]
     return redirect(redirect_url)
+
 
 @app.route("/basket/remove/<int:product_id>")
 def remove_from_basket(product_id):
@@ -790,10 +812,10 @@ def remove_from_basket(product_id):
         basket.remove(product_id)
     except:
         pass
-    
+
     # Re-assign basket
     session["basket"] = basket
-    
+
     # Redirect
     redirect_url = request.args.get("redirect", "/")
     return redirect(redirect_url)

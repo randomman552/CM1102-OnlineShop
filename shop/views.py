@@ -3,9 +3,13 @@ import flask_login as login
 from shop.models import User
 from flask_admin import expose
 
+# The views in this file are used on the admin panel page
+
+
 class ProductView(ModelView):
     column_display_pk = True
-    form_columns = ['name', 'public', '_price', 'description', '_mass', '_surface_gravity', '_orbital_period']
+    form_columns = ['name', 'public', '_price', 'description',
+                    '_mass', '_surface_gravity', '_orbital_period']
 
     def is_accessible(self):
         if login.current_user.is_authenticated:
@@ -13,6 +17,7 @@ class ProductView(ModelView):
                 user = User.query.get(login.current_user.get_id())
                 return user.is_admin
         return False
+
 
 class pCategoryView(ModelView):
     column_display_pk = True
@@ -27,6 +32,7 @@ class pCategoryView(ModelView):
                 return user.is_admin
         return False
 
+
 class PictureView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
@@ -39,7 +45,8 @@ class PictureView(ModelView):
                 user = User.query.get(login.current_user.get_id())
                 return user.is_admin
         return False
-        
+
+
 class CategoryView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
@@ -51,7 +58,8 @@ class CategoryView(ModelView):
                 user = User.query.get(login.current_user.get_id())
                 return user.is_admin
         return False
-        
+
+
 class ReviewView(ModelView):
     column_display_pk = True
     column_hide_backrefs = False
