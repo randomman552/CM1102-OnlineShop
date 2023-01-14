@@ -1,6 +1,6 @@
 {
-	"username": "c1984802",
-	"password": "Group11database",
-	"host": "csmysql.cs.cf.ac.uk",
-	"database": "c1984802_CM1102Website"
+	"username": "shop",
+	"password": "V3ryS3curePassw0rd",
+	"host": "127.0.0.1",
+	"database": "shop"
 }
